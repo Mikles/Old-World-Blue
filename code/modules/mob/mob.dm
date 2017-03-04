@@ -898,7 +898,6 @@ mob/proc/yank_out_object()
 			var/mob/living/carbon/human/human_user = U
 			human_user.bloody_hands(H)
 
-	selection.forceMove(get_turf(src))
 	U.put_in_hands(selection)
 
 	for(var/obj/item/weapon/O in pinned)
@@ -996,10 +995,10 @@ mob/proc/yank_out_object()
 
 
 /mob/proc/check_CH(CH_name as text, var/CH_type)
-	if(!src.client.CH || (src.client.CH.handler_name != CH_name))
-		src.client.CH = PoolOrNew(CH_type)
+	if(!src.client.CH || !istype(src.client.CH, CH_type))//(src.client.CH.handler_name != CH_name))
+		src.client.CH = PoolOrNew(CH_type,src.client)
 		src << "<span class='warning'>You prepare [CH_name].</span>"
 	else
-		src.client.CH = null
+		qdel(src.client.CH)
 		src << "<span class='notice'>You unprepare [CH_name].</span>"
 	return

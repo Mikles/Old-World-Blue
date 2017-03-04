@@ -4,11 +4,24 @@
 	var/mouse_icon
 	var/handler_name
 	var/one_use_flag = 1//drop client.CH after succes ability use
+	var/client/owner
+
+/datum/click_handler/New(client/_owner)
+	owner = _owner
+
+//datum/click_handler/Prepare(/client/_owner)
+
+/datum/click_handler/Destroy()
+	..()
+	if (owner)
+		owner.CH = null
+	return
+//	owner = null
 
 /datum/click_handler/proc/mob_check(mob/living/carbon/human/user) //Check can mob use a ability
 	return
 
-/datum/click_handler/proc/use_ability(mob/living/carbon/human/user,atom/target) //Check can mob use a ability
+/datum/click_handler/proc/use_ability(mob/living/carbon/human/user,atom/target)
 	return
 
 /datum/click_handler/human/mob_check(mob/living/carbon/human/user)
@@ -100,3 +113,28 @@
 
 /datum/click_handler/changeling/changeling_extract_dna_sting/use_ability(mob/living/carbon/human/user,atom/target)
 	return user.changeling_extract_dna_sting(target)
+
+
+//WIZARD CH
+/datum/click_handler/wizard/mob_check(mob/living/carbon/human/user)
+	if(ishuman(user))
+		return 1
+	return 0
+/datum/click_handler/wizard/use_ability(mob/living/carbon/human/user,atom/target)
+
+/datum/click_handler/wizard/fireball
+	handler_name = "Fireball"
+/*/datum/click_handler/wizard/fireball/mob_check(mob/living/carbon/human/user)
+	return 1*/
+/datum/click_handler/wizard/fireball/use_ability(mob/living/carbon/human/user,atom/target)
+	if (target == user)
+		return 0
+	if (!isliving(target) && !isturf(target))
+		return 0
+	for(var/spell/spell_storage in user.mind.learned_spells)
+		if (istype(src,spell_storage.CH_type))//(src.handler_name == spell_storage.name)
+			return spell_storage.perform(user,0,target)
+	user << "We cannot find it's power..."
+//	src.qdel()
+	qdel(user.client.CH)
+	return 0

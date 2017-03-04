@@ -10,21 +10,8 @@
 	var/construction_time = 100
 	var/list/construction_cost = list(DEFAULT_WALL_MATERIAL=18000)
 	var/list/part = null // Order of args is important for installing robolimbs.
-	var/sabotaged = 0 //Emagging limbs can have repercussions when installed as prosthetics.
 	var/allow_slim_body = 1
 	dir = SOUTH
-
-/obj/item/prosthesis/attackby(obj/item/W as obj, mob/user as mob)
-	if(istype(W,/obj/item/weapon/card/emag))
-		if(sabotaged)
-			user << "\red [src] is already sabotaged!"
-		else
-			user << "\red You slide [W] into the dataport on [src] and short out the safeties."
-			sabotaged = 1
-		return
-	else
-		return ..()
-
 
 
 //// Unbranded ////
@@ -92,3 +79,5 @@
 	name = "Enforcer Charge right leg"
 	icon_state = "r_leg"
 	part = list(BP_R_LEG = /obj/item/organ/external/robotic/enforcer/limb/leg)
+
+

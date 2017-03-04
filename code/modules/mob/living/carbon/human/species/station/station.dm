@@ -98,6 +98,10 @@
 				  "Ñ"="Ññ", "Ø"="Øø", "Ù"="Ùù")
 	accentFL = list("ã" = "õ", "Ã" = "Õ")
 
+	body_builds = list(
+		new/datum/body_build/unathi
+	)
+
 	restricted_jobs = list(
 		"Captain", "Head of Personnel", "Head of Security", "Chief Engineer",
 		"Research Director", "Chief Medical Officer", "Detective",
@@ -398,9 +402,10 @@
 /datum/species/machine/equip_survival_gear(var/mob/living/carbon/human/H)
 	return
 
-/datum/species/machine/handle_post_spawn(var/mob/living/carbon/human/H)
+/datum/species/machine/organs_spawned(var/mob/living/carbon/human/H)
+	..()
 	for(var/obj/item/organ/O in H.organs)
-		O.robotize()
+		O.robotic = 2
 
 /datum/species/machine/handle_death(var/mob/living/carbon/human/H)
 	..()
