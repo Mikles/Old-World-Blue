@@ -1,3 +1,7 @@
+/obj/item/weapon/disk
+	name = "disk"
+	icon = 'icons/obj/items.dmi'
+
 /obj/item/weapon/banhammer
 	desc = "banhammer"
 	name = "banhammer"
@@ -5,7 +9,7 @@
 	icon_state = "toyhammer"
 	slot_flags = SLOT_BELT
 	throwforce = 0
-	w_class = 2.0
+	w_class = ITEM_SIZE_SMALL
 	throw_speed = 7
 	throw_range = 15
 	attack_verb = list("banned")
@@ -24,7 +28,7 @@
 	throw_speed = 1
 	throw_range = 4
 	throwforce = 10
-	w_class = 2
+	w_class = ITEM_SIZE_SMALL
 
 	suicide_act(mob/user)
 		viewers(user) << "<span class='danger'>[user] is impaling \himself with the [src.name]! It looks like \he's trying to commit suicide.</span>"
@@ -32,21 +36,25 @@
 
 /obj/item/weapon/nullrod/attack(mob/M as mob, mob/living/user as mob) //Paste from old-code to decult with a null rod.
 
-	M.attack_log += text("\[[time_stamp()]\] <font color='orange'>Has been attacked with [src.name] by [user.name] ([user.ckey])</font>")
-	user.attack_log += text("\[[time_stamp()]\] <font color='red'>Used the [src.name] to attack [M.name] ([M.ckey])</font>")
-
-	msg_admin_attack("[user.name] ([user.ckey]) attacked [M.name] ([M.ckey]) with [src.name] (INTENT: [uppertext(user.a_intent)]) (<A HREF='?_src_=holder;adminplayerobservecoodjump=1;X=[user.x];Y=[user.y];Z=[user.z]'>JMP</a>)")
+	admin_attack_log(
+		"Used the [src.name] to attack [key_name(M)]",
+		"Has been attacked with [src.name] by [key_name(user)]",
+		"used [src.name] to attack"
+	)
 
 	user.setClickCooldown(DEFAULT_ATTACK_COOLDOWN)
 	user.do_attack_animation(M)
 
+	//TODO: DNA3 clown_block
+	/*
 	if ((CLUMSY in user.mutations) && prob(50))
 		user << "<span class='danger'>The rod slips out of your hand and hits your head.</span>"
 		user.take_organ_damage(10)
 		user.Paralyse(20)
 		return
+	*/
 
-	if (M.stat !=2)
+	if (M.stat !=DEAD)
 		if(cult && (M.mind in cult.current_antagonists) && prob(33))
 			M << "<span class='danger'>The power of [src] clears your mind of the cult's influence!</span>"
 			user << "<span class='danger'>You wave [src] over [M]'s head and see their eyes become clear, their mind returning to normal.</span>"
@@ -77,7 +85,7 @@
 	throwforce = 1
 	sharp = 1
 	edge = 1
-	w_class = 3
+	w_class = ITEM_SIZE_NORMAL
 	attack_verb = list("attacked", "slashed", "stabbed", "sliced", "torn", "ripped", "diced", "cut")
 
 	suicide_act(mob/user)
@@ -230,8 +238,6 @@
 		else
 			health -= rand(1,3)
 
-	else if (HULK in user.mutations)
-		health = 0
 	else
 		health -= rand(5,8)
 

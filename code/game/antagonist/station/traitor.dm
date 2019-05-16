@@ -2,7 +2,7 @@ var/datum/antagonist/traitor/traitors
 
 // Inherits most of its vars from the base datum.
 /datum/antagonist/traitor
-	id = MODE_TRAITOR
+	id = ROLE_TRAITOR
 	protected_jobs = list("Security Officer", "Warden", "Detective", "Internal Affairs Agent", "Head of Security", "Captain")
 	flags = ANTAG_SUSPICIOUS | ANTAG_RANDSPAWN | ANTAG_VOTABLE
 
@@ -44,11 +44,11 @@ var/datum/antagonist/traitor/traitors
 					kill_objective.owner = traitor
 					kill_objective.find_target()
 					traitor.objectives += kill_objective
-				if(34 to 50)
+				if(34 to 44)
 					var/datum/objective/explosion/explosion_objective = new
 					explosion_objective.owner = traitor
 					traitor.objectives += explosion_objective
-				if(51 to 66)
+				if(45 to 66)
 					var/datum/objective/harm/harm_objective = new
 					harm_objective.owner = traitor
 					harm_objective.find_target()
@@ -59,7 +59,7 @@ var/datum/antagonist/traitor/traitors
 					steal_objective.find_target()
 					traitor.objectives += steal_objective
 		switch(rand(1,100))
-			if(1 to 100)
+			if(1 to 90)
 				if (!(locate(/datum/objective/escape) in traitor.objectives))
 					var/datum/objective/escape/escape_objective = new
 					escape_objective.owner = traitor

@@ -3,7 +3,7 @@
 	desc = "A bulky pump-action grenade launcher. Holds up to 6 grenades in a revolving magazine."
 	icon_state = "riotgun"
 	item_state = "riotgun"
-	w_class = 4
+	w_class = ITEM_SIZE_HUGE
 	force = 10
 
 	fire_sound = 'sound/weapons/empty.ogg'
@@ -15,7 +15,7 @@
 	var/obj/item/weapon/grenade/chambered
 	var/list/grenades = new/list()
 	var/max_grenades = 5 //holds this + one in the chamber
-	matter = list(DEFAULT_WALL_MATERIAL = 2000)
+	matter = list(MATERIAL_STEEL = 2000)
 
 //revolves the magazine, allowing players to choose between multiple grenade types
 /obj/item/weapon/gun/launcher/grenade/proc/pump(mob/M as mob)
@@ -83,15 +83,14 @@
 	return chambered
 
 /obj/item/weapon/gun/launcher/grenade/handle_post_fire(mob/user)
-	message_admins("[key_name_admin(user)] fired a grenade ([chambered.name]) from a grenade launcher ([src.name]).")
-	log_game("[key_name_admin(user)] used a grenade ([chambered.name]).")
+	log_game("[key_name_admin(user)] used a grenade ([chambered.name]).", chambered, 0)
 	chambered = null
 
 //Underslung grenade launcher to be used with the Z8
 /obj/item/weapon/gun/launcher/grenade/underslung
 	name = "underslung grenade launcher"
 	desc = "Not much more than a tube and a firing mechanism, this grenade launcher is designed to be fitted to a rifle."
-	w_class = 3
+	w_class = ITEM_SIZE_NORMAL
 	force = 5
 	max_grenades = 0
 

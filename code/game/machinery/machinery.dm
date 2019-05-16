@@ -99,6 +99,8 @@ Class Procs:
 /obj/machinery
 	name = "machinery"
 	icon = 'icons/obj/stationobjs.dmi'
+	w_class = ITEM_SIZE_NO_CONTAINER
+
 	var/stat = 0
 	var/emagged = 0
 	var/use_power = 1
@@ -139,10 +141,9 @@ Class Procs:
 /obj/machinery/process()//If you dont use process or power why are you here
 	if(!(use_power || idle_power_usage || active_power_usage))
 		return PROCESS_KILL
-	return
 
 /obj/machinery/emp_act(severity)
-	if(use_power && stat == 0)
+	if(use_power && !stat)
 		use_power(7500/severity)
 
 		var/obj/effect/overlay/pulse2 = PoolOrNew(/obj/effect/overlay, src.loc)
@@ -237,7 +238,7 @@ Class Procs:
 			visible_message("<span class='warning'>[H] stares cluelessly at [src].</span>")
 			return 1
 		else if(prob(H.getBrainLoss()))
-			user << "<span class='warning'>You momentarily forget how to use [src].</span>"
+			user << "<span class='warning'>You momentarily forget how to use \the [src].</span>"
 			return 1
 
 	src.add_fingerprint(user)
@@ -251,6 +252,7 @@ Class Procs:
 	if(ispath(circuit))
 		circuit = PoolOrNew(circuit, null)
 
+	component_parts = list()
 	if(circuit)
 		component_parts += circuit
 
@@ -300,7 +302,7 @@ Class Procs:
 			return 1
 	return 0
 
-/obj/machinery/proc/default_part_replacement(var/mob/user, var/obj/item/weapon/storage/part_replacer/R)
+/obj/machinery/proc/default_part_replacement(var/mob/user, var/obj/item/storage/part_replacer/R)
 	if(!istype(R))
 		return 0
 	if(!component_parts)
@@ -342,7 +344,7 @@ Class Procs:
 		return 0
 	playsound(src.loc, 'sound/items/Screwdriver.ogg', 50, 1)
 	panel_open = !panel_open
-	user << "<span class='notice'>You [panel_open ? "open" : "close"] the maintenance hatch of [src].</span>"
+	user << "<span class='notice'>You [panel_open ? "open" : "close"] the maintenance hatch of \the [src].</span>"
 	update_icon()
 	return 1
 
@@ -356,5 +358,6 @@ Class Procs:
 		I.forceMove(loc)
 		component_parts -= I
 	circuit.forceMove(loc)
+	circuit.deconstruct(src)
 	qdel(src)
 	return 1

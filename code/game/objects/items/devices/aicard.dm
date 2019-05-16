@@ -3,7 +3,7 @@
 	icon = 'icons/obj/pda.dmi'
 	icon_state = "aicard" // aicard-full
 	item_state = "electronic"
-	w_class = 2.0
+	w_class = ITEM_SIZE_SMALL
 	slot_flags = SLOT_BELT
 	var/flush = null
 	origin_tech = list(TECH_DATA = 4, TECH_MATERIAL = 4)
@@ -61,7 +61,7 @@
 			flush = 1
 			carded_ai.suiciding = 1
 			carded_ai << "Your core files are being wiped!"
-			while (carded_ai && carded_ai.stat != 2)
+			while (carded_ai && carded_ai.stat != DEAD)
 				carded_ai.adjustOxyLoss(2)
 				carded_ai.updatehealth()
 				sleep(10)

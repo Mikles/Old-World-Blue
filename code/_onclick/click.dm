@@ -124,7 +124,7 @@
 	var/sdepth = A.storage_depth(src)
 	if((!isturf(A) && A == loc) || (sdepth != -1 && sdepth <= 1))
 		if(W)
-			var/resolved = W.resolve_attackby(A, src)
+			var/resolved = W.resolve_attackby(A, src, params)
 			if(!resolved && A && W)
 				W.afterattack(A, src, 1, params) // 1 indicates adjacency
 		else
@@ -144,7 +144,7 @@
 		if(A.Adjacent(src)) // see adjacent.dm
 			if(W)
 				// Return 1 in attackby() to prevent afterattack() effects (when safely moving items for example)
-				var/resolved = W.resolve_attackby(A,src)
+				var/resolved = W.resolve_attackby(A,src, params)
 				if(!resolved && A && W)
 					W.afterattack(A, src, 1, params) // 1: clicking something Adjacent
 			else
@@ -205,6 +205,8 @@
 	animals lunging, etc.
 */
 /mob/proc/RangedAttack(var/atom/A, var/params)
+	//TODO: DNA3
+	/*
 	if(!mutations.len) return
 	if((LASER in mutations) && a_intent == I_HURT)
 		LaserEyes(A) // moved into a proc below
@@ -212,6 +214,8 @@
 		if(get_dist(src, A) > tk_maxrange)
 			return
 		A.attack_tk(src)
+	*/
+
 /*
 	Restrained ClickOn
 
@@ -362,3 +366,7 @@
 		else		direction = WEST
 	if(direction != dir)
 		facedir(direction)
+
+/mob/living/silicon/ai/face_atom(var/atom/A)
+	if(holo)
+		holo.face_hologram_to(A, src)

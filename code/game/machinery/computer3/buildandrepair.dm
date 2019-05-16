@@ -2,7 +2,7 @@
 /obj/item/part/computer/circuitboard
 	density = 0
 	anchored = 0
-	w_class = 2.0
+	w_class = ITEM_SIZE_SMALL
 	name = "Circuit board"
 	icon = 'icons/obj/module.dmi'
 	icon_state = "id_mod"
@@ -178,7 +178,7 @@
 			if(istype(P, /obj/item/weapon/crowbar)) // complicated check
 				remove_peripheral()
 
-			if(istype(P, /obj/item/stack/material) && P.get_material_name() == "glass")
+			if(ismaterial(P) && P.get_material_name() == MATERIAL_GLASS)
 				var/obj/item/stack/S = P
 				if(S.amount >= 2)
 					playsound(src.loc, 'sound/items/Deconstruct.ogg', 50, 1)

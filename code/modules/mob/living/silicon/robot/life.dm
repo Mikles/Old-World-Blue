@@ -63,7 +63,7 @@
 /mob/living/silicon/robot/handle_regular_status_updates()
 
 	if(src.camera && !scrambledcodes)
-		if(src.stat == 2 || wires.IsIndexCut(BORG_WIRE_CAMERA))
+		if(src.stat == DEAD || wires.IsIndexCut(BORG_WIRE_CAMERA))
 			src.camera.set_status(0)
 		else
 			src.camera.set_status(1)
@@ -77,12 +77,12 @@
 	if(src.resting)
 		Weaken(5)
 
-	if(health < config.health_threshold_dead && src.stat != 2) //die only once
+	if(health < config.health_threshold_dead && src.stat != DEAD) //die only once
 		death()
 
-	if (src.stat != 2) //Alive.
+	if (src.stat != DEAD) //Alive.
 		if (src.paralysis || src.stunned || src.weakened || !src.has_power) //Stunned etc.
-			src.stat = 1
+			src.stat = UNCONSCIOUS
 			if (src.stunned > 0)
 				AdjustStunned(-1)
 			if (src.weakened > 0)
@@ -98,7 +98,7 @@
 
 	else //Dead.
 		src.blinded = 1
-		src.stat = 2
+		src.stat = DEAD
 
 	if (src.stuttering) src.stuttering--
 
@@ -145,7 +145,8 @@
 
 /mob/living/silicon/robot/handle_regular_hud_updates()
 
-	if (src.stat == DEAD || XRAY in mutations || src.sight_mode & BORGXRAY)
+	//TODO: DNA3 XRAY
+	if (src.stat == DEAD || src.sight_mode & BORGXRAY)
 		src.sight |= SEE_TURFS
 		src.sight |= SEE_MOBS
 		src.sight |= SEE_OBJS
@@ -164,7 +165,7 @@
 		src.sight |= SEE_MOBS
 		src.see_in_dark = 8
 		src.see_invisible = SEE_INVISIBLE_LEVEL_TWO
-	else if (src.stat != 2)
+	else if (src.stat != DEAD)
 		src.sight &= ~SEE_MOBS
 		src.sight &= ~SEE_TURFS
 		src.sight &= ~SEE_OBJS
@@ -185,7 +186,7 @@
 				process_med_hud(src,0)
 
 	if (src.healths)
-		if (src.stat != 2)
+		if (src.stat != DEAD)
 			if(istype(src,/mob/living/silicon/robot/drone))
 				switch(health)
 					if(35 to INFINITY)

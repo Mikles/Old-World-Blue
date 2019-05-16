@@ -1,7 +1,3 @@
-//This list contains the z-level numbers which can be accessed via space travel and the percentile chances to get there.
-//(Exceptions: extended, sandbox and nuke) -Errorage
-var/list/accessible_z_levels = list("1" = 5, "3" = 10, "4" = 15, "5" = 10, "6" = 60, "7" = 10, "8" = 10)
-
 /turf/space
 	icon = 'icons/turf/space.dmi'
 	name = "\proper space"
@@ -26,7 +22,7 @@ var/list/accessible_z_levels = list("1" = 5, "3" = 10, "4" = 15, "5" = 10, "6" =
 /turf/space/proc/update_starlight()
 	if(!config.starlight)
 		return
-	if(locate(/turf/simulated) in orange(src,1))
+	if(locate(/turf/simulated) in orange(1,src))
 		set_light(config.starlight)
 	else
 		set_light(0)

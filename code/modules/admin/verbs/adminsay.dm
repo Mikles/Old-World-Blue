@@ -7,7 +7,7 @@
 	msg = sanitize(msg)
 	if(!msg)	return
 
-	log_admin("ADMIN: [key_name(src)] : [msg]")
+	log_adminsay("[key_name(src)] : [msg]", null, 0)
 
 	if(check_rights(R_ADMIN,0))
 		for(var/client/C in admins)
@@ -20,10 +20,10 @@
 	set name = "Msay"
 	set hidden = 1
 
-	if(!check_rights(R_ADMIN|R_MOD|R_MENTOR))	return
+	if(!check_rights(R_ADMIN|R_MOD))	return
 
 	msg = sanitize(msg)
-	log_admin("MOD: [key_name(src)] : [msg]")
+	log_admin("MOD: [key_name(src)] : [msg]", null, 0)
 
 	if (!msg)
 		return

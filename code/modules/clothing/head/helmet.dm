@@ -5,14 +5,14 @@
 	item_flags = THICKMATERIAL
 	item_state = "helmet"
 	armor = list(melee = 50, bullet = 15, laser = 50,energy = 10, bomb = 25, bio = 0, rad = 0)
-	flags_inv = HIDEEARS|HIDEEYES
+	flags_inv = HIDEEARS|HIDEEYES|BLOCKHEADHAIR
 	body_parts_covered = HEAD|EYES
 	cold_protection = HEAD
 	min_cold_protection_temperature = HELMET_MIN_COLD_PROTECTION_TEMPERATURE
 	heat_protection = HEAD
 	max_heat_protection_temperature = HELMET_MAX_HEAT_PROTECTION_TEMPERATURE
 	siemens_coefficient = 0.7
-	w_class = 3
+	w_class = ITEM_SIZE_NORMAL
 	ear_protection = 1
 
 /obj/item/clothing/head/helmet/security
@@ -93,10 +93,17 @@
 			update_clothing_icon()	//so our mob-overlays update
 
 
+/obj/item/clothing/head/helmet/blackberetarmor
+	name = "officer beret"
+	flags_inv = HIDEEARS|HIDEEYES
+	desc = "A black beret with an officer's rank emblem."
+	icon_state = "beret_corporate_officer"
+
 /obj/item/clothing/head/helmet/dermal
 	name = "Dermal Armour Patch"
 	desc = "You're not quite sure how you manage to take it on and off, but it implants nicely in your head."
 	icon_state = "dermal"
+	flags_inv = HIDEEARS|HIDEEYES
 	item_state = "dermal"
 	armor = list(melee = 80, bullet = 60, laser = 50,energy = 10, bomb = 25, bio = 10, rad = 0)
 	siemens_coefficient = 0.6

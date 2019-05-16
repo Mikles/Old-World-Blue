@@ -193,15 +193,9 @@ var/list/donator_icons
 				if(M.client)
 					M.client.screen += cinematic
 
-				switch(M.z)
-					if(0)	//inside a crate or something
-						var/turf/T = get_turf(M)
-						if(T && T.z in config.station_levels)				//we don't use M.death(0) because it calls a for(/mob) loop and
-							M.health = 0
-							M.stat = DEAD
-					if(1)	//on a z-level 1 turf.
-						M.health = 0
-						M.stat = DEAD
+				if(isOnStationLevel(M)) //we don't use M.death(0) because it calls a for(/mob) loop and
+					M.health = 0
+					M.stat = DEAD
 
 		//Now animate the cinematic
 		switch(station_missed)
@@ -256,7 +250,7 @@ var/list/donator_icons
 						world << sound('sound/effects/explosionfar.ogg')
 						cinematic.icon_state = "summary_selfdes"
 				for(var/mob/living/M in living_mob_list)
-					if(M.loc.z in config.station_levels)
+					if(isOnStationLevel(M))
 						M.death()//No mercy
 		//If its actually the end of the round, wait for it to end.
 		//Otherwise if its a verb it will continue on afterwards.
@@ -297,10 +291,10 @@ var/list/donator_icons
 					captainless=0
 				if(!player_is_antag(player.mind, only_offstation_roles = 1))
 					job_master.EquipRank(player, rang)
+					equip_custom_items(player)
 					job_master.MoveAtSpawnPoint(player, rang)
 					if(ishuman(player))
 						UpdateFactionList(player)
-						equip_custom_items(player)
 		if(captainless)
 			for(var/mob/M in player_list)
 				if(!istype(M,/mob/new_player))
@@ -416,7 +410,7 @@ var/list/donator_icons
 	world << "<br>"
 
 	for (var/mob/living/silicon/ai/aiPlayer in mob_list)
-		if (aiPlayer.stat != 2)
+		if (aiPlayer.stat != DEAD)
 			world << "<b>[aiPlayer.name] (Played by: [aiPlayer.key])'s laws at the end of the round were:</b>"
 		else
 			world << "<b>[aiPlayer.name] (Played by: [aiPlayer.key])'s laws when it was deactivated were:</b>"
@@ -437,7 +431,7 @@ var/list/donator_icons
 			continue
 
 		if (!robo.connected_ai)
-			if (robo.stat != 2)
+			if (robo.stat != DEAD)
 				world << "<b>[robo.name] (Played by: [robo.key]) survived as an AI-less borg! Its laws were:</b>"
 			else
 				world << "<b>[robo.name] (Played by: [robo.key]) was unable to survive the rigors of being a cyborg without an AI. Its laws were:</b>"
@@ -466,8 +460,10 @@ var/list/donator_icons
 				total_antagonists[temprole] += ": [Mind.name]([Mind.key])"
 
 	//Now print them all into the log!
-	log_game("Antagonists at round end were...")
+	var/output = "Antagonists at round end were..."
 	for(var/i in total_antagonists)
-		log_game("[i]s[total_antagonists[i]].")
+		output += "[i]s[total_antagonists[i]]."
+
+	log_game(output)
 
 	return 1

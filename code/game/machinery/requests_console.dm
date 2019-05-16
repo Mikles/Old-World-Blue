@@ -236,7 +236,7 @@ var/list/obj/machinery/requests_console/allConsoles = list()
 
 		var/new_message = rhtml_encode(input_utf8(usr, "Write your message:", "Awaiting Input", "", "message"))
 		if(new_message)
-			message = new_message
+			message = cp1251_to_utf8(new_message)
 			screen = 9
 			switch(href_list["priority"])
 				if("2")	priority = 2
@@ -261,6 +261,7 @@ var/list/obj/machinery/requests_console/allConsoles = list()
 
 	if(href_list["sendAnnouncement"])
 		if(!announcementConsole)	return
+		log_game("[key_name(usr)] use [src] for annonce \"[message]\"", src.loc, FALSE)
 		announcement.Announce(utf8_to_cp1251(message), msg_sanitized = 1)
 		reset_announce()
 		screen = 0
@@ -278,7 +279,7 @@ var/list/obj/machinery/requests_console/allConsoles = list()
 		screen = 7 //if it's successful, this will get overrwritten (7 = unsufccessfull, 6 = successfull)
 		if (sending)
 			var/pass = 0
-			for (var/obj/machinery/message_server/MS in world)
+			for (var/obj/machinery/message_server/MS in machines)
 				if(!MS.active) continue
 				MS.send_rc_message(href_list["department"],department,log_msg,msgStamped,msgVerified,priority)
 				pass = 1
@@ -321,7 +322,7 @@ var/list/obj/machinery/requests_console/allConsoles = list()
 
 						screen = 6
 						Console.set_light(2)
-				messages += "<B>Message sent to [dpt]</B><BR>[cp1251_to_utf8(message)]"
+				messages += "<B>Message sent to [dpt]</B><BR>[message]"
 			else
 				for (var/mob/O in hearers(4, src.loc))
 					O.show_message(text("\icon[src] *The Requests Console beeps: 'NOTICE: No server detected!'"))
@@ -392,13 +393,13 @@ var/list/obj/machinery/requests_console/allConsoles = list()
 		else
 			user << "You can't do much with that."*/
 
-	if (istype(O, /obj/item/weapon/card/id))
+	if (O.GetID())
 		if(screen == 9)
-			var/obj/item/weapon/card/id/T = O
+			var/obj/item/weapon/card/id/T = O.GetID()
 			msgVerified = text("<font color='green'><b>Verified by [T.registered_name] ([T.assignment])</b></font>")
 			updateUsrDialog()
 		if(screen == 10)
-			var/obj/item/weapon/card/id/ID = O
+			var/obj/item/weapon/card/id/ID = O.GetID()
 			if (access_RC_announce in ID.GetAccess())
 				announceAuth = 1
 				announcement.announcer = ID.assignment ? "[ID.assignment] [ID.registered_name]" : ID.registered_name

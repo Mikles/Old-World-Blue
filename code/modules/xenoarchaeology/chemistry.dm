@@ -6,7 +6,7 @@
 	desc = "A small, open-topped glass container for delicate research samples. It sports a re-useable strip for labelling with a pen."
 	icon = 'icons/obj/device.dmi'
 	icon_state = "solution_tray"
-	matter = list("glass" = 5)
+	matter = list(MATERIAL_GLASS = 5)
 	w_class = 2.0
 	amount_per_transfer_from_this = 1
 	possible_transfer_amounts = list(1, 2)
@@ -22,7 +22,7 @@ obj/item/weapon/reagent_containers/glass/solution_tray/attackby(obj/item/weapon/
 	else
 		..(W, user)
 
-/obj/item/weapon/storage/box/solution_trays
+/obj/item/storage/box/solution_trays
 	name = "solution tray box"
 	icon_state = "solution_trays"
 

@@ -17,10 +17,10 @@
 	item_state = "pen"
 	slot_flags = SLOT_BELT | SLOT_EARS
 	throwforce = 0
-	w_class = 1.0
+	w_class = ITEM_SIZE_TINY
 	throw_speed = 7
 	throw_range = 15
-	matter = list(DEFAULT_WALL_MATERIAL = 10)
+	matter = list(MATERIAL_STEEL = 10)
 	var/colour = "black"	//what colour the ink is!
 	pressure_resistance = 2
 
@@ -64,9 +64,11 @@
 		return
 	user << "<span class='warning'>You stab [M] with the pen.</span>"
 //	M << "\red You feel a tiny prick!" //That's a whole lot of meta!
-	M.attack_log += text("\[[time_stamp()]\] <font color='orange'>Has been stabbed with [name]  by [user.name] ([user.ckey])</font>")
-	user.attack_log += text("\[[time_stamp()]\] <font color='red'>Used the [name] to stab [M.name] ([M.ckey])</font>")
-	msg_admin_attack("[user.name] ([user.ckey]) Used the [name] to stab [M.name] ([M.ckey]) (<A HREF='?_src_=holder;adminplayerobservecoodjump=1;X=[user.x];Y=[user.y];Z=[user.z]'>JMP</a>)")
+	admin_attack_log(user, M,
+		"Used the [name] to stab [key_name(M)]",
+		"Has been stabbed with [name]  by [key_name(user)]",
+		"Used the [name] to stab"
+	)
 	return
 
 /*
@@ -184,7 +186,7 @@
 	desc = "A colourful crayon. Please refrain from eating it or putting it in your nose."
 	icon = 'icons/obj/crayons.dmi'
 	icon_state = "crayonred"
-	w_class = 1.0
+	w_class = ITEM_SIZE_TINY
 	attack_verb = list("attacked", "coloured")
 	colour = "#FF0000" //RGB
 	var/shadeColour = "#220000" //RGB

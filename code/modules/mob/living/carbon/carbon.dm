@@ -34,12 +34,10 @@
 /mob/living/carbon/Move(NewLoc, direct)
 	. = ..()
 	if(.)
-		if(src.nutrition && src.stat != 2)
+		if(src.nutrition && src.stat != DEAD)
 			src.nutrition -= DEFAULT_HUNGER_FACTOR/10
 			if(src.m_intent == "run")
 				src.nutrition -= DEFAULT_HUNGER_FACTOR/10
-		if((FAT in src.mutations) && src.m_intent == "run" && src.bodytemperature <= 360)
-			src.bodytemperature += 2
 
 		// Moving around increases germ_level faster
 		if(germ_level < GERM_LEVEL_MOVE_CAP && prob(8))
@@ -207,7 +205,7 @@
 				else
 					src.show_message("My [org.name] is <span class='notice'> OK.",1)
 
-			if((SKELETON in H.mutations) && (!H.w_uniform) && (!H.wear_suit))
+			if((SKELETON & H.status_flags) && (!H.w_uniform) && (!H.wear_suit))
 				H.play_xylophone()
 		else if (on_fire)
 			playsound(src.loc, 'sound/weapons/thudswoosh.ogg', 50, 1, -1)
@@ -299,6 +297,7 @@
 	var/atom/movable/item = src.get_active_hand()
 
 	if(!item) return
+	setClickCooldown(DEFAULT_ATTACK_COOLDOWN)
 
 	if (istype(item, /obj/item/weapon/grab))
 		var/obj/item/weapon/grab/G = item
@@ -311,9 +310,11 @@
 				var/start_T_descriptor = "<font color='#6b5d00'>tile at [start_T.x], [start_T.y], [start_T.z] in area [get_area(start_T)]</font>"
 				var/end_T_descriptor = "<font color='#6b4400'>tile at [end_T.x], [end_T.y], [end_T.z] in area [get_area(end_T)]</font>"
 
-				M.attack_log += text("\[[time_stamp()]\] <font color='orange'>Has been thrown by [usr.name] ([usr.ckey]) from [start_T_descriptor] with the target [end_T_descriptor]</font>")
-				usr.attack_log += text("\[[time_stamp()]\] <font color='red'>Has thrown [M.name] ([M.ckey]) from [start_T_descriptor] with the target [end_T_descriptor]</font>")
-				msg_admin_attack("[usr.name] ([usr.ckey]) has thrown [M.name] ([M.ckey]) from [start_T_descriptor] with the target [end_T_descriptor] (<A HREF='?_src_=holder;adminplayerobservecoodjump=1;X=[usr.x];Y=[usr.y];Z=[usr.z]'>JMP</a>)")
+				admin_attack_log(usr, M,
+					"Has thrown [M.name] ([M.ckey]) from [start_T_descriptor] with the target [end_T_descriptor]",
+					"Has been thrown by [usr.name] ([usr.ckey]) from [start_T_descriptor] with the target [end_T_descriptor]",
+					"[key_name(usr)] has thrown [key_name(M)] from ([start_T.x],[start_T.y],[start_T.z]) to [end_T.x], [end_T.y], [end_T.z]"
+				)
 
 				M.Weaken(1)
 				qdel(G)
@@ -324,24 +325,23 @@
 	if(!item) return //Grab processing has a chance of returning null
 
 	//actually throw it!
-	if (item)
-		src.visible_message("\red [src] has thrown [item].")
+	src.visible_message("\red [src] has thrown [item].")
 
-		if(!src.lastarea)
-			src.lastarea = get_area(src.loc)
-		if((istype(src.loc, /turf/space)) || (src.lastarea.has_gravity == 0))
-			src.inertia_dir = get_dir(target, src)
-			step(src, inertia_dir)
+	if(!src.lastarea)
+		src.lastarea = get_area(src.loc)
+	if((istype(src.loc, /turf/space)) || (src.lastarea.has_gravity == 0))
+		src.inertia_dir = get_dir(target, src)
+		step(src, inertia_dir)
 
 
 /*
-		if(istype(src.loc, /turf/space) || (src.flags & NOGRAV)) //they're in space, move em one space in the opposite direction
-			src.inertia_dir = get_dir(target, src)
-			step(src, inertia_dir)
+	if(istype(src.loc, /turf/space) || (src.flags & NOGRAV)) //they're in space, move em one space in the opposite direction
+		src.inertia_dir = get_dir(target, src)
+		step(src, inertia_dir)
 */
 
 
-		item.throw_at(target, item.throw_range, item.throw_speed, src)
+	item.throw_at(target, item.throw_range, item.throw_speed, src)
 
 /mob/living/carbon/fire_act(datum/gas_mixture/air, exposed_temperature, exposed_volume)
 	..()
@@ -420,7 +420,7 @@
 	return
 
 /mob/living/carbon/slip(var/slipped_on,stun_duration=8)
-	if(buckled)
+	if(buckled || lying)
 		return 0
 	stop_pulling()
 	src << "<span class='warning'>You slipped on [slipped_on]!</span>"

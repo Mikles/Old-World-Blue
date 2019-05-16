@@ -25,6 +25,12 @@ var/bomb_set
 	                      // 3 is sealant open, 4 is unwrenched, 5 is removed from bolts.
 	use_power = 0
 
+/obj/item/weapon/disk/nuclear
+	name = "nuclear authentication disk"
+	desc = "Better keep this safe."
+	icon_state = "nucleardisk"
+	item_state = "card-id"
+	w_class = ITEM_SIZE_TINY
 
 
 /obj/machinery/nuclearbomb/New()
@@ -385,7 +391,7 @@ obj/machinery/nuclearbomb/proc/nukehack_win(mob/user as mob)
 
 	var/off_station = 0
 	var/turf/bomb_location = get_turf(src)
-	if(bomb_location && (bomb_location.z in config.station_levels))
+	if(bomb_location && isStationLevel(bomb_location.z))
 		if( (bomb_location.x < (128-NUKERANGE)) || (bomb_location.x > (128+NUKERANGE)) || (bomb_location.y < (128-NUKERANGE)) || (bomb_location.y > (128+NUKERANGE)) )
 			off_station = 1
 	else
@@ -417,6 +423,5 @@ obj/machinery/nuclearbomb/proc/nukehack_win(mob/user as mob)
 /obj/item/weapon/disk/nuclear/Destroy()
 	if(blobstart.len > 0)
 		var/obj/D = new /obj/item/weapon/disk/nuclear(pick(blobstart))
-		message_admins("[src] has been destroyed. Spawning [D] at ([D.x], [D.y], [D.z]).")
-		log_game("[src] has been destroyed. Spawning [D] at ([D.x], [D.y], [D.z]).")
+		log_game("[src] has been destroyed. Spawning [D].", D)
 	..()

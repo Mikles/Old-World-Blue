@@ -48,7 +48,7 @@
 	if(!control_area)
 		control_area = get_area(src)
 	else if(istext(control_area))
-		for(var/area/A in world)
+		for(var/area/A in all_areas)
 			if(A.name && A.name==control_area)
 				control_area = A
 				break
@@ -84,7 +84,7 @@
 	if(stat & BROKEN)
 		return
 
-	if(istype(W, /obj/item/weapon/card/id)||istype(W, /obj/item/device/pda))
+	if(W.GetID())
 		if(allowed(usr))
 			if(emagged)
 				user << "<span class='notice'>The turret control is unresponsive.</span>"
@@ -149,8 +149,7 @@
 			enabled = value
 		else if(href_list["command"] == "lethal")
 			lethal = value
-			message_admins("[usr]([usr.ckey])(<A HREF='?_src_=holder;adminplayerobservecoodjump=1;X=[src.x];Y=[src.y];Z=[src.z]'>JMP</a>) turned turret to lethal mode at [src.x],[src.y],[src.z] in area ([get_area(src)]).", 0)
-			log_game("[usr]([usr.ckey]) turned turret to lethal mode at [src.x],[src.y],[src.z] in area ([get_area(src)])")
+			log_game("[usr]([usr.ckey]) turned turret to lethal mode.", src)
 		else if(href_list["command"] == "check_synth")
 			check_synth = value
 		else if(href_list["command"] == "check_weapons")

@@ -107,18 +107,6 @@
 	path = /obj/item/clothing/head/welding
 	category = "General"
 
-/datum/autolathe/recipe/metal
-	name = "steel sheets"
-	path = /obj/item/stack/material/steel
-	category = "General"
-	is_stack = 1
-
-/datum/autolathe/recipe/glass
-	name = "glass sheets"
-	path = /obj/item/stack/material/glass
-	category = "General"
-	is_stack = 1
-
 /datum/autolathe/recipe/rglass
 	name = "reinforced glass sheets"
 	path = /obj/item/stack/material/glass/reinforced
@@ -158,7 +146,7 @@
 
 /datum/autolathe/recipe/powermodule
 	name = "power control module"
-	path = /obj/item/weapon/module/power_control
+	path = /obj/item/weapon/power_control
 	category = "Engineering"
 
 /datum/autolathe/recipe/rcd_ammo

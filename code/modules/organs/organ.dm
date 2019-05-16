@@ -39,6 +39,7 @@ var/list/organ_cache = list()
 
 /obj/item/organ/Destroy()
 	if(owner)           owner = null
+	if(parent)          parent = null
 	if(transplant_data) transplant_data.Cut()
 	if(autopsy_data)    autopsy_data.Cut()
 	if(trace_chemicals) trace_chemicals.Cut()
@@ -47,7 +48,7 @@ var/list/organ_cache = list()
 	return ..()
 
 // Move organ inside new owner and attach it.
-/obj/item/organ/proc/install(mob/living/carbon/human/H)
+/obj/item/organ/proc/install(mob/living/carbon/human/H, var/redraw_mob = 1)
 	if(!istype(H))
 		return 1
 
@@ -61,6 +62,7 @@ var/list/organ_cache = list()
 			blood_DNA = list()
 		blood_DNA[H.dna.unique_enzymes] = H.dna.b_type
 	processing_objects -= src
+	sync_to_owner()
 
 /obj/item/organ/proc/removed(var/mob/living/user)
 	if(!istype(owner))
@@ -76,14 +78,17 @@ var/list/organ_cache = list()
 
 	if(owner && vital)
 		if(user)
-			user.attack_log += "\[[time_stamp()]\]<font color='red'> removed a vital organ ([src]) from [owner.name] ([owner.ckey]) (INTENT: [uppertext(user.a_intent)])</font>"
-			owner.attack_log += "\[[time_stamp()]\]<font color='orange'> had a vital organ ([src]) removed by [user.name] ([user.ckey]) (INTENT: [uppertext(user.a_intent)])</font>"
-			msg_admin_attack("[user.name] ([user.ckey]) removed a vital organ ([src]) from [owner.name] ([owner.ckey]) (INTENT: [uppertext(user.a_intent)]) (<A HREF='?_src_=holder;adminplayerobservecoodjump=1;X=[user.x];Y=[user.y];Z=[user.z]'>JMP</a>)")
+			admin_attack_log(user, owner,
+				"removed a vital organ ([src]) from [key_name(owner)]",
+				"had a vital organ ([src]) removed by [key_name(user)]",
+				"removed a vital organ ([src]) from"
+			)
 		owner.death()
 
+	parent = null
 	owner = null
 
-/obj/item/organ/proc/sync_colour_to_owner()
+/obj/item/organ/proc/sync_to_owner()
 	return
 
 /obj/item/organ/proc/get_icon()
@@ -118,7 +123,7 @@ var/list/organ_cache = list()
 	if(preserved)
 		return
 	//Process infections
-	if (robotic >= 2 || (owner && owner.species && (owner.species.flags & IS_PLANT)))
+	if ((robotic >= ORGAN_ROBOT) || (owner && owner.species && (owner.species.flags & IS_PLANT)))
 		germ_level = 0
 		return
 
@@ -283,4 +288,7 @@ var/list/organ_cache = list()
 					return
 
 /obj/item/organ/proc/can_feel_pain()
-	return (robotic < ORGAN_ROBOT) && !(status & (ORGAN_DEAD|ORGAN_DESTROYED))
+	return (robotic < ORGAN_ROBOT) && !(status & (ORGAN_CUT_AWAY|ORGAN_DEAD|ORGAN_DESTROYED))
+
+/obj/item/organ/proc/is_usable()
+	return !(status & (ORGAN_CUT_AWAY|ORGAN_MUTATED|ORGAN_DEAD))

@@ -14,7 +14,7 @@
 	slot_flags = SLOT_BACK
 	req_one_access = list()
 	req_access = list()
-	w_class = 4
+	w_class = ITEM_SIZE_HUGE
 
 	// These values are passed on to all component pieces.
 	armor = list(melee = 40, bullet = 5, laser = 20,energy = 5, bomb = 35, bio = 100, rad = 20)
@@ -364,7 +364,7 @@
 			fail_msg = "<span class='warning'>You must be solid to do this.</span>"
 	if(sealing)
 		fail_msg = "<span class='warning'>The hardsuit is in the process of adjusting seals and cannot be activated.</span>"
-	else if(!fail_msg && ((use_unconcious && user.stat > 1) || (!use_unconcious && user.stat)))
+	else if(!fail_msg && ((use_unconcious && user.stat > UNCONSCIOUS) || (!use_unconcious && user.stat)))
 		fail_msg = "<span class='warning'>You are in no fit state to do that."
 	else if(!cell)
 		fail_msg = "<span class='warning'>There is no cell installed in the suit.</span>"

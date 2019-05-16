@@ -43,7 +43,7 @@
 				if(!T.implanted) continue
 				var/loc_display = "Unknown"
 				var/mob/living/carbon/M = T.imp_in
-				if(M.z in config.station_levels && !istype(M.loc, /turf/space))
+				if(isOnStationLevel(M) && !istype(M.loc, /turf/space))
 					var/turf/mob_loc = get_turf(M)
 					loc_display = mob_loc.loc
 				if(T.malfunction)
@@ -95,7 +95,7 @@
 			var/obj/item/weapon/implant/I = locate(href_list["warn"])
 			if( istype(I) && I.imp_in)
 				var/mob/living/carbon/R = I.imp_in
-				log_say("PrisonComputer3 message: [key_name(usr)]->[key_name(R)] : [warning]")
+				log_game("PrisonComputer3 message: [key_name(usr)]->[key_name(R)] : [warning]", R)
 				R << "\green You hear a voice in your head saying: '[warning]'"
 
 		interact()

@@ -214,10 +214,7 @@ By design, d1 is the smallest direction and d2 is the highest
 	return
 
 obj/structure/cable/proc/cableColor(var/colorC)
-	var/color_n = "#DD0000"
-	if(colorC)
-		color_n = colorC
-	color = color_n
+	color = colorC ? colorC : "#DD0000"
 
 /////////////////////////////////////////////////
 // Cable laying helpers
@@ -467,15 +464,16 @@ obj/structure/cable/proc/cableColor(var/colorC)
 	name = "cable coil"
 	icon = 'icons/obj/power.dmi'
 	icon_state = "coil"
+	randpixel = 2
 	amount = MAXCOIL
 	max_amount = MAXCOIL
 	color = COLOR_RED
 	desc = "A coil of power cable."
 	throwforce = 10
-	w_class = 2.0
+	w_class = ITEM_SIZE_SMALL
 	throw_speed = 2
 	throw_range = 5
-	matter = list(DEFAULT_WALL_MATERIAL = 50, "glass" = 20)
+	matter = list(MATERIAL_STEEL = 50, MATERIAL_GLASS = 20)
 	flags = CONDUCT
 	slot_flags = SLOT_BELT
 	item_state = "coil"
@@ -502,8 +500,6 @@ obj/structure/cable/proc/cableColor(var/colorC)
 	src.amount = length
 	if (param_color) // It should be red by default, so only recolor it if parameter was specified.
 		color = param_color
-	pixel_x = rand(-2,2)
-	pixel_y = rand(-2,2)
 	update_icon()
 	update_wclass()
 
@@ -549,9 +545,9 @@ obj/structure/cable/proc/cableColor(var/colorC)
 
 /obj/item/stack/cable_coil/proc/update_wclass()
 	if(amount == 1)
-		w_class = 1.0
+		w_class = ITEM_SIZE_TINY
 	else
-		w_class = 2.0
+		w_class = ITEM_SIZE_SMALL
 
 /obj/item/stack/cable_coil/examine(mob/user, return_dist=1)
 	.=..()
@@ -611,19 +607,11 @@ obj/structure/cable/proc/cableColor(var/colorC)
 // Items usable on a cable coil :
 //   - Wirecutters : cut them duh !
 //   - Cable coil : merge cables
-/obj/item/stack/cable_coil/proc/can_merge(var/obj/item/stack/cable_coil/C)
-	return color == C.color
+/obj/item/stack/cable_coil/can_merge(var/obj/item/stack/cable_coil/C)
+	return istype(C) && color == C.color
 
-/obj/item/stack/cable_coil/cyborg/can_merge()
-	return 1
-
-/obj/item/stack/cable_coil/transfer_to(obj/item/stack/cable_coil/S)
-	if(!istype(S))
-		return
-	if(!can_merge(S))
-		return
-
-	..()
+/obj/item/stack/cable_coil/cyborg/can_merge(var/obj/item/stack/cable_coil/C)
+	return istype(C)
 
 /obj/item/stack/cable_coil/use()
 	. = ..()
@@ -860,12 +848,11 @@ obj/structure/cable/proc/cableColor(var/colorC)
 
 /obj/item/stack/cable_coil/cut
 	item_state = "coil2"
+	randpixel = 3
 
 /obj/item/stack/cable_coil/cut/New(loc)
 	..()
 	src.amount = rand(1,2)
-	pixel_x = rand(-2,2)
-	pixel_y = rand(-2,2)
 	update_icon()
 	update_wclass()
 

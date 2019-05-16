@@ -7,18 +7,27 @@
 	var/eye_color = ""
 	var/robo_color = "#000000"
 	var/icon/mob_icon = null
+	var/datum/species/species = null
+	var/body_build = null
 
-/obj/item/organ/internal/eyes/install(mob/living/carbon/human/H)
+/obj/item/organ/internal/eyes/install(mob/living/carbon/human/H, redraw_mob = 1)
 	if(..()) return 1
 	// Apply our eye color to the target.
 	if(eye_color)
 		owner.eyes_color = eye_color
-	else
-		sync_colour_to_owner()
-	owner.update_eyes()
+	sync_to_owner()
+	if(redraw_mob)
+		owner.update_body()
+
+/obj/item/organ/internal/eyes/sync_to_owner()
+	if(!owner)
+		return
+	species = owner.species
+	body_build = owner.body_build.index
+	eye_color = owner.eyes_color ? owner.eyes_color : "#000000"
 
 /obj/item/organ/internal/eyes/get_icon()
-	mob_icon = new/icon(owner.species.icobase, "eyes[owner.body_build.index]")
+	mob_icon = new/icon(species.icobase, "eyes[body_build]")
 	if(robotic >= ORGAN_ROBOT)
 		mob_icon.Blend(robo_color, ICON_ADD)
 	else
@@ -28,16 +37,24 @@
 /obj/item/organ/internal/eyes/get_icon_key()
 	return "eyes[eye_color]"
 
-/obj/item/organ/internal/eyes/sync_colour_to_owner()
-	if(!owner)
-		return
-	eye_color = owner.eyes_color ? owner.eyes_color : "#000000"
-
 /obj/item/organ/internal/eyes/take_damage(amount, var/silent=0)
 	var/oldbroken = is_broken()
 	..()
+
+	if(damage > 10)
+		if(!silent)
+			owner << SPAN_WARN("Your eyes are really starting to hurt. This can't be good for you!")
+
+	if(damage >= min_bruised_damage)
+		if(!owner.disabilities & NEARSIGHTED)
+			if(!silent)
+				owner << SPAN_DANG("It's become harder to see!")
+			owner.disabilities |= NEARSIGHTED
+			spawn(100)
+				owner.disabilities &= ~NEARSIGHTED
+
 	if(is_broken() && !oldbroken && owner && !owner.stat)
-		owner << "<span class='danger'>You go blind!</span>"
+		owner << SPAN_DANG("You go blind!")
 
 /obj/item/organ/internal/eyes/process() //Eye damage replaces the old eye_stat var.
 	..()
@@ -53,7 +70,7 @@
 
 /obj/item/organ/internal/eyes/oneeye
 	get_icon()
-		mob_icon = icon(owner.species.icobase, "left_eye[owner.body_build.index]")
+		mob_icon = icon(species.icobase, "left_eye[body_build]")
 		mob_icon.Blend(eye_color, ICON_ADD)
 		return mob_icon
 
@@ -62,7 +79,7 @@
 
 /obj/item/organ/internal/eyes/oneeye/right
 	get_icon()
-		mob_icon = icon(owner.species.icobase, "right_eye[owner.body_build.index]")
+		mob_icon = icon(species.icobase, "right_eye[body_build]")
 		mob_icon.Blend(eye_color, ICON_ADD)
 		return mob_icon
 
@@ -75,7 +92,7 @@
 	var/second_color = "#000000"
 	get_icon()
 		..()
-		var/icon/one_eye = icon(owner.species.icobase, "left_eye[owner.body_build.index]")
+		var/icon/one_eye = icon(species.icobase, "left_eye[body_build]")
 		one_eye.Blend(second_color, ICON_ADD)
 		mob_icon.Blend(one_eye, ICON_OVERLAY)
 		return mob_icon
@@ -130,7 +147,7 @@
 
 /obj/item/organ/internal/eyes/mechanic/cam/get_icon()
 	..() //basic eyes + color
-	var/icon/socket = icon(owner.species.icobase, "left_eye[owner.body_build.index]")
+	var/icon/socket = icon(species.icobase, "left_eye[body_build]")
 	if(camera)
 		socket.Blend("#C0C0C0", ICON_ADD)
 	mob_icon.Blend(socket, ICON_OVERLAY)

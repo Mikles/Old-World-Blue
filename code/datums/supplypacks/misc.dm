@@ -33,9 +33,9 @@
 		/obj/item/clothing/accessory/storage/black_vest,
 		/obj/item/clothing/accessory/storage/brown_vest,
 		/obj/item/clothing/accessory/storage/white_vest,
-		/obj/item/clothing/accessory/storage/black_drop_pouches,
-		/obj/item/clothing/accessory/storage/brown_drop_pouches,
-		/obj/item/clothing/accessory/storage/white_drop_pouches,
+		/obj/item/clothing/accessory/storage/drop_pouches,
+		/obj/item/clothing/accessory/storage/drop_pouches/brown,
+		/obj/item/clothing/accessory/storage/drop_pouches/white,
 		/obj/item/clothing/accessory/storage/webbing
 	)
 	cost = 10
@@ -44,7 +44,7 @@
 
 /datum/supply_packs/misc/underwear
 	name = "Random underwear pack"
-	contains = list(/obj/item/weapon/storage/box/underwear = 3)
+	contains = list(/obj/item/storage/box/underwear = 3)
 	cost = 10
 	containertype = /obj/structure/closet/crate
 	containername = "Underwear crate"

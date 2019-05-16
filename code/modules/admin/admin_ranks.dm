@@ -37,11 +37,10 @@ var/list/admin_ranks = list()								//list of all ranks with associated rights
 				if("stealth")					rights |= R_STEALTH
 				if("rejuv","rejuvinate")		rights |= R_REJUVINATE
 				if("varedit")					rights |= R_VAREDIT
-				if("everything","host","all")	rights |= (R_HOST | R_BUILDMODE | R_ADMIN | R_BAN | R_FUN | R_SERVER | R_DEBUG | R_PERMISSIONS | R_POSSESS | R_STEALTH | R_REJUVINATE | R_VAREDIT | R_SOUNDS | R_SPAWN | R_MOD| R_MENTOR)
+				if("everything","host","all")	rights |= (R_HOST | R_BUILDMODE | R_ADMIN | R_BAN | R_FUN | R_SERVER | R_DEBUG | R_PERMISSIONS | R_POSSESS | R_STEALTH | R_REJUVINATE | R_VAREDIT | R_SOUNDS | R_SPAWN | R_MOD)
 				if("sound","sounds")			rights |= R_SOUNDS
 				if("spawn","create")			rights |= R_SPAWN
 				if("mod")						rights |= R_MOD
-				if("mentor")				rights |= R_MENTOR
 
 		admin_ranks[rank] = rights
 		previous_rights = rights
@@ -114,7 +113,8 @@ var/list/admin_ranks = list()								//list of all ranks with associated rights
 		while(query.NextRow())
 			var/ckey = query.item[1]
 			var/rank = query.item[2]
-			if(rank == "Removed")	continue	//This person was de-adminned. They are only in the admin list for archive purposes.
+			if(rank == "Removed")
+				continue	//This person was de-adminned. They are only in the admin list for archive purposes.
 
 			var/rights = query.item[3]
 			if(istext(rights))	rights = text2num(rights)
@@ -122,6 +122,7 @@ var/list/admin_ranks = list()								//list of all ranks with associated rights
 
 			//find the client for a ckey if they are connected and associate them with the new admin datum
 			D.associate(directory[ckey])
+
 		if(!admin_datums)
 			error("The database query in load_admins() resulted in no admins being added to the list. Reverting to legacy system.")
 			log_misc("The database query in load_admins() resulted in no admins being added to the list. Reverting to legacy system.")

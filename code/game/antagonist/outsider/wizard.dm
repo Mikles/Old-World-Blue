@@ -1,8 +1,7 @@
 var/datum/antagonist/wizard/wizards
 
 /datum/antagonist/wizard
-	id = MODE_WIZARD
-	role_type = BE_WIZARD
+	id = ROLE_WIZARD
 	role_text = "Space Wizard"
 	role_text_plural = "Space Wizards"
 	bantype = "wizard"
@@ -38,7 +37,7 @@ var/datum/antagonist/wizard/wizards
 		if(31 to 60)
 			escape = 1
 			steal = 1
-		if(61 to 99)
+		if(61 to 89)
 			kill = 1
 			steal = 1
 		else
@@ -81,12 +80,12 @@ var/datum/antagonist/wizard/wizards
 	wizard_mob.equip_to_slot_or_del(new /obj/item/clothing/suit/wizrobe(wizard_mob), slot_wear_suit)
 	wizard_mob.equip_to_slot_or_del(new /obj/item/clothing/head/wizard(wizard_mob), slot_head)
 	switch(wizard_mob.backbag)
-		if(2) wizard_mob.equip_to_slot_or_del(new /obj/item/weapon/storage/backpack(wizard_mob), slot_back)
-		if(3) wizard_mob.equip_to_slot_or_del(new /obj/item/weapon/storage/backpack/satchel/norm(wizard_mob), slot_back)
-		if(4) wizard_mob.equip_to_slot_or_del(new /obj/item/weapon/storage/backpack/satchel(wizard_mob), slot_back)
-		if(5) wizard_mob.equip_to_slot_or_del(new /obj/item/weapon/storage/backpack/dufflebag(wizard_mob), slot_back)
-		if(6) wizard_mob.equip_to_slot_or_del(new /obj/item/weapon/storage/backpack/messenger(wizard_mob), slot_back)
-	wizard_mob.equip_to_slot_or_del(new /obj/item/weapon/storage/box(wizard_mob), slot_in_backpack)
+		if(2) wizard_mob.equip_to_slot_or_del(new /obj/item/storage/backpack(wizard_mob), slot_back)
+		if(3) wizard_mob.equip_to_slot_or_del(new /obj/item/storage/backpack/satchel/norm(wizard_mob), slot_back)
+		if(4) wizard_mob.equip_to_slot_or_del(new /obj/item/storage/backpack/satchel(wizard_mob), slot_back)
+		if(5) wizard_mob.equip_to_slot_or_del(new /obj/item/storage/backpack/dufflebag(wizard_mob), slot_back)
+		if(6) wizard_mob.equip_to_slot_or_del(new /obj/item/storage/backpack/messenger(wizard_mob), slot_back)
+	wizard_mob.equip_to_slot_or_del(new /obj/item/storage/box(wizard_mob), slot_in_backpack)
 	wizard_mob.equip_to_slot_or_del(new /obj/item/weapon/teleportation_scroll(wizard_mob), slot_r_store)
 	wizard_mob.equip_to_slot_or_del(new /obj/item/weapon/spellbook(wizard_mob), slot_r_hand)
 	wizard_mob.equip_survival_gear()
@@ -117,19 +116,32 @@ obj/item/clothing
 
 /*Checks if the wizard is wearing the proper attire.
 Made a proc so this is not repeated 14 (or more) times.*/
-/mob/proc/wearing_wiz_garb()
-	src << "Silly creature, you're not a human. Only humans can cast this spell."
+/mob/proc/is_like_wizard(flags)
+	src << SPAN_WARN("Silly creature, you're not a human. Only humans can cast this spell.")
 	return 0
 
 // Humans can wear clothes.
-/mob/living/carbon/human/wearing_wiz_garb()
-	if(!is_wiz_garb(src.wear_suit))
-		src << "<span class='warning'>I don't feel strong enough without my robe.</span>"
-		return 0
-	if(!is_wiz_garb(src.shoes))
-		src << "<span class='warning'>I don't feel strong enough without my sandals.</span>"
-		return 0
-	if(!is_wiz_garb(src.head))
-		src << "<span class='warning'>I don't feel strong enough without my hat.</span>"
-		return 0
-	return 1
+/mob/living/carbon/human/is_like_wizard(flags)
+	if(flags & WIZARD_CLOTHINGS)
+		if(!is_wiz_garb(src.wear_suit))
+			src << SPAN_WARN("I don't feel strong enough without my robe.")
+			return FALSE
+		if(!is_wiz_garb(src.shoes))
+			src << SPAN_WARN("I don't feel strong enough without my sandals.")
+			return FALSE
+		if(!is_wiz_garb(src.head))
+			src << SPAN_WARN("I don't feel strong enough without my hat.")
+			return FALSE
+	if(flags & WIZARD_KNOWLEDGE)
+		if(wizards && wizards.is_antagonist(mind))
+			return TRUE
+		else
+			for(var/obj/item/weapon/implant/wizard/I in src)
+				if(I.imp_in == src)
+					return TRUE
+			return FALSE
+	return TRUE
+
+/datum/antagonist/wizard/remove_antagonist(var/datum/mind/player, var/show_message, var/implanted)
+	player.current.spellremove()
+	..()

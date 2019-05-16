@@ -1,29 +1,62 @@
 /datum/organ_description
-	var/name = "upper body"
-	var/organ_tag = BP_CHEST
-	var/default_type = /obj/item/organ/external/chest
-	var/body_part = UPPER_TORSO
+	var/organ_tag = "limb"
+	var/name = "limb"
+	var/default_type = /obj/item/organ/external/organic
+
+	var/min_broken_damage = 30
+	var/max_damage = 0
+	var/vital = 0
+	var/cannot_amputate = 0
+	var/w_class = ITEM_SIZE_NORMAL
+
+	var/body_part = null
 	var/amputation_point = "spine"
 	var/joint = "neck"
 	var/parent_organ = null
 	var/icon_position = null
-	var/can_grasp = 0
-	var/can_stand = 0
+	var/can_grasp = FALSE
+	var/can_stand = FALSE
 	var/list/drop_on_remove = null
 
+/datum/organ_description/chest
+	organ_tag = BP_CHEST
+	name = "upper body"
+	default_type = /obj/item/organ/external/organic
+
+	min_broken_damage = 35
+	max_damage = 100
+	vital = TRUE
+	cannot_amputate = TRUE
+	w_class = ITEM_SIZE_HUGE
+
+	body_part = UPPER_TORSO
+	amputation_point = "spine"
+
 /datum/organ_description/groin
-	name = "lower body"
 	organ_tag = BP_GROIN
-	default_type = /obj/item/organ/external/groin
+	name = "lower body"
+	default_type = /obj/item/organ/external/organic
+
+	min_broken_damage = 35
+	max_damage = 100
+	vital = TRUE
+	w_class = ITEM_SIZE_LARGE
+
 	body_part = LOWER_TORSO
 	joint = "hip"
 	amputation_point = "lumbar"
 	parent_organ = BP_CHEST
 
 /datum/organ_description/head
-	name = "head"
 	organ_tag = BP_HEAD
+	name = "head"
 	default_type = /obj/item/organ/external/head
+
+	max_damage = 75
+	min_broken_damage = 35
+	vital = TRUE
+	w_class = ITEM_SIZE_NORMAL
+
 	body_part = HEAD
 	joint = "jaw"
 	amputation_point = "neck"
@@ -31,14 +64,17 @@
 	drop_on_remove = list(slot_glasses,slot_head,slot_l_ear,slot_r_ear,slot_wear_mask)
 
 /datum/organ_description/arm
-	default_type = /obj/item/organ/external/limb
+	max_damage = 50
+	min_broken_damage = 30
+	w_class = ITEM_SIZE_NORMAL
 	parent_organ = BP_CHEST
-	can_grasp = 1
+	can_grasp = TRUE
 
 /datum/organ_description/arm/left
 	name = "left arm"
 	organ_tag = BP_L_ARM
 	body_part = ARM_LEFT
+	icon_position = LEFT
 	joint = "left elbow"
 	amputation_point = "left shoulder"
 
@@ -46,13 +82,16 @@
 	name = "right arm"
 	organ_tag = BP_R_ARM
 	body_part = ARM_RIGHT
+	icon_position = RIGHT
 	joint = "right elbow"
 	amputation_point = "right shoulder"
 
 /datum/organ_description/leg
-	default_type = /obj/item/organ/external/limb
+	max_damage = 50
+	min_broken_damage = 30
+	w_class = ITEM_SIZE_NORMAL
 	parent_organ = BP_GROIN
-	can_stand = 1
+	can_stand = TRUE
 
 /datum/organ_description/leg/left
 	name = "left leg"
@@ -71,8 +110,9 @@
 	amputation_point = "right hip"
 
 /datum/organ_description/hand
-	default_type = /obj/item/organ/external/tiny
-	can_grasp = 1
+	min_broken_damage = 15
+	w_class = ITEM_SIZE_SMALL
+	can_grasp = TRUE
 	drop_on_remove = list(slot_gloves, slot_handcuffed)
 
 /datum/organ_description/hand/left
@@ -80,6 +120,7 @@
 	name = "left hand"
 	body_part = HAND_LEFT
 	parent_organ = BP_L_ARM
+	icon_position = LEFT
 	joint = "left wrist"
 	amputation_point = "left wrist"
 
@@ -88,12 +129,14 @@
 	name = "right hand"
 	body_part = HAND_RIGHT
 	parent_organ = BP_R_ARM
+	icon_position = RIGHT
 	joint = "right wrist"
 	amputation_point = "right wrist"
 
 /datum/organ_description/foot
-	default_type = /obj/item/organ/external/tiny
-	can_stand = 1
+	min_broken_damage = 15
+	w_class = ITEM_SIZE_SMALL
+	can_stand = TRUE
 	drop_on_remove = list(slot_shoes, slot_legcuffed)
 
 /datum/organ_description/foot/left
@@ -114,84 +157,40 @@
 	joint = "right ankle"
 	amputation_point = "right ankle"
 
-////DIONA////
-/datum/organ_description/diona
-	name = "upper body"
-	amputation_point = "branch"
-	joint = "structural ligament"
-	default_type = /obj/item/organ/external/diona/chest
-
-/datum/organ_description/groin/diona
-	name = "fork"
-	default_type = /obj/item/organ/external/diona/groin
-
-/datum/organ_description/head/diona
-	default_type = /obj/item/organ/external/diona/head
-
-/datum/organ_description/arm/left/diona
-	name = "left upper tendril"
-	default_type = /obj/item/organ/external/diona/limb
-
-/datum/organ_description/arm/right/diona
-	name = "right upper tendril"
-	default_type = /obj/item/organ/external/diona/limb
-
-/datum/organ_description/leg/left/diona
-	name = "left lower tendril"
-	default_type = /obj/item/organ/external/diona/limb
-
-/datum/organ_description/leg/right/diona
-	name = "right lower tendril"
-	default_type = /obj/item/organ/external/diona/limb
-
-/datum/organ_description/hand/left/diona
-	name = "left grasper"
-	default_type = /obj/item/organ/external/diona/tiny
-
-/datum/organ_description/hand/right/diona
-	name = "right grasper"
-	default_type = /obj/item/organ/external/diona/tiny
-
-/datum/organ_description/foot/left/diona
-	default_type = /obj/item/organ/external/diona/tiny
-
-/datum/organ_description/foot/right/diona
-	default_type = /obj/item/organ/external/diona/tiny
-
 ////SLIME////
-/datum/organ_description/slime
+/datum/organ_description/chest/slime
 	name = "upper body"
-	default_type = /obj/item/organ/external/chest/slime
+	default_type = /obj/item/organ/external/slime
 
 /datum/organ_description/groin/slime
 	name = "fork"
-	default_type = /obj/item/organ/external/groin/slime
+	default_type = /obj/item/organ/external/slime
 
 /datum/organ_description/head/slime
 	default_type = /obj/item/organ/external/head/slime
 
 /datum/organ_description/arm/left/slime
-	default_type = /obj/item/organ/external/limb/slime
+	default_type = /obj/item/organ/external/slime
 
 /datum/organ_description/arm/right/slime
-	default_type = /obj/item/organ/external/limb/slime
+	default_type = /obj/item/organ/external/slime
 
 /datum/organ_description/leg/left/slime
-	default_type = /obj/item/organ/external/limb/slime
+	default_type = /obj/item/organ/external/slime
 
 /datum/organ_description/leg/right/slime
-	default_type = /obj/item/organ/external/limb/slime
+	default_type = /obj/item/organ/external/slime
 
 /datum/organ_description/hand/left/slime
-	default_type = /obj/item/organ/external/tiny/slime
+	default_type = /obj/item/organ/external/slime
 
 /datum/organ_description/hand/right/slime
-	default_type = /obj/item/organ/external/tiny/slime
+	default_type = /obj/item/organ/external/slime
 
 /datum/organ_description/foot/left/slime
-	default_type = /obj/item/organ/external/tiny/slime
+	default_type = /obj/item/organ/external/slime
 
 /datum/organ_description/foot/right/slime
-	default_type = /obj/item/organ/external/tiny/slime
+	default_type = /obj/item/organ/external/slime
 
 

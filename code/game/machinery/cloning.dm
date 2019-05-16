@@ -102,7 +102,7 @@
 
 	//Get the clone body ready
 	H.adjustCloneLoss(150) // New damage var so you can't eject a clone early then stab them to abuse the current damage system --NeoFite
-	H.adjustBrainLoss(80) // Even if healed to full health, it will have some brain damage
+	H.adjustBrainLoss(20) // Even if healed to full health, it will have some brain damage
 	H.Paralyse(4)
 
 	//Here let's calculate their health so the pod doesn't immediately eject them!!!
@@ -156,7 +156,7 @@
 				log += "Occupant is suiciding."
 			if(!occupant.key)
 				log += "Occupant key is missed."
-			log_debug(log)
+			log_debug(log, src)
 			locked = 0
 			go_out()
 			connected_message("Clone Rejected: Deceased.")
@@ -206,7 +206,7 @@
 			return
 		if(default_part_replacement(user, W))
 			return
-	if(istype(W, /obj/item/weapon/card/id)||istype(W, /obj/item/device/pda))
+	if(W.GetID())
 		if(!check_access(W))
 			user << "<span class='warning'>Access Denied.</span>"
 			return
@@ -307,7 +307,7 @@
 		occupant.client.perspective = MOB_PERSPECTIVE
 	occupant.loc = loc
 	eject_wait = 0 //If it's still set somehow.
-	domutcheck(occupant) //Waiting until they're out before possible transforming.
+	//TODO: DNA3 update_mutations
 	occupant = null
 
 	biomass -= CLONE_BIOMASS
@@ -368,23 +368,6 @@
 	else if (mess)
 		icon_state = "pod_g"
 
-//Health Tracker Implant
-
-/obj/item/weapon/implant/health
-	name = "health implant"
-	var/healthstring = ""
-
-/obj/item/weapon/implant/health/proc/sensehealth()
-	if(!implanted)
-		return "ERROR"
-	else
-		if(isliving(implanted))
-			var/mob/living/L = implanted
-			healthstring = "[round(L.getOxyLoss())] - [round(L.getFireLoss())] - [round(L.getToxLoss())] - [round(L.getBruteLoss())]"
-		if(!healthstring)
-			healthstring = "ERROR"
-		return healthstring
-
 //Disk stuff.
 //The return of data disks?? Just for transferring between genetics machine/cloning machine.
 //TO-DO: Make the genetics machine accept them.
@@ -393,7 +376,7 @@
 	icon = 'icons/obj/cloning.dmi'
 	icon_state = "datadisk0" //Gosh I hope syndies don't mistake them for the nuke disk.
 	item_state = "card-id"
-	w_class = 2.0
+	w_class = ITEM_SIZE_SMALL
 	var/datum/dna2/record/buf = null
 	var/read_only = 0 //Well,it's still a floppy disk
 
@@ -406,6 +389,7 @@
 	read_only = 1
 
 	New()
+		..()
 		initializeDisk()
 		buf.types=DNA2_BUF_UE|DNA2_BUF_UI
 		//data = "066000033000000000AF00330660FF4DB002690"
@@ -415,6 +399,9 @@
 		buf.dna.UI=list(0x066,0x000,0x033,0x000,0x000,0x000,0xAF0,0x033,0x066,0x0FF,0x4DB,0x002,0x690)
 		//buf.dna.UI=list(0x0C8,0x0C8,0x0C8,0x0C8,0x0C8,0x0C8,0x000,0x000,0x000,0x000,0x161,0xFBD,0xDEF) // Farmer Jeff
 		buf.dna.UpdateUI()
+
+/*
+TODO: DNA3 monkey disk
 
 /obj/item/weapon/disk/data/monkey
 	name = "data disk - 'Mr. Muggles'"
@@ -429,6 +416,7 @@
 			new_SE += rand(1,1024)
 		buf.dna.SE=new_SE
 		buf.dna.SetSEValueRange(MONKEYBLOCK,0xDAC, 0xFFF)
+*/
 
 /obj/item/weapon/disk/data/New()
 	..()
@@ -448,11 +436,11 @@
  *	Diskette Box
  */
 
-/obj/item/weapon/storage/box/disks
+/obj/item/storage/box/disks
 	name = "Diskette Box"
 	icon_state = "disk_kit"
 
-/obj/item/weapon/storage/box/disks/New()
+/obj/item/storage/box/disks/New()
 	..()
 	new /obj/item/weapon/disk/data(src)
 	new /obj/item/weapon/disk/data(src)

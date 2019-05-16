@@ -11,7 +11,7 @@
 	desc = "Standard superconductive magnetic coil with average capacity and I/O rating."
 	icon = 'icons/obj/stock_parts.dmi'
 	icon_state = "smes_coil"			// Just few icons patched together. If someone wants to make better icon, feel free to do so!
-	w_class = 4.0 						// It's LARGE (backpack size)
+	w_class = ITEM_SIZE_LARGE							// It's LARGE (backpack size)
 	var/ChargeCapacity = 5000000
 	var/IOCapacity = 250000
 
@@ -35,8 +35,6 @@
 	desc = "Specialised version of standard superconductive magnetic coil. While this one won't store almost any power, it rapidly transfers power, making it useful in systems which require large throughput."
 	ChargeCapacity = 500000
 	IOCapacity = 1000000
-
-
 
 
 // SMES SUBTYPES - THESE ARE MAPPED IN AND CONTAIN DIFFERENT TYPES OF COILS
@@ -76,11 +74,11 @@
 	should_be_mapped = 1
 
 /obj/machinery/power/smes/buildable/Destroy()
-	..()
 	qdel(wires)
+	wires = null
 	for(var/obj/nano_module/rcon/R in world)
 		R.FindDevices()
-
+	return ..()
 
 // Proc: process()
 // Parameters: None
@@ -181,9 +179,7 @@
 		var/obj/item/clothing/gloves/G = h_user.gloves
 		if(G.siemens_coefficient == 0)
 			user_protected = 1
-	log_game("SMES FAILURE: <b>[src.x]X [src.y]Y [src.z]Z</b> User: [usr.ckey], Intensity: [intensity]/100")
-	message_admins("SMES FAILURE: <b>[src.x]X [src.y]Y [src.z]Z</b> User: [usr.ckey], Intensity: [intensity]/100 - <A HREF='?_src_=holder;adminplayerobservecoodjump=1;X=[src.x];Y=[src.y];Z=[src.z]'>JMP</a>")
-
+	log_game("SMES FAILURE: User: [usr.ckey], Intensity: [intensity]/100", src)
 
 	switch (intensity)
 		if (0 to 15)
@@ -250,8 +246,7 @@
 
 			if (prob(50))
 				// Added admin-notifications so they can stop it when griffed.
-				log_game("SMES explosion imminent.")
-				message_admins("SMES explosion imminent.")
+				log_game("SMES explosion imminent.", src)
 				src.ping("DANGER! Magnetic containment field unstable! Containment field failure imminent!")
 				failing = 1
 				// 30 - 60 seconds and then BAM!
@@ -336,7 +331,7 @@
 
 			playsound(get_turf(src), 'sound/items/Crowbar.ogg', 50, 1)
 			user << "<span class='warning'>You begin to disassemble the [src]!</span>"
-			if (do_after(usr, 100 * cur_coils)) // More coils = takes longer to disassemble. It's complex so largest one with 5 coils will take 50s
+			if (do_after(usr, 100 * cur_coils, src)) // More coils = takes longer to disassemble. It's complex so largest one with 5 coils will take 50s
 
 				if (failure_probability && prob(failure_probability))
 					total_system_failure(failure_probability, user)

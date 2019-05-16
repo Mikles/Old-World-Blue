@@ -1,11 +1,10 @@
-﻿<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+﻿<!DOCTYPE HTML>
 <html>
 <head>
-  <title>BlueBay12</title>
+  <title>Old World Blue</title>
   <link rel="stylesheet" type="text/css" href="changelog.css">
   <base target="_blank" />
   <script type='text/javascript'>
-  
 	function changeText(tagID, newText, linkTagID){
 		var tag = document.getElementById(tagID);
 		tag.innerHTML = newText;
@@ -13,21 +12,405 @@
 		linkTag.removeAttribute("href");
 		linkTag.removeAttribute("onclick");
 	}
-	
+
   </script>  
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 </head>
 
 <body>
-<table align='center' width='650'><tr><td>
-<table align='center' class="top">
-	<tr>
-		<td valign='top'>
-			<p><div align='center'><font size='3'><a href="http://forum.ss13.ru">Forum</a> | <a href="http://wiki.ss13.ru">Wiki</a> | <a href="https://github.com/animusdev/Old-World-Blue">Source</a></font></div></p>
-			</td>
-	</tr>
-</table>
-<div class="commit sansserif">
+<table align='center' width='650'>
+<tr><td align='center'>
+	<a href="http://forum.ss13.ru">Forum</a> | <a href="http://wiki.ss13.ru">Wiki</a> | <a href="https://github.com/animusdev/Old-World-Blue">Source</a>
+</td></tr>
+<tr><td>
+	<h2 class="date">26.06.2017</h2>
+	<h3 class="author">Lethal Ghost updated:</h3>
+	<ul class="changes bgimages16">
+		<li class="experiment">Временный откат карты.</li>
+	</ul>
+	<h2 class="date">14.06.2017</h2>
+	<h3 class="author">Rodial updated:</h3>
+	<ul class="changes bgimages16">
+		<li class="rscadd">Для крайне верхних уровней РнД наполовину добавлен особый девайс, представляющий из себя улучшенное хендтеле.</li>
+	</ul>
+	<h2 class="date">13.06.2017</h2>
+	<h3 class="author">Rodial updated:</h3>
+	<ul class="changes bgimages16">
+		<li class="rscadd">Финально введена система рефлектов (отражений лучей) и рикошетов (пуль) от стен в зависимости от материала. Вероятность рикошета зависит от угла.</li>
+	</ul>
+	<h3 class="author">D00k_N00kem updated:</h3>
+	<ul class="changes bgimages16">
+		<li class="maptweak">Карта диустина v6.</li>
+	</ul>
+	<h2 class="date">9.06.2017</h2>
+	<h3 class="author">D00k_N00kem updated:</h3>
+	<ul class="changes bgimages16">
+		<li class="maptweak">Доработка основной карты стации.</li>
+	</ul>
+	<h3 class="author">Lethal Ghost updated:</h3>
+	<ul class="changes bgimages16">
+		<li class="rscadd">Материалы переведены на новую основу.</li>
+		<li class="rscadd">Все создаваемое в протолате можно разобрать вернув 3/4 ресурсов.</li>
+		<li class="rscadd">Все создаваемое в принтере плат можно разобрать вернув 3/4 ресурсов.</li>
+		<li class="rscadd">Все создаваеммые из материалов предметы можно разобрать вернув материал.</li>
+		<li class="bugfix">Исправление конфлика материалов блокировавшего сборку мехов.</li>
+		<li class="rscadd">Создаваемые из материалов предметы (руками), наследуют уровни исследуемой в РнД.</li>
+		<li class="bugfix">Исправление рантайма возникающего при извлечение слишком большого числа ресурсов из фабрикатора.</li>
+		<li class="rscadd">Возможно разобрать всю создаваемую в фабрикаторе технику вернув 3/4 ресурсов.</li>
+		<li class="rscadd">Обновленный код соединения стаков предметов. Фикс соединения стаков проводов.</li>
+		<li class="rscadd">Добавлена индустриальная версия автолата.</li>
+		<li class="rscadd">Упрощенный код сборки мехов. Возможность использовать детали лучше требуемых, учет используемых деталей (только при сборке).</li>
+		<li class="maptweak">Индустриальный автолат в карго со старта.</li>
+	</ul>
+	<h2 class="date">6.06.2017</h2>
+	<h3 class="author">Lethal Ghost updated:</h3>
+	<ul class="changes bgimages16">
+		<li class="experiment">Расширение взаимодействия магов с технологией. Персонажи больше не могут так просто использовать вещи мага.</li>
+	</ul>
+	<h3 class="author">D00k_N00kem updated:</h3>
+	<ul class="changes bgimages16">
+		<li class="experiment">Изменения карты, бриг, немного инженерки, мелочи там и тут.</li>
+	</ul>
+	<h2 class="date">30.05.2017</h2>
+	<h3 class="author">Lethal Ghost updated:</h3>
+	<ul class="changes bgimages16">
+		<li class="maptweak">Конвейеры на астероиде полностью питаются от внутренних зон.</li>
+		<li class="maptweak">Кнопки в кабинете РД больше не перекрывают друг друга.</li>
+		<li class="maptweak">Небольшая замена лута на дереликте, в тонелях станции.</li>
+	</ul>
+
+	<h2 class="date">28.05.2017</h2>
+	<h3 class="author">Lethal Ghost updated:</h3>
+	<ul class="changes bgimages16">
+		<li class="tweak">Переработка цен создания некоторых предметов в РнД. Плюс фиксы.</li>
+		<li class="tweak">Переработка донат панели. Просмотр доступен всем.</li>
+		<li class="bugfix">Исправление описания предметов за правым ухом персонажа.</li>
+	</ul>
+
+	<h2 class="date">27.05.2017</h2>
+	<h3 class="author">Lethal Ghost updated:</h3>
+	<ul class="changes bgimages16">
+		<li class="bugfix">Исправление телепортационного свитка мага.</li>
+	</ul>
+	<h3 class="author">Kinrany updated:</h3>
+	<ul class="changes bgimages16">
+		<li class="rscadd">Обновленная работа дебаггера СЕ.</li>
+	</ul>
+
+	<h2 class="date">26.05.2017</h2>
+	<h3 class="author">Tertiumdatur updated:</h3>
+	<ul class="changes bgimages16">
+		<li class="imageadd">Новые спрайты для ксенофлоры.</li>
+	</ul>
+
+	<h2 class="date">25.05.2017</h2>
+	<h3 class="author">Lethal Ghost updated:</h3>
+	<ul class="changes bgimages16">
+		<li class="wip">Доработка маркеров карт. Вероятность попасть на Z уровень зависит от параметров карты, а не прописана строго.</li>
+		<li class="bugfix">Исправление описания модификации глаз в настройке персонажа.</li>
+		<li class="tweak">Обновленеи работы УИ паутины интриги.</li>
+	</ul>
+	<h3 class="author">Kinrany updated:</h3>
+	<ul class="changes bgimages16">
+		<li class="tweak">Исправление описания материалов при извлечении из автолата.</li>
+	</ul>
+
+	<h2 class="date">24.05.2017</h2>
+	<h3 class="author">Lethal Ghost updated:</h3>
+	<ul class="changes bgimages16">
+		<li class="rscadd">Каменные полы/стены для новых карт.</li>
+		<li class="tweak">Чуть более удобное извлечение материалов из автолата.</li>
+		<li class="bugfix">Исправление непреднамереного снижения цен в автолатах.</li>
+	</ul>
+	<h3 class="author">KuzyXD updated:</h3>
+	<ul class="changes bgimages16">
+		<li class="rscadd">Доработка снятия ролей с персонажей + фиксы.</li>
+	</ul>
+	<h3 class="author">Tertiumdatur updated:</h3>
+	<ul class="changes bgimages16">
+		<li class="imageadd">Новые спрайты окружения для новых карт.</li>
+	</ul>
+
+
+	<h2 class="date">22.05.2017</h2>
+	<h3 class="author">Lethal Ghost updated:</h3>
+	<ul class="changes bgimages16">
+		<li class="rscadd">Обновленный интерфейс фабрикатора мехов. Возможность извлечь кастомное число листов материалов, независимая прокрутка очереи и основного меню.</li>
+		<li class="bugfix">Исправление деления стаков на не целые части.</li>
+	</ul>
+
+	<h2 class="date">21.05.2017</h2>
+	<h3 class="author">KuzyXD updated:</h3>
+	<ul class="changes bgimages16">
+		<li class="bugfix">Исправление дюпа материалов с автолатом. Все созданное в автолате можно разобрать получим 3/4 вложенных ресурсов.</li>
+		<li class="bugfix">Исправление возможности получить материалы из голографических столов.</li>
+	</ul>
+
+	<h2 class="date">20.05.2017</h2>
+	<h3 class="author">Lethal Ghost updated:</h3>
+	<ul class="changes bgimages16">
+		<li class="rscadd">При пересадке головы переносится не только прическа, но и все цвета волос, борода.</li>
+		<li class="rscadd">Обновлена работа с материалами в автолате. Листы материалов больше не являются особыми рецептами.</li>
+	</ul>
+
+	<h2 class="date">19.05.2017</h2>
+	<h3 class="author">Lethal Ghost updated:</h3>
+	<ul class="changes bgimages16">
+		<li class="rscadd">Теперь все аннонсменты логируются.</li>
+		<li class="imageadd">Новые виды диванов для новых карт. Пока без возможности сборки.</li>
+		<li class="wip">Доработка маркеров карт. Генерация астероида на основе данных карты, а не конфиге.</li>
+		<li class="bugfix">Исправлено зависание спрайта слиппера в закрытом положении.</li>
+		<li class="bugfix">Исправлена проходимость стационарного медицинского сканера.</li>
+	</ul>
+
+	<h2 class="date">18.05.2017</h2>
+	<h3 class="author">Lethal Ghost updated:</h3>
+	<ul class="changes bgimages16">
+		<li class="bugfix">Исправление генерации спрайтов контейнеров.</li>
+	</ul>
+	<h2 class="date">14.05.2017</h2>
+	<h3 class="author">Lethal Ghost updated:</h3>
+	<ul class="changes bgimages16">
+		<li class="rscadd">Консоли слипперов/стационарных сканеров прозрачны для движения мобов.</li>
+	</ul>
+	<h2 class="date">13.05.2017</h2>
+	<h3 class="author">Lethal Ghost updated:</h3>
+	<ul class="changes bgimages16">
+		<li class="tweak">Шарфы больше не зкрывают лица, если этого не видно на спрайте.</li>
+		<li class="rscadd">Унификация кода взаимодействия с грабом (никаких ударов грабом, мытья граба, правильное описание при осмотре и на фото).</li>
+	</ul>
+	<h2 class="date">11.05.2017</h2>
+	<h3 class="author">Voldirs updated:</h3>
+	<ul class="changes bgimages16">
+		<li class="imageadd">Импланты лояльности в карго.</li>
+		<li class="tweak">Больше предметов в набор охраны карго. Плюс шлемы.</li>
+	</ul>
+	<h2 class="date">10.05.2017</h2>
+	<h3 class="author">Lethal Ghost updated:</h3>
+	<ul class="changes bgimages16">
+		<li class="imageadd">Больше видов дайсов.</li>
+	</ul>
+	<h2 class="date">9.05.2017</h2>
+	<h3 class="author">Lethal Ghost updated:</h3>
+	<ul class="changes bgimages16">
+		<li class="rscadd">Заблокирован повторный вход в игру персонажем с тем же именем.</li>
+		<li class="rscadd">Особая техника для заброшенных станций в космосе.</li>
+		<li class="rscadd">Еще больше техники для дереликта (максимальный уровень медицины).</li>
+	</ul>
+	<h2 class="date">8.05.2017</h2>
+	<h3 class="author">Lethal Ghost updated:</h3>
+	<ul class="changes bgimages16">
+		<li class="bugfix">Исправление стоимости производства некоторой техники в фабрикаторах.</li>
+		<li class="bugfix">Фикс дюпа материалов с фабрикаторами.</li>
+		<li class="rscadd">Holosing для уборщика. Ищите в РнД.</li>
+	</ul>
+	<h2 class="date">5.05.2017</h2>
+	<h3 class="author">Lethal Ghost updated:</h3>
+	<ul class="changes bgimages16">
+		<li class="rscadd">Обновленный код give.</li>
+		<li class="bugfix">Фикс спрайтов букв (мелок).</li>
+		<li class="bugfix">Исправление сборки киборгов.</li>
+	</ul>
+	<h2 class="date">3.05.2017</h2>
+	<h3 class="author">Lethal Ghost updated:</h3>
+	<ul class="changes bgimages16">
+		<li class="rscadd">Переработка имлантов. Импланты подавления вардену.</li>
+	</ul>
+	<h2 class="date">30.04.2017</h2>
+	<h3 class="author">Lethal Ghost updated:</h3>
+	<ul class="changes bgimages16">
+		<li class="imageadd">Спрайты для операций. Поддерживают оба типа тела.</li>
+	</ul>
+	<h2 class="date">29.04.2017</h2>
+	<h3 class="author">Lethal Ghost updated:</h3>
+	<ul class="changes bgimages16">
+		<li class="bugfix">Исправление работы кошельков/коробочек.</li>
+	</ul>
+	<h2 class="date">22.04.2017</h2>
+	<h3 class="author">Lethal Ghost updated:</h3>
+	<ul class="changes bgimages16">
+		<li class="rscadd">Разделение технологий РнД по категориям.</li>
+		<li class="rscadd">Расширение списка модулей для органов. Подкожная броня, Армблейд.</li>
+		<li class="bugfix">Исправление поворота голограммы ИИ.</li>
+	</ul>
+	<h2 class="date">21.04.2017</h2>
+	<h3 class="author">Lethal Ghost updated:</h3>
+	<ul class="changes bgimages16">
+		<li class="rscadd">Обновленный код хранения настройки особых ролей. Проверьте ваши префернсы.</li>
+		<li class="rscadd">Операции для установки/удаления модулей органов.</li>
+	</ul>
+	<h2 class="date">16.04.2017</h2>
+	<h3 class="author">Lethal Ghost updated:</h3>
+	<ul class="changes bgimages16">
+		<li class="tweak">Новый интерфейс для телепорта.</li>
+	</ul>
+	<h2 class="date">15.04.2017</h2>
+	<h3 class="author">Lethal Ghost updated:</h3>
+	<ul class="changes bgimages16">
+		<li class="rscadd">Клик по слоту перенаправляется на предмет в слоте.</li>
+		<li class="bugfix">Фикс дыр в html.</li>
+	</ul>
+	<h2 class="date">10.04.2017</h2>
+	<h3 class="author">Stolaire updated:</h3>
+	<ul class="changes bgimages16">
+		<li class="imageadd">Новая прическа halfshaved.</li>
+	</ul>
+	<h2 class="date">5.04.2017</h2>
+	<h3 class="author">DeLineFortune updated:</h3>
+	<ul class="changes bgimages16">
+		<li class="tweak">Изменение парамтеров брони парамедиков.</li>
+	</ul>
+	<h3 class="author">Lethal Ghost updated:</h3>
+	<ul class="changes bgimages16">
+		<li class="rscadd">Возможность перетянуть на себя поднос для поднятия его без захвата предметов.</li>
+		<li class="bugfix">Фикс возможности положить граббер робота на робоподнос.</li>
+		<li class="rscadd">Возможность положить спящих киборгов в робослиппер.</li>
+		<li class="bugfix">Фикс требований платы ПакМэн.</li>
+		<li class="bugfix">Защитное оборудование ксеносов больше не удаляет предметы лодаута.</li>
+		<li class="imageadd">Рабочие ботинки без пальцев для ксеносов.</li>
+	</ul>
+	<h2 class="date">3.04.2017</h2>
+	<h3 class="author">Lethal Ghost updated:</h3>
+	<ul class="changes bgimages16">
+		<li class="rscdel">Генетика закрыта на ремонт.</li>
+	</ul>
+	<h2 class="date">2.04.2017</h2>
+	<h3 class="author">Lethal Ghost updated:</h3>
+	<ul class="changes bgimages16">
+		<li class="rscadd">Обновлено логирование. Подготовка к включению режима Мемо.</li>
+		<li class="rscadd">Подготовка кода органов к включению нового режима генокрада.</li>
+		<li class="maptweak">Небольшие изменения карты.</li>
+	</ul>
+	<h2 class="date">1.04.2017</h2>
+	<h3 class="author">Lethal Ghost updated:</h3>
+	<ul class="changes bgimages16">
+		<li class="rscadd">Модули для органов. Возможность вживлять технику (hello wolverine!)</li>
+		<li class="rscadd">Требования к химикатам снижаются в улучшенном принтере плат.</li>
+	</ul>
+	<h2 class="date">28.03.2017</h2>
+	<h3 class="author">Lethal Ghost updated:</h3>
+	<ul class="changes bgimages16">
+		<li class="tweak">В ЕРТ нельзя вступить, если вы не можете респауниться.</li>
+	</ul>
+	<h2 class="date">25.03.2017</h2>
+	<h3 class="author">Lethal Ghost updated:</h3>
+	<ul class="changes bgimages16">
+		<li class="tweak">Кастомные предметы выдаеются с большим приоритетом, чем одежда професии.</li>
+		<li class="rscadd">Выбор типа тела на панель настройки персонажа (антагонисты).</li>
+		<li class="bugfix">Фиксы буквы "я" в серверах логов радиопереговоров.</li>
+		<li class="bugfix">Фиксы буквы "я" в NTSL.</li>
+		<li class="rscadd">Оптимизация отрисовки персонажа. Фикс бага с "голым мужиком".</li>
+		<li class="bugfix">Фиксы рисования мелом на растоянии.</li>
+	</ul>
+	<h2 class="date">24.03.2017</h2>
+	<h3 class="author">Lethal Ghost updated:</h3>
+	<ul class="changes bgimages16">
+		<li class="rscdel">Удалены остатки толстоты.</li>
+	</ul>
+	<h2 class="date">23.03.2017</h2>
+	<h3 class="author">Tertiumdatur updated:</h3>
+	<ul class="changes bgimages16">
+		<li class="rscdel">Удален суржик.</li>
+		<li class="rscadd">Добавлен новый язык - Belter Creole.</li>
+		<li class="tweak">Больше возможных гражанств для выбора.</li>
+	</ul>
+	<h3 class="author">Lethal Ghost updated:</h3>
+	<ul class="changes bgimages16">
+		<li class="tweak">Все панели настройки персонажей используют одинаковы форматы для оттенка кожи.</li>
+		<li class="bugfix">Исправление рантайма при гибе людей.</li>
+		<li class="bugfix">Волосы больше не будут пропадать на отрубленных головах.</li>
+		<li class="bugfix">Таяры получают правильные имена при старте раунда.</li>
+		<li class="bugfix">Из имен IPC больше не удаляются цифры.</li>
+		<li class="rscadd">Таяры и унатхи получают беспалые сапоги вместо сандалей, если такие положены профессией.</li>
+	</ul>
+	<h2 class="date">22.03.2017</h2>
+	<h3 class="author">Camper updated:</h3>
+	<ul class="changes bgimages16">
+		<li class="rscadd">Мультикнопка. Одна панель собирающая в себя много кнопок. Стол СМО снова свободен.</li>
+	</ul>
+	<h3 class="author">Tertiumdatur updated:</h3>
+	<ul class="changes bgimages16">
+		<li class="imageadd">Новая прическа для Таяр.</li>
+		<li class="rscadd">Обновленная федора. Теперь в лодауте.</li>
+	</ul>
+	<h2 class="date">21.03.2017</h2>
+	<h3 class="author">Joody updated:</h3>
+	<ul class="changes bgimages16">
+		<li class="rscadd">Улучшение работы пианино. Спешите попробовать!</li>
+	</ul>
+	<h3 class="author">Lethal Ghost updated:</h3>
+	<ul class="changes bgimages16">
+		<li class="rscadd">ММИ может контролировать Мехов.</li>
+		<li class="rscadd">Любовь в матчмейкинг.</li>
+		<li class="tweak">Число доступных строк в пианино увеличено до 250.</li>
+	</ul>
+	<h2 class="date">20.03.2017</h2>
+	<h3 class="author">RandomColonist updated:</h3>
+	<ul class="changes bgimages16">
+		<li class="imageadd">Новые спрайты для индустриального сварочного аппарата.</li>
+	</ul>
+	<h2 class="date">19.03.2017</h2>
+	<h3 class="author">Fox231 updated:</h3>
+	<ul class="changes bgimages16">
+		<li class="tweak">Уменьшен шанс выпадения заданий на подрыв.</li>
+	</ul>
+	<h2 class="date">18.03.2017</h2>
+	<h3 class="author">Lethal Ghost updated:</h3>
+	<ul class="changes bgimages16">
+		<li class="rscadd">Обновление отображения полицейской ленты.</li>
+		<li class="bugfix">Фикс рантайма при попытке залогиниться в консоли комуникаций без ID карты.</li>
+		<li class="bugfix">Коробочки вернулись в сумки. Исправленная функция проверки доступности сумки.</li>
+		<li class="rscadd">Обновленная выдача защитного снаряжения для рас.</li>
+		<li class="rscadd">Возможность пришить обратно утраченную конечность обратно.</li>
+		<li class="rscadd">Ворованный с бея мачмейкинг.</li>
+	</ul>
+	<h2 class="date">17.03.2017</h2>
+	<h3 class="author">Lethal Ghost updated:</h3>
+	<ul class="changes bgimages16">
+		<li class="rscadd">Свободное расположение предметов на столах.</li>
+	</ul>
+	<h2 class="date">13.03.2017</h2>
+	<h3 class="author">Lethal Ghost updated:</h3>
+	<ul class="changes bgimages16">
+		<li class="rscadd">Почти вся техника требующая ID карту, теперь сама находит её в ПДА, кошельке и прочем.</li>
+		<li class="rscadd">Кукла здоровья отображает урон по конечностям.</li>
+		<li class="bugfix">Фабрикатор теперь правильно обновляет список технологий.</li>
+	</ul>
+	<h2 class="date">12.03.2017</h2>
+	<h3 class="author">Lethal Ghost updated:</h3>
+	<ul class="changes bgimages16">
+		<li class="bugfix">Фикс отображения мутации панцирь на Превью.</li>
+		<li class="wip">Переработка расчета балов карго. Подготовка к введению новой системы.</li>
+		<li class="bugfix">Фикс спрайтов потайных стен.</li>
+		<li class="bugfix">Повязка на глаз из лодаута теперь надевается на нездоровый глаз.</li>
+		<li class="rscadd">При разборке техники падает несколько полных стаков материала, вместо одного переполненого.</li>
+		<li class="wip">Принципиальное обновление кода создания техники в РнД.</li>
+		<li class="bugfix">Фикс дыры с взаимодействием между Z уровнями.</li>
+		<li class="bugfix">Фикс использования ножа в качестве вилки.</li>
+	</ul>
+	<h2 class="date">10.03.2017</h2>
+	<h3 class="author">Lethal Ghost updated:</h3>
+	<ul class="changes bgimages16">
+		<li class="rscadd">Новый мех с особыми параметрами Laidlaw. Использовался скреллами.</li>
+	</ul>
+	<h2 class="date">8.03.2017</h2>
+	<h3 class="author">Lethal Ghost updated:</h3>
+	<ul class="changes bgimages16">
+		<li class="bugfix">Если подтип предмета лодаута не выбран, спаунтися первый тип.</li>
+		<li class="bugfix">Фикс грабов на расстоянии.</li>
+		<li class="bugfix">Фикс подскальзывания, если моб пристегнут и тд.</li>
+		<li class="rscadd">Переработка логирования. Единый стиль, больше координат, меньше джамп-линков в файле логов.</li>
+	</ul>
+	<h2 class="date">7.03.2017</h2>
+	<h3 class="author">Lethal Ghost updated:</h3>
+	<ul class="changes bgimages16">
+		<li class="rscadd">Теперь можно полноценно использовать два хедсета одновременно.</li>
+	</ul>
+	<h2 class="date">5.03.2017</h2>
+	<h3 class="author">Lethal Ghost updated:</h3>
+	<ul class="changes bgimages16">
+		<li class="wip">Эксперимент с группировкой схожих предметов в лодауте.</li>
+	</ul>
 	<h2 class="date">1.03.2017</h2>
 	<h3 class="author">Lethal Ghost updated:</h3>
 	<ul class="changes bgimages16">
@@ -673,7 +1056,6 @@
 		<li class="bugfix">Фикс крови, которая не шла.</li> 
 		<li class="rscadd">Любителям коротких мужских стрижек — добавил целых четыре, прямиком с ТГ.</li>
 	</ul>
-</div>
-
+</td></tr></table>
 </body>
 </html>

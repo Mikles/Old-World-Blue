@@ -8,8 +8,9 @@
 		There is an obvious internal place for a picture or lock of some sort, \
 		but even behind that is a very thin compartment unhinged with the pinch of a thumb and forefinger."
 	icon_state = "locket"
+	wear_state = "locket"
 	slot_flags = 0
-	w_class = 2
+	w_class = ITEM_SIZE_SMALL
 	slot_flags = SLOT_MASK | SLOT_TIE
 	var/base_icon
 	var/open

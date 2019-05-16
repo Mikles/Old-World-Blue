@@ -124,7 +124,7 @@
 	if(!target && amount && !emagged)
 		if(targetdirection) // Building a bridge
 			var/turf/T = get_step(src, targetdirection)
-			while(T in range(src))
+			while(T in range(src)) //TODO: Check that
 				if(istype(T, /turf/space))
 					target = T
 					break
@@ -258,10 +258,10 @@
 		target = null
 		repairing = 0
 		update_icons()
-	else if(istype(A, /obj/item/stack/material) && amount + 4 <= maxAmount)
+	else if(ismaterial(A) && amount + 4 <= maxAmount)
 		var/obj/item/stack/material/M = A
-		if(M.get_material_name() == DEFAULT_WALL_MATERIAL)
-			visible_message("<span class='notice'>[src] begins to make tiles.</span>")
+		if(M.get_material_name() == MATERIAL_STEEL)
+			visible_message(SPAN_NOTE("[src] begins to make tiles."))
 			repairing = 1
 			update_icons()
 			if(do_after(src, 40))
@@ -277,7 +277,7 @@
 	visible_message("<span class='danger'>[src] blows apart!</span>")
 	var/turf/Tsec = get_turf(src)
 
-	var/obj/item/weapon/storage/toolbox/mechanical/N = new /obj/item/weapon/storage/toolbox/mechanical(Tsec)
+	var/obj/item/storage/toolbox/mechanical/N = new /obj/item/storage/toolbox/mechanical(Tsec)
 	N.contents = list()
 	new /obj/item/device/assembly/prox_sensor(Tsec)
 	if(prob(50))
@@ -298,7 +298,7 @@
 
 /* Assembly */
 
-/obj/item/weapon/storage/toolbox/mechanical/attackby(var/obj/item/stack/tile/steel/T, mob/user as mob)
+/obj/item/storage/toolbox/mechanical/attackby(var/obj/item/stack/tile/steel/T, mob/user as mob)
 	if(!istype(T, /obj/item/stack/tile/steel))
 		..()
 		return
@@ -326,7 +326,7 @@
 	throwforce = 10.0
 	throw_speed = 2
 	throw_range = 5
-	w_class = 3.0
+	w_class = ITEM_SIZE_NORMAL
 	var/created_name = "Floorbot"
 
 /obj/item/weapon/toolbox_tiles/attackby(var/obj/item/W, mob/user as mob)
@@ -348,7 +348,7 @@
 		created_name = t
 
 /obj/item/weapon/toolbox_tiles_sensor
-	desc = "It's a toolbox with tiles sticking out the top and a sensor attached"
+	desc = "It's a toolbox with tiles sticking out the top and a sensor attached."
 	name = "tiles, toolbox and sensor arrangement"
 	icon = 'icons/obj/aibots.dmi'
 	icon_state = "toolbox_tiles_sensor"
@@ -356,7 +356,7 @@
 	throwforce = 10.0
 	throw_speed = 2
 	throw_range = 5
-	w_class = 3.0
+	w_class = ITEM_SIZE_NORMAL
 	var/created_name = "Floorbot"
 
 /obj/item/weapon/toolbox_tiles_sensor/attackby(var/obj/item/W, mob/user as mob)

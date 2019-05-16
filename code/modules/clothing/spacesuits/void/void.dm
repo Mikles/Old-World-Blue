@@ -10,16 +10,16 @@
 	max_heat_protection_temperature = SPACE_SUIT_MAX_HEAT_PROTECTION_TEMPERATURE
 
 	//Species-specific stuff.
-	species_restricted = list("exclude","Unathi","Tajara","Skrell","Diona","Vox", "Xenomorph")
+	species_restricted = list("exclude",SPECIES_UNATHI,SPECIES_TAJARA,SPECIES_SKRELL,SPECIES_DIONA,SPECIES_VOX, "Xenomorph")
 	sprite_sheets_refit = list(
-		"Unathi" = 'icons/inv_slots/hats/mob_unathi.dmi',
-		"Tajara" = 'icons/inv_slots/hats/mob_tajaran.dmi',
-		"Skrell" = 'icons/inv_slots/hats/mob_skrell.dmi',
+		SPECIES_UNATHI = 'icons/inv_slots/hats/mob_unathi.dmi',
+		SPECIES_TAJARA = 'icons/inv_slots/hats/mob_tajaran.dmi',
+		SPECIES_SKRELL = 'icons/inv_slots/hats/mob_skrell.dmi',
 	)
 	sprite_sheets_obj = list(
-		"Unathi" = 'icons/inv_slots/hats/icon_unathi.dmi',
-		"Tajara" = 'icons/inv_slots/hats/icon_tajaran.dmi',
-		"Skrell" = 'icons/inv_slots/hats/icon_skrell.dmi',
+		SPECIES_UNATHI = 'icons/inv_slots/hats/icon_unathi.dmi',
+		SPECIES_TAJARA = 'icons/inv_slots/hats/icon_tajaran.dmi',
+		SPECIES_SKRELL = 'icons/inv_slots/hats/icon_skrell.dmi',
 	)
 
 	light_overlay = "helmet_light"
@@ -28,6 +28,7 @@
 	name = "voidsuit"
 	icon_state = "void"
 	item_state = "void"
+	w_class = ITEM_SIZE_HUGE//bulky item
 	desc = "A high-tech dark red space suit. Used for AI satellite maintenance."
 	slowdown = 1
 	armor = list(melee = 40, bullet = 5, laser = 20,energy = 5, bomb = 35, bio = 100, rad = 20)
@@ -35,16 +36,16 @@
 	heat_protection = UPPER_TORSO|LOWER_TORSO|LEGS|FEET|ARMS|HANDS
 	max_heat_protection_temperature = SPACE_SUIT_MAX_HEAT_PROTECTION_TEMPERATURE
 
-	species_restricted = list("exclude","Unathi","Tajara","Diona","Vox", "Xenomorph")
+	species_restricted = list("exclude",SPECIES_UNATHI,SPECIES_TAJARA,SPECIES_DIONA,SPECIES_VOX, "Xenomorph")
 	sprite_sheets_refit = list(
-		"Unathi" = 'icons/inv_slots/suits/mob_unathi.dmi',
-		"Tajara" = 'icons/inv_slots/suits/mob_tajaran.dmi',
-		"Skrell" = 'icons/inv_slots/suits/mob_skrell.dmi',
+		SPECIES_UNATHI = 'icons/inv_slots/suits/mob_unathi.dmi',
+		SPECIES_TAJARA = 'icons/inv_slots/suits/mob_tajaran.dmi',
+		SPECIES_SKRELL = 'icons/inv_slots/suits/mob_skrell.dmi',
 	)
 	sprite_sheets_obj = list(
-		"Unathi" = 'icons/inv_slots/suits/icon_unathi.dmi',
-		"Tajara" = 'icons/inv_slots/suits/icon_tajaran.dmi',
-		"Skrell" = 'icons/inv_slots/suits/icon_skrell.dmi',
+		SPECIES_UNATHI = 'icons/inv_slots/suits/icon_unathi.dmi',
+		SPECIES_TAJARA = 'icons/inv_slots/suits/icon_tajaran.dmi',
+		SPECIES_SKRELL = 'icons/inv_slots/suits/icon_skrell.dmi',
 	)
 
 	//Breach thresholds, should ideally be inherited by most (if not all) voidsuits.
@@ -113,7 +114,7 @@
 		if(istype(H))
 			if(helmet && H.head == helmet)
 				H.drop_from_inventory(helmet)
-				helmet.loc = src
+				helmet.forceMove(src)
 
 	if(boots)
 		boots.canremove = 1
@@ -121,11 +122,11 @@
 		if(istype(H))
 			if(boots && H.shoes == boots)
 				H.drop_from_inventory(boots)
-				boots.loc = src
+				boots.forceMove(src)
 
 	if(tank)
 		tank.canremove = 1
-		tank.loc = src
+		tank.forceMove(src)
 
 /obj/item/clothing/suit/space/void/verb/toggle_helmet()
 
@@ -149,7 +150,7 @@
 		H << "<span class='notice'>You retract your suit helmet.</span>"
 		helmet.canremove = 1
 		H.drop_from_inventory(helmet)
-		helmet.loc = src
+		helmet.forceMove(src)
 	else
 		if(H.head)
 			H << "<span class='danger'>You cannot deploy your helmet while wearing \the [H.head].</span>"
@@ -233,15 +234,15 @@
 
 			if(choice == tank)	//No, a switch doesn't work here. Sorry. ~Techhead
 				user << "You pop \the [tank] out of \the [src]'s storage compartment."
-				tank.loc = get_turf(src)
+				tank.forceMove(get_turf(src))
 				src.tank = null
 			else if(choice == helmet)
 				user << "You detatch \the [helmet] from \the [src]'s helmet mount."
-				helmet.loc = get_turf(src)
+				helmet.forceMove(get_turf(src))
 				src.helmet = null
 			else if(choice == boots)
 				user << "You detatch \the [boots] from \the [src]'s boot mounts."
-				boots.loc = get_turf(src)
+				boots.forceMove(get_turf(src))
 				src.boots = null
 		else
 			user << "\The [src] does not have anything installed."

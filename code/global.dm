@@ -38,39 +38,6 @@ var/list/paper_blacklist = list(
 	"onmousedown", "onmouseup", "onmousemove", "onmouseout", "onmouseover",
 )
 
-// The way blocks are handled badly needs a rewrite, this is horrible.
-// Too much of a project to handle at the moment, TODO for later.
-var/BLINDBLOCK    = 0
-var/DEAFBLOCK     = 0
-var/HULKBLOCK     = 0
-var/TELEBLOCK     = 0
-var/FIREBLOCK     = 0
-var/XRAYBLOCK     = 0
-var/CLUMSYBLOCK   = 0
-var/FAKEBLOCK     = 0
-var/COUGHBLOCK    = 0
-var/GLASSESBLOCK  = 0
-var/EPILEPSYBLOCK = 0
-var/TWITCHBLOCK   = 0
-var/NERVOUSBLOCK  = 0
-var/MONKEYBLOCK   = 27
-
-var/BLOCKADD = 0
-var/DIFFMUT  = 0
-
-var/HEADACHEBLOCK      = 0
-var/NOBREATHBLOCK      = 0
-var/REMOTEVIEWBLOCK    = 0
-var/REGENERATEBLOCK    = 0
-var/INCREASERUNBLOCK   = 0
-var/REMOTETALKBLOCK    = 0
-var/MORPHBLOCK         = 0
-var/BLENDBLOCK         = 0
-var/HALLUCINATIONBLOCK = 0
-var/NOPRINTSBLOCK      = 0
-var/SHOCKIMMUNITYBLOCK = 0
-var/SMALLSIZEBLOCK     = 0
-
 var/skipupdate = 0
 
 var/eventchance = 10 // Percent chance per 5 minutes.
@@ -94,9 +61,7 @@ var/shuttle_frozen = 0
 var/shuttle_left   = 0
 var/shuttlecoming  = 0
 
-var/list/jobMax        = list()
 var/list/bombers       = list()
-var/list/admin_log     = list()
 var/list/lastsignalers = list() // Keeps last 100 signals here in format: "[src] used \ref[src] @ location [src.loc]: [freq]/[code]"
 var/list/lawchanges    = list() // Stores who uploaded laws to which silicon-based lifeform, and what the law was.
 var/list/reg_dna       = list()
@@ -146,24 +111,15 @@ var/datum/station_state/start_state = null
 var/datum/configuration/config      = null
 var/datum/sun/sun                   = null
 
-var/list/combatlog = list()
-var/list/IClog     = list()
-var/list/OOClog    = list()
-var/list/adminlog  = list()
-
 var/list/powernets = list()
 
 var/Debug  = 0 // Global debug switch.
 var/Debug2 = 0
-var/datum/debug/debugobj
-
-var/datum/moduletypes/mods = new()
 
 var/wavesecret    = 0
 var/gravity_is_on = 1
 
 var/join_motd = null
-var/forceblob = 0
 
 var/datum/nanomanager/nanomanager		= new() // NanoManager, the manager for Nano UIs.
 var/datum/event_manager/event_manager	= new() // Event Manager, the manager for events.

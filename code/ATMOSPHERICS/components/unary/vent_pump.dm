@@ -269,7 +269,6 @@
 
 	hibernate = 0
 
-	//log_admin("DEBUG \[[world.timeofday]\]: /obj/machinery/atmospherics/unary/vent_pump/receive_signal([signal.debug_print()])")
 	if(!signal.data["tag"] || (signal.data["tag"] != id_tag) || (signal.data["sigtype"]!="command"))
 		return 0
 
@@ -344,7 +343,6 @@
 			broadcast_status()
 		return //do not update_icon
 
-		//log_admin("DEBUG \[[world.timeofday]\]: vent_pump/receive_signal: unknown command \"[signal.data["command"]]\"\n[signal.debug_print()]")
 	spawn(2)
 		broadcast_status()
 	update_icon()
@@ -355,7 +353,7 @@
 		var/obj/item/weapon/weldingtool/WT = W
 		if (WT.remove_fuel(0,user))
 			user << "<span class='notice'>Now welding the vent.</span>"
-			if(do_after(user, 20))
+			if(do_after(user, 20, src))
 				if(!src || !WT.isOn()) return
 				playsound(src.loc, 'sound/items/Welder2.ogg', 50, 1)
 				if(!welded)
@@ -407,7 +405,7 @@
 		return 1
 	playsound(src.loc, 'sound/items/Ratchet.ogg', 50, 1)
 	user << "<span class='notice'>You begin to unfasten \the [src]...</span>"
-	if (do_after(user, 40))
+	if (do_after(user, 40, src))
 		user.visible_message( \
 			"<span class='notice'>\The [user] unfastens \the [src].</span>", \
 			"<span class='notice'>You have unfastened \the [src].</span>", \

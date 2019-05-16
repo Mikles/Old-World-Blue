@@ -53,7 +53,8 @@ Buildable meters
 
 /obj/item/pipe
 	name = "pipe"
-	desc = "A pipe"
+	desc = "A pipe."
+	randpixel = 5
 	var/pipe_type = 0
 	//var/pipe_dir = 0
 	var/pipename
@@ -62,7 +63,7 @@ Buildable meters
 	icon = 'icons/obj/pipe-item.dmi'
 	icon_state = "simple"
 	item_state = "buildpipe"
-	w_class = 3
+	w_class = ITEM_SIZE_NORMAL
 	level = 2
 
 /obj/item/pipe/New(var/loc, var/pipe_type as num, var/dir as num, var/obj/machinery/atmospherics/make_from = null)
@@ -200,8 +201,6 @@ Buildable meters
 			connect_types = CONNECT_TYPE_REGULAR|CONNECT_TYPE_SUPPLY|CONNECT_TYPE_SCRUBBER
 	//src.pipe_dir = get_pipe_dir()
 	update()
-	src.pixel_x = rand(-5, 5)
-	src.pixel_y = rand(-5, 5)
 
 //update the name and icon of the pipe item depending on the type
 
@@ -1160,11 +1159,11 @@ Buildable meters
 
 /obj/item/pipe_meter
 	name = "meter"
-	desc = "A meter that can be laid on pipes"
+	desc = "A meter that can be laid on pipes."
 	icon = 'icons/obj/pipe-item.dmi'
 	icon_state = "meter"
 	item_state = "buildpipe"
-	w_class = 4
+	w_class = ITEM_SIZE_LARGE
 
 /obj/item/pipe_meter/attackby(var/obj/item/weapon/W as obj, var/mob/user as mob)
 	..()

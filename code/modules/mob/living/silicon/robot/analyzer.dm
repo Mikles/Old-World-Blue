@@ -9,11 +9,11 @@
 	flags = CONDUCT
 	slot_flags = SLOT_BELT
 	throwforce = 3
-	w_class = 2.0
+	w_class = ITEM_SIZE_SMALL
 	throw_speed = 5
 	throw_range = 10
 	origin_tech = list(TECH_MAGNET = 2, TECH_BIO = 1, TECH_ENGINEERING = 2)
-	matter = list(DEFAULT_WALL_MATERIAL = 500, "glass" = 200)
+	matter = list(MATERIAL_STEEL = 500, MATERIAL_GLASS = 200)
 	var/mode = 1;
 
 
@@ -28,6 +28,8 @@
 	do_scan(M, user)
 
 /obj/item/device/robotanalyzer/proc/do_scan(mob/living/M as mob, mob/living/user as mob)
+	//TODO: DNA3 clown_block
+	/*
 	if((CLUMSY in user.mutations) && prob(50))
 		user << text("\red You try to analyze the floor's vitals!")
 		for(var/mob/O in viewers(M, null))
@@ -37,6 +39,7 @@
 		user.show_message("\blue Key: Suffocation/Toxin/Burns/Brute", 1)
 		user.show_message("\blue Body Temperature: ???", 1)
 		return
+	*/
 
 	var/scan_type
 	if(istype(M, /mob/living/silicon/robot))
@@ -52,7 +55,7 @@
 		if("robot")
 			var/BU = M.getFireLoss() > 50 	? 	"<b>[M.getFireLoss()]</b>" 		: M.getFireLoss()
 			var/BR = M.getBruteLoss() > 50 	? 	"<b>[M.getBruteLoss()]</b>" 	: M.getBruteLoss()
-			user.show_message("\blue Analyzing Results for [M]:\n\t Overall Status: [M.stat > 1 ? "fully disabled" : "[M.health - M.halloss]% functional"]")
+			user.show_message("\blue Analyzing Results for [M]:\n\t Overall Status: [M.stat > UNCONSCIOUS ? "fully disabled" : "[M.health - M.halloss]% functional"]")
 			user.show_message("\t Key: <font color='#FFA500'>Electronics</font>/<font color='red'>Brute</font>", 1)
 			user.show_message("\t Damage Specifics: <font color='#FFA500'>[BU]</font> - <font color='red'>[BR]</font>")
 			if(M.tod && M.stat == DEAD)

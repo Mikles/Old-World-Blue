@@ -113,7 +113,7 @@
 				if(isnull(current)) return
 
 			if("mob's area")
-				var/mob/M = input("Select mob to take area for [arguments.len+1]\th argument") as null|mob in world
+				var/mob/M = input("Select mob to take area for [arguments.len+1]\th argument") as null|mob in mob_list
 				if(!M) return
 				current = get_area(M)
 				if(!current)
@@ -138,13 +138,13 @@
 		if(!target)
 			usr << "Your callproc target no longer exists."
 			return
-		log_admin("[key_name(src)] called [target]'s [procname]() with [arguments.len ? "the arguments [list2params(arguments)]" : "no arguments"].")
+		log_admin("[key_name(src)] called [target]'s [procname]() with [arguments.len ? "the arguments [list2params(arguments)]" : "no arguments"].", target, 0)
 		if(arguments.len)
 			returnval = call(target, procname)(arglist(arguments))
 		else
 			returnval = call(target, procname)()
 	else
-		log_admin("[key_name(src)] called [procname]() with [arguments.len ? "the arguments [list2params(arguments)]" : "no arguments"].")
+		log_admin("[key_name(src)] called [procname]() with [arguments.len ? "the arguments [list2params(arguments)]" : "no arguments"].", null, 0)
 		returnval = call(procname)(arglist(arguments))
 
 	usr << "<span class='info'>[procname]() returned: [isnull(returnval) ? "null" : returnval]</span>"

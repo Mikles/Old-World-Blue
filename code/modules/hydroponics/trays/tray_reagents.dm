@@ -5,7 +5,7 @@
 	flags = NOBLUDGEON
 	slot_flags = SLOT_BELT
 	throwforce = 4
-	w_class = 2.0
+	w_class = ITEM_SIZE_SMALL
 	throw_speed = 2
 	throw_range = 10
 	var/toxicity = 4
@@ -58,7 +58,7 @@
 	force = 5.0
 	throwforce = 7.0
 	w_class = 2.0
-	matter = list(DEFAULT_WALL_MATERIAL = 50)
+	matter = list(MATERIAL_STEEL = 50)
 	attack_verb = list("slashed", "sliced", "cut", "clawed")
 
 
@@ -106,6 +106,7 @@
 	flags = OPENCONTAINER
 	possible_transfer_amounts = null
 	w_class = 2.0
+	randpixel = 5
 
 	var/fertilizer //Reagent contained, if any.
 
@@ -115,9 +116,6 @@
 
 /obj/item/weapon/reagent_containers/glass/fertilizer/New()
 	..()
-
-	src.pixel_x = rand(-5.0, 5)
-	src.pixel_y = rand(-5.0, 5)
 
 	if(fertilizer)
 		reagents.add_reagent(fertilizer,10)

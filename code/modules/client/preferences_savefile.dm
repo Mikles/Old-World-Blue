@@ -55,7 +55,7 @@
 	S["ooccolor"]			>> ooccolor
 	S["lastchangelog"]		>> lastchangelog
 	S["UI_style"]			>> UI_style
-	S["be_special"]			>> be_special
+	S["special_toggles"]	>> special_toggles
 	S["default_slot"]		>> default_slot
 	S["toggles"]			>> toggles
 	S["chat_toggles"]		>> chat_toggles
@@ -66,12 +66,14 @@
 	ooccolor		= sanitize_hexcolor(ooccolor, initial(ooccolor))
 	lastchangelog	= sanitize_text(lastchangelog, initial(lastchangelog))
 	UI_style		= sanitize_inlist(UI_style, list("White", "Midnight","Orange","old"), initial(UI_style))
-	be_special		= sanitize_integer(be_special, 0, 65535, initial(be_special))
 	default_slot	= sanitize_integer(default_slot, 1, config.character_slots, initial(default_slot))
 	toggles			= sanitize_integer(toggles, 0, 65535, initial(toggles))
 	chat_toggles	= sanitize_integer(chat_toggles, 0, 65535, initial(chat_toggles))
 	UI_style_color	= sanitize_hexcolor(UI_style_color, initial(UI_style_color))
 	UI_style_alpha	= sanitize_integer(UI_style_alpha, 0, 255, initial(UI_style_alpha))
+	if(!islist(special_toggles))
+		special_toggles = list()
+	//TODO: sanitize.
 
 	return 1
 
@@ -87,7 +89,7 @@
 	S["ooccolor"]		<< ooccolor
 	S["lastchangelog"]	<< lastchangelog
 	S["UI_style"]		<< UI_style
-	S["be_special"]		<< be_special
+	S["special_toggles"]<< special_toggles
 	S["default_slot"]	<< default_slot
 	S["toggles"]		<< toggles
 	S["chat_toggles"]	<< chat_toggles
@@ -155,6 +157,9 @@
 	for(var/module in robot_modules)
 		S["flavour_texts_robot_[module]"] >> flavor_texts_robot[module]
 
+	S["relations"]			>> relations
+	S["relations_info"]		>> relations_info
+
 	var/mod_id = "nothing"
 	var/color = "#ffffff"
 	for(var/organ in modifications_types)
@@ -169,7 +174,7 @@
 	S["med_record"]			>> med_record
 	S["sec_record"]			>> sec_record
 	S["gen_record"]			>> gen_record
-	S["be_special"]			>> be_special
+	S["special_toggles"]	>> special_toggles
 	S["disabilities"]		>> disabilities
 	S["player_alt_titles"]	>> player_alt_titles
 	S["gear"]				>> gear
@@ -185,11 +190,11 @@
 	S["exploit_record"]	>> exploit_record
 
 	//Sanitize
-	real_name		= sanitizeName(real_name)
-
 	if(isnull(species) || !(species in playable_species))
-		species = "Human"
+		species = SPECIES_HUMAN
 	current_species = all_species[species]
+
+	real_name		= current_species.sanitize_name(real_name)
 
 	if(!underwear  || !(underwear in all_underwears))   underwear = pick(all_underwears)
 	if(!undershirt || !(undershirt in all_undershirts)) undershirt = pick(all_undershirts)
@@ -199,7 +204,7 @@
 	if(isnull(language)) language = "None"
 	if(isnull(spawnpoint)) spawnpoint = "Arrivals Shuttle"
 	if(isnull(nanotrasen_relation)) nanotrasen_relation = initial(nanotrasen_relation)
-	if(!real_name) real_name = random_name(gender)
+	if(!real_name) real_name = random_name(gender, species)
 	random_name		= sanitize_integer(random_name, 0, 1, initial(random_name))
 	gender			= sanitize_gender(gender)
 	age				= sanitize_integer(age, current_species.min_age, current_species.max_age, initial(age))
@@ -207,8 +212,8 @@
 	facial_color	= sanitize_hexcolor(facial_color, initial(facial_color))
 	s_tone			= sanitize_integer(s_tone, 1, 220, initial(s_tone))
 	skin_color		= sanitize_hexcolor(skin_color, initial(skin_color))
-	h_style			= sanitize_inlist(h_style, hair_styles_list, initial(h_style))
-	f_style			= sanitize_inlist(f_style, facial_hair_styles_list, initial(f_style))
+	h_style			= sanitize_inlist(h_style, hair_styles_list, current_species.default_h_style)
+	f_style			= sanitize_inlist(f_style, facial_hair_styles_list, current_species.default_f_style)
 	eyes_color		= sanitize_hexcolor(eyes_color, initial(eyes_color))
 	backbag			= sanitize_integer(backbag, 1, backbaglist.len, initial(backbag))
 	b_type			= sanitize_text(b_type, initial(b_type))
@@ -230,7 +235,11 @@
 	if(!player_alt_titles) player_alt_titles = new()
 	if(!modifications_data) src.modifications_data = list()
 	if(!modifications_colors) src.modifications_colors = list()
+	if(!islist(special_toggles))
+		special_toggles = list()
 	if(!gear) src.gear = list()
+	if(!relations) src.relations = list()
+	if(!relations_info) src.relations_info = list()
 
 	if(!home_system) home_system = "Unset"
 	if(!citizenship) citizenship = "None"
@@ -295,8 +304,11 @@
 	for(var/module in robot_modules)
 		S["flavour_texts_robot_[module]"] << flavor_texts_robot[module]
 
+	S["relations"]			<< relations
+	S["relations_info"]		<< relations_info
+
 	for(var/organ in modifications_types)
-		var/datum/body_modification/BM = modifications_data[organ]
+		var/datum/body_modification/BM = get_modification(organ)
 		S["modification_[organ]"] << BM.id
 		S["color_[organ]"]  	  << modifications_colors[organ]
 
@@ -305,7 +317,7 @@
 	S["sec_record"]			<< sec_record
 	S["gen_record"]			<< gen_record
 	S["player_alt_titles"]	<< player_alt_titles
-	S["be_special"]			<< be_special
+	S["special_toggles"]	<< special_toggles
 	S["disabilities"]		<< disabilities
 	S["gear"]				<< gear
 	S["home_system"] 		<< home_system

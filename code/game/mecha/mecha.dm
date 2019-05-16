@@ -85,7 +85,7 @@
 	..()
 	events = new
 
-	icon_state += "-open"
+	update_icon()
 	add_radio()
 	add_cabin()
 	if(!add_airtank()) //we check this here in case mecha does not have an internal tank available by default - WIP
@@ -154,6 +154,18 @@
 
 	mechas_list -= src //global mech list
 	..()
+
+/obj/mecha/update_icon()
+	if (initial_icon)
+		icon_state = initial_icon
+	else
+		icon_state = initial(icon_state)
+
+	if(!occupant)
+		icon_state += "-open"
+
+
+
 
 ////////////////////////
 ////// Helpers /////////
@@ -547,6 +559,8 @@
 			)
 			src.log_append_to_last("Armor saved.")
 		return
+	//TODO: DNA3 hulk
+	/*
 	else if ((HULK in user.mutations) && !prob(src.deflect_chance))
 		src.take_damage(15)
 		src.check_for_internal_damage(list(MECHA_INT_TEMP_CONTROL,MECHA_INT_TANK_BREACH,MECHA_INT_CONTROL_LOST))
@@ -554,6 +568,7 @@
 			"<font color='red'><b>[user] hits [src.name], doing some damage.</b></font>",
 			"<font color='red'><b>You hit [src.name] with all your might. The metal creaks and bends.</b></font>"
 		)
+	*/
 	else
 		user.visible_message(
 			"<font color='red'><b>[user] hits [src.name]. Nothing happens</b></font>",
@@ -759,16 +774,18 @@
 		else
 			user << "You were unable to attach [W] to [src]"
 		return
-	if(istype(W, /obj/item/weapon/card/id)||istype(W, /obj/item/device/pda))
+
+	if(istype(W, /obj/item/device/mmi))
+		if(mmi_move_inside(W,user))
+			user << "[src]-MMI interface initialized successfuly"
+		else
+			user << "[src]-MMI interface initialization failed."
+		return
+
+	if(W.GetID())
 		if(add_req_access || maint_access)
 			if(internals_access_allowed(usr))
-				var/obj/item/weapon/card/id/id_card
-				if(istype(W, /obj/item/weapon/card/id))
-					id_card = W
-				else
-					var/obj/item/device/pda/pda = W
-					id_card = pda.id
-				output_maintenance_dialog(id_card, user)
+				output_maintenance_dialog(W.GetID(), user)
 				return
 			else
 				user << "\red Invalid ID: Access denied."
@@ -1102,9 +1119,70 @@
 		src.add_fingerprint(H)
 		src.forceMove(src.loc)
 		src.log_append_to_last("[H] moved in as pilot.")
-		src.icon_state = src.reset_icon()
+		update_icon()
 		set_dir(dir_in)
 		playsound(src, 'sound/machines/windowdoor.ogg', 50, 1)
+		if(!hasInternalDamage())
+			src.occupant << sound('sound/mecha/nominal.ogg',volume=50)
+		return 1
+	else
+		return 0
+
+/obj/mecha/proc/mmi_move_inside(var/obj/item/device/mmi/mmi_as_oc as obj,mob/user as mob)
+	if(!mmi_as_oc.brainmob || !mmi_as_oc.brainmob.client)
+		user << "Consciousness matrix not detected."
+		return 0
+	else if(mmi_as_oc.brainmob.stat)
+		user << "Beta-rhythm below acceptable level."
+		return 0
+	else if(occupant)
+		user << "Occupant detected."
+		return 0
+	else if(dna && dna!=mmi_as_oc.brainmob.dna.unique_enzymes)
+		user << "Stop it!"
+		return 0
+	//Added a message here since people assume their first click failed or something./N
+//	user << "Installing MMI, please stand by."
+
+	user.visible_message(
+		"\blue [usr] starts to insert an MMI into [src.name]"
+	)
+
+	if(do_after(user, 40, src))
+		if(!occupant)
+			return mmi_moved_inside(mmi_as_oc,user)
+		else
+			user << "Occupant detected."
+	else
+		user << "You stop inserting the MMI."
+	return 0
+
+/obj/mecha/proc/mmi_moved_inside(var/obj/item/device/mmi/mmi_as_oc as obj,mob/user as mob)
+	if(mmi_as_oc && user in range(1))
+		if(!mmi_as_oc.brainmob || !mmi_as_oc.brainmob.client)
+			user << "Consciousness matrix not detected."
+			return 0
+		else if(mmi_as_oc.brainmob.stat)
+			user << "[mmi_as_oc] beta-rhythm below acceptable level."
+			return 0
+		user.drop_from_inventory(mmi_as_oc)
+		var/mob/brainmob = mmi_as_oc.brainmob
+		brainmob.reset_view(src)
+	/*
+		brainmob.client.eye = src
+		brainmob.client.perspective = EYE_PERSPECTIVE
+	*/
+		occupant = brainmob
+		brainmob.loc = src //should allow relaymove
+		brainmob.canmove = 1
+		mmi_as_oc.loc = src
+		mmi_as_oc.mecha = src
+		src.verbs -= /obj/mecha/verb/eject
+		src.Entered(mmi_as_oc)
+		src.Move(src.loc)
+		src.icon_state = initial(icon_state)
+		dir = dir_in
+		src.log_message("[mmi_as_oc] moved in as pilot.")
 		if(!hasInternalDamage())
 			src.occupant << sound('sound/mecha/nominal.ogg',volume=50)
 		return 1
@@ -1191,7 +1269,7 @@
 			src.occupant.canmove = 0
 			src.verbs += /obj/mecha/verb/eject
 		src.occupant = null
-		src.icon_state = src.reset_icon()+"-open"
+		update_icon()
 		src.set_dir(dir_in)
 	return
 
@@ -1438,9 +1516,10 @@
 	if(!id_card || !user) return
 
 	var/maint_options = "<a href='?src=\ref[src];set_internal_tank_valve=1;user=\ref[user]'>Set Cabin Air Pressure</a>"
+	if(istype(occupant, /mob/living/carbon/brain))
+		maint_options += "<a href='?src=\ref[src];remove_MMI=1'>Remove MMI-occupant.</a>"
 	if (locate(/obj/item/mecha_parts/mecha_equipment/tool/passenger) in contents)
 		maint_options += "<a href='?src=\ref[src];remove_passenger=1;user=\ref[user]'>Remove Passenger</a>"
-
 	var/output = {"
 		<html><head>
 		<style>
@@ -1604,6 +1683,24 @@
 			if(new_pressure)
 				internal_tank_valve = new_pressure
 				user << "The internal pressure valve has been set to [internal_tank_valve]kPa."
+	if(href_list["remove_MMI"] && state>= 1 && istype(occupant, /mob/living/carbon/brain))
+		var/mob/user = usr
+		var/mob/living/carbon/brain/brainmob = occupant
+		user.visible_message(
+			"\red [user] begins ejecting \the [brainmob]...",
+			"\red You begin ejecting \the [brainmob]..."
+		)
+		if (!do_after(user, 40, needhand=0) || brainmob != occupant)
+			return
+
+		user.visible_message(
+			"\red [user] successfully removes [occupant]!",
+			"\red You successfully remove [occupant]!"
+		)
+		go_out()
+		log_message("[brainmob] (MMI) was removed.")
+		return
+
 	if(href_list["remove_passenger"] && state >= 1)
 		var/mob/user = filter.getMob("user")
 		var/list/passengers = list()
@@ -1623,11 +1720,17 @@
 		var/obj/item/mecha_parts/mecha_equipment/tool/passenger/P = passengers[pname]
 		var/mob/occupant = P.occupant
 
-		user.visible_message("\red [user] begins opening the hatch on \the [P]...", "\red You begin opening the hatch on \the [P]...")
+		user.visible_message(
+			"\red [user] begins opening the hatch on \the [P]...",
+			"\red You begin opening the hatch on \the [P]..."
+		)
 		if (!do_after(user, 40, needhand=0))
 			return
 
-		user.visible_message("\red [user] opens the hatch on \the [P] and removes [occupant]!", "\red You open the hatch on \the [P] and remove [occupant]!")
+		user.visible_message(
+			"\red [user] opens the hatch on \the [P] and removes [occupant]!",
+			"\red You open the hatch on \the [P] and remove [occupant]!"
+		)
 		P.go_out()
 		P.log_message("[occupant] was removed.")
 		return
@@ -1767,13 +1870,6 @@
 		cell.give(amount)
 		return 1
 	return 0
-
-/obj/mecha/proc/reset_icon()
-	if (initial_icon)
-		icon_state = initial_icon
-	else
-		icon_state = initial(icon_state)
-	return icon_state
 
 /obj/mecha/attack_generic(var/mob/user, var/damage, var/attack_message)
 

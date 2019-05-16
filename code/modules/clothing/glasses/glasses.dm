@@ -14,7 +14,7 @@ BLIND     // can't see anything
 /obj/item/clothing/glasses
 	name = "glasses"
 	icon = 'icons/inv_slots/glasses/icon.dmi'
-	w_class = 2.0
+	w_class = ITEM_SIZE_SMALL
 	slot_flags = SLOT_EYES
 	var/vision_flags = 0
 	var/darkness_view = 0//Base human is 2
@@ -104,7 +104,7 @@ BLIND     // can't see anything
 	New(var/mob/living/carbon/human/H)
 		..()
 		if(istype(H))
-			if(istype(H.internal_organs_by_name[O_EYES], /obj/item/organ/internal/eyes/oneeye/right))
+			if(!istype(H.internal_organs_by_name[O_EYES], /obj/item/organ/internal/eyes/oneeye/right))
 				icon_state = "[initial(icon_state)]_l"
 
 	verb/switcheye()
@@ -208,7 +208,7 @@ BLIND     // can't see anything
 	icon_state = "welding-g"
 	item_state = "welding-g"
 	icon_action_button = "action_welding_g"
-	matter = list(DEFAULT_WALL_MATERIAL = 1500, "glass" = 1000)
+	matter = list(MATERIAL_STEEL = 1500, MATERIAL_GLASS = 1000)
 	var/up = 0
 
 /obj/item/clothing/glasses/welding/attack_self()

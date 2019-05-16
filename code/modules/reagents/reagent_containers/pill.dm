@@ -7,8 +7,9 @@
 	icon = 'icons/obj/chemical.dmi'
 	icon_state = null
 	item_state = "pill"
+	randpixel = 7
 	possible_transfer_amounts = null
-	w_class = 1
+	w_class = ITEM_SIZE_TINY
 	slot_flags = SLOT_EARS
 	volume = 60
 	center_of_mass = list("x"=16, "y"=15)
@@ -51,8 +52,7 @@
 			return
 		user << "<span class='notice'>You dissolve \the [src] in [target].</span>"
 
-		user.attack_log += text("\[[time_stamp()]\] <font color='red'>Spiked \a [target] with a pill. Reagents: [reagentlist()]</font>")
-		msg_admin_attack("[user.name] ([user.ckey]) spiked \a [target] with a pill. Reagents: [reagentlist()] (INTENT: [uppertext(user.a_intent)]) (<A HREF='?_src_=holder;adminplayerobservecoodjump=1;X=[user.x];Y=[user.y];Z=[user.z]'>JMP</a>)")
+		self_attack_log(user, "Spiked \a [key_name(target)] with a pill. Reagents: [reagentlist()]", 1)
 
 		reagents.trans_to(target, reagents.total_volume)
 		for(var/mob/O in viewers(2, user))

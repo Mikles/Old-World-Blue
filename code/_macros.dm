@@ -1,4 +1,10 @@
-#define Clamp(x, y, z) 	(x <= y ? y : (x >= z ? z : x))
+#define subtypesof(type) (typesof(type) - type)
+
+#define SPAN_NOTE(text) "<span class='notice'>[text]</span>"
+#define SPAN_WARN(text) "<span class='warning'>[text]</span>"
+#define SPAN_DANG(text) "<span class='danger'>[text]</span>"
+
+#define Clamp(value, low, high) 	(value <= low ? low : (value >= high ? high : value))
 #define CLAMP01(x) 		(Clamp(x, 0, 1))
 
 #define get_turf(A) get_step(A,0)
@@ -22,6 +28,8 @@
 #define ishuman(A) istype(A, /mob/living/carbon/human)
 
 #define isliving(A) istype(A, /mob/living)
+
+#define ismaterial(A) istype(A, /obj/item/stack/material)
 
 #define ismouse(A) istype(A, /mob/living/simple_animal/mouse)
 

@@ -255,7 +255,7 @@ var/list/sacrificed = list()
 			for(var/obj/effect/rune/R in world)
 				if(R.word1==cultwords["travel"] && R.word2==cultwords["blood"] && R.word3==cultwords["self"])
 					for(var/mob/living/carbon/D in R.loc)
-						if(D.stat!=2)
+						if(D.stat!=DEAD)
 							admin_attack_log(usr, D, "Used a blood drain rune.", "Was victim of a blood drain rune.", "used a blood drain rune on")
 							var/bdrain = rand(1,25)
 							D << "<span class='warning'>You feel weakened.</span>"
@@ -453,8 +453,7 @@ var/list/sacrificed = list()
 			var/mob/observer/dead/ghost
 			for(var/mob/observer/dead/O in this_rune.loc)
 				if(!O.client)	continue
-				if(!O.MayRespawn()) continue
-				if(O.mind && O.mind.current && O.mind.current.stat != DEAD)	continue
+				if(!O.MayRespawn(1, 5)) continue
 				ghost = O
 				break
 			if(!ghost)
@@ -595,7 +594,7 @@ var/list/sacrificed = list()
 			user.visible_message("<span class='danger'>\The [user] keels over dead, \his blood glowing blue as it escapes \his body and dissipates into thin air.</span>", \
 			"<span class='danger'>In the last moment of your humble life, you feel an immense pain as fabric of reality mends... with your blood.</span>", \
 			"<span class='warning'>You hear faint rustle.</span>")
-			for(,user.stat==2)
+			for(,user.stat==DEAD)
 				sleep(600)
 				if (!user)
 					return
@@ -676,7 +675,7 @@ var/list/sacrificed = list()
 							usr << "<span class='warning'>Your target's earthly bonds are too strong. You need more cultists to succeed in this ritual.</span>"
 					else
 						if(cultsinrange.len >= 3)
-							if(H.stat !=2)
+							if(H.stat !=DEAD)
 								if(prob(80) || worth)
 									usr << "<span class='cult'>The Geometer of Blood accepts this [worth ? "exotic " : ""]sacrifice.</span>"
 									cult.grant_runeword(usr)
@@ -699,7 +698,7 @@ var/list/sacrificed = list()
 								else
 									H.gib()
 						else
-							if(H.stat !=2)
+							if(H.stat !=DEAD)
 								usr << "<span class='warning'>The victim is still alive, you will need more cultists chanting for the sacrifice to succeed.</span>"
 							else
 								if(prob(40))
@@ -715,7 +714,7 @@ var/list/sacrificed = list()
 									H.gib()
 				else
 					if(cultsinrange.len >= 3)
-						if(H.stat !=2)
+						if(H.stat !=DEAD)
 							if(prob(80))
 								usr << "<span class='cult'>The Geometer of Blood accepts this sacrifice.</span>"
 								cult.grant_runeword(usr)
@@ -738,7 +737,7 @@ var/list/sacrificed = list()
 							else
 								H.gib()
 					else
-						if(H.stat !=2)
+						if(H.stat !=DEAD)
 							usr << "<span class='warning'>The victim is still alive, you will need more cultists chanting for the sacrifice to succeed.</span>"
 						else
 							if(prob(40))
@@ -1061,7 +1060,7 @@ var/list/sacrificed = list()
 					if(iscarbon(L))
 						var/mob/living/carbon/C = L
 						flick("e_flash", C.flash)
-						if(C.stuttering < 1 && (!(HULK in C.mutations)))
+						if(C.stuttering < 1)
 							C.stuttering = 1
 						C.Weaken(1)
 						C.Stun(1)
@@ -1090,8 +1089,7 @@ var/list/sacrificed = list()
 					else if(iscarbon(T))
 						var/mob/living/carbon/C = T
 						flick("e_flash", C.flash)
-						if (!(HULK in C.mutations))
-							C.silent += 15
+						C.silent += 15
 						C.Weaken(25)
 						C.Stun(25)
 						admin_attack_log(usr, C, "Used a stun rune.", "Was victim of a stun rune.", "used a stun rune on")
@@ -1111,7 +1109,7 @@ var/list/sacrificed = list()
 			user.equip_to_slot_or_del(new /obj/item/clothing/head/culthood/alt(user), slot_head)
 			user.equip_to_slot_or_del(new /obj/item/clothing/suit/cultrobes/alt(user), slot_wear_suit)
 			user.equip_to_slot_or_del(new /obj/item/clothing/shoes/cult(user), slot_shoes)
-			user.equip_to_slot_or_del(new /obj/item/weapon/storage/backpack/cultpack(user), slot_back)
+			user.equip_to_slot_or_del(new /obj/item/storage/backpack/cultpack(user), slot_back)
 			//the above update their overlay icons cache but do not call update_icons()
 			//the below calls update_icons() at the end, which will update overlay icons by using the (now updated) cache
 			user.put_in_hands(new /obj/item/weapon/melee/cultblade(user))	//put in hands or on floor

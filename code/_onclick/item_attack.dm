@@ -14,12 +14,12 @@ item/resolve_attackby() calls the target atom's attackby() proc.
 	return
 
 //I would prefer to rename this to attack(), but that would involve touching hundreds of files.
-/obj/item/proc/resolve_attackby(atom/A, mob/user)
+/obj/item/proc/resolve_attackby(atom/A, mob/user, var/click_params)
 	add_fingerprint(user)
-	return A.attackby(src, user)
+	return A.attackby(src, user, click_params)
 
 // No comment
-/atom/proc/attackby(obj/item/W, mob/user)
+/atom/proc/attackby(obj/item/W, mob/user, var/click_params)
 	return
 
 /atom/movable/attackby(obj/item/W, mob/user)
@@ -58,9 +58,11 @@ item/resolve_attackby() calls the target atom's attackby() proc.
 				flick(G.hud.icon_state, G.hud)
 				G.last_action = world.time
 				user.visible_message("<span class='danger'>[user] slit [M]'s throat open with \the [name]!</span>")
-				user.attack_log += "\[[time_stamp()]\]<font color='red'> Knifed [M.name] ([M.ckey]) with [name] (INTENT: [uppertext(user.a_intent)]) (DAMTYE: [uppertext(damtype)])</font>"
-				M.attack_log += "\[[time_stamp()]\]<font color='orange'> Got knifed by [user.name] ([user.ckey]) with [name] (INTENT: [uppertext(user.a_intent)]) (DAMTYE: [uppertext(damtype)])</font>"
-				msg_admin_attack("[key_name(user)] knifed [key_name(M)] with [name] (INTENT: [uppertext(user.a_intent)]) (DAMTYE: [uppertext(damtype)])" )
+				admin_attack_log(user, M,
+					"Knifed [key_name(M)] with [name]",
+					"Got knifed by [key_name(user)] with [name]",
+					"used [name] to knifed"
+				)
 				return
 
 	/////////////////////////
@@ -68,14 +70,19 @@ item/resolve_attackby() calls the target atom's attackby() proc.
 	M.lastattacker = user
 
 	if(!no_attack_log)
-		user.attack_log += "\[[time_stamp()]\]<font color='red'> Attacked [M.name] ([M.ckey]) with [name] (INTENT: [uppertext(user.a_intent)]) (DAMTYE: [uppertext(damtype)])</font>"
-		M.attack_log += "\[[time_stamp()]\]<font color='orange'> Attacked by [user.name] ([user.ckey]) with [name] (INTENT: [uppertext(user.a_intent)]) (DAMTYE: [uppertext(damtype)])</font>"
-		msg_admin_attack("[key_name(user)] attacked [key_name(M)] with [name] (INTENT: [uppertext(user.a_intent)]) (DAMTYE: [uppertext(damtype)])" )
+		admin_attack_log(user, M,
+			"Attacked [key_name(M)] with [name] (DAMTYE: [uppertext(damtype)])",
+			"Attacked by [key_name(user)] with [name] (DAMTYE: [uppertext(damtype)])",
+			"used [name] (INTENT: [uppertext(user.a_intent)]) (DAMTYE: [uppertext(damtype)]) to attack"
+		)
 	/////////////////////////
 
 	var/power = force
+	//TODO: DNA3 hulk
+	/*
 	if(HULK in user.mutations)
 		power *= 2
+	*/
 
 	// TODO: needs to be refactored into a mob/living level attacked_by() proc. ~Z
 	user.do_attack_animation(M)
@@ -93,7 +100,10 @@ item/resolve_attackby() calls the target atom's attackby() proc.
 			return 1
 		return 0
 	else
-		user.visible_message("<span class='danger'>[M] has been [pick(attack_verb)] with [src] by [user]!</span>")
+		if(attack_verb)
+			user.visible_message("<span class='danger'>[M] has been [pick(attack_verb)] with [src] by [user]!</span>")
+		else
+			user.visible_message("<span class='danger'>[M] has been attacked with [src] by [user]!</span>")
 
 		if (hitsound)
 			playsound(loc, hitsound, 50, 1, -1)
@@ -104,9 +114,8 @@ item/resolve_attackby() calls the target atom's attackby() proc.
 					var/turf/simulated/location = get_turf(M)
 					if(istype(location)) location.add_blood_floor(M)
 			if("fire")
-				if (!(COLD_RESISTANCE in M.mutations))
-					M.take_organ_damage(0, power)
-					M << "Aargh it burns!"
+				M.take_organ_damage(0, power)
+				M << "Aargh it burns!"
 		M.updatehealth()
 	add_fingerprint(user)
 	return 1

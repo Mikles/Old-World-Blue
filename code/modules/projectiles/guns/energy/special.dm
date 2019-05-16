@@ -5,7 +5,7 @@
 	item_state = "ionrifle"
 	fire_sound = 'sound/weapons/Laser.ogg'
 	origin_tech = list(TECH_COMBAT = 2, TECH_MAGNET = 4)
-	w_class = 4
+	w_class = ITEM_SIZE_HUGE
 	force = 10
 	flags =  CONDUCT
 	slot_flags = SLOT_BACK
@@ -65,7 +65,7 @@
 	icon_state = "riotgun"
 	item_state = "c20r"
 	slot_flags = SLOT_BELT|SLOT_BACK
-	w_class = 4
+	w_class = ITEM_SIZE_HUGE
 	projectile_type = /obj/item/projectile/meteor
 	cell_type = /obj/item/weapon/cell/potato
 	self_recharge = 1
@@ -78,7 +78,7 @@
 	icon = 'icons/obj/bureaucracy.dmi'
 	icon_state = "pen"
 	item_state = "pen"
-	w_class = 1
+	w_class = ITEM_SIZE_TINY
 	slot_flags = SLOT_BELT
 
 
@@ -94,13 +94,14 @@
 	desc = "A specialized firearm designed to fire lethal bolts of phoron."
 	icon_state = "toxgun"
 	fire_sound = 'sound/effects/stealthoff.ogg'
-	w_class = 3.0
+	w_class = ITEM_SIZE_NORMAL
 	origin_tech = list(TECH_COMBAT = 5, TECH_PHORON = 4)
 	projectile_type = /obj/item/projectile/energy/phoron
 
 /* Staves */
 
 /obj/item/weapon/gun/energy/staff
+	var/wizard_only = TRUE
 	name = "staff of change"
 	desc = "An artefact that spits bolts of coruscating energy which cause the target's very form to reshape itself"
 	icon = 'icons/obj/gun.dmi'
@@ -110,12 +111,33 @@
 	fire_sound = 'sound/weapons/emitter.ogg'
 	flags =  CONDUCT
 	slot_flags = SLOT_BACK
-	w_class = 4.0
+	w_class = ITEM_SIZE_HUGE
 	max_shots = 5
 	projectile_type = /obj/item/projectile/change
 	origin_tech = null
 	self_recharge = 1
 	charge_meter = 0
+	origin_tech = list(TECH_ARCANE = 2)
+
+/obj/item/weapon/gun/energy/staff/special_check(var/mob/user)
+	if(user.is_like_wizard(WIZARD_KNOWLEDGE))
+		return TRUE
+	else if(!wizard_only)
+		return TRUE
+	else if(prob(40)) //Clumsy handling
+		var/obj/P = consume_next_projectile()
+		if(P)
+			if(process_projectile(P, user, user, pick(BP_ALL)))
+				handle_post_fire(user, user)
+				user.visible_message(
+					SPAN_DANG("Accidentally [user] shoots \himself in with \the [src]!"),
+					SPAN_DANG("Accidentally you shoot yourself with \the [src]!")
+				)
+				user.drop_from_inventory(src)
+		else
+			handle_click_empty(user)
+	return FALSE
+
 
 /obj/item/weapon/gun/energy/staff/handle_click_empty(mob/user = null)
 	if (user)
@@ -130,7 +152,7 @@
 	projectile_type = /obj/item/projectile/animate
 	max_shots = 10
 
-obj/item/weapon/gun/energy/staff/focus
+/obj/item/weapon/gun/energy/staff/focus
 	name = "mental focus"
 	desc = "An artefact that channels the will of the user into destructive bolts of force. If you aren't careful with it, you might poke someone's brain out."
 	icon = 'icons/obj/wizard.dmi'

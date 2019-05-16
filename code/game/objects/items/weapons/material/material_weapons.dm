@@ -7,7 +7,7 @@
 	gender = NEUTER
 	throw_speed = 3
 	throw_range = 7
-	w_class = 3
+	w_class = ITEM_SIZE_NORMAL
 	sharp = 0
 	edge = 0
 
@@ -15,7 +15,7 @@
 	var/unbreakable
 	var/force_divisor = 0.5
 	var/thrown_force_divisor = 0.5
-	var/default_material = DEFAULT_WALL_MATERIAL
+	var/default_material = MATERIAL_STEEL
 	var/material/material
 	var/drops_debris = 1
 

@@ -4,7 +4,7 @@
 	icon = 'icons/obj/pda.dmi'
 	icon_state = "cart"
 	item_state = "electronic"
-	w_class = 1
+	w_class = ITEM_SIZE_TINY
 
 	var/obj/item/radio/integrated/radio = null
 	var/access_security = 0
@@ -219,8 +219,7 @@
 				var/mob/user = PDA.fingerprintslast
 				if(istype(PDA.loc,/mob/living))
 					name = PDA.loc
-				log_admin("STATUS: [user] set status screen with [PDA]. Message: [data1] [data2]")
-				message_admins("STATUS: [user] set status screen with [PDA]. Message: [data1] [data2]")
+				log_game("STATUS: [key_name(user)] set status screen with [PDA]. Message: [data1] [data2]", src)
 
 		if("alert")
 			status_signal.data["picture_state"] = data1
@@ -461,7 +460,7 @@
 			BucketData[++BucketData.len] = list("x" = 0, "y" = 0, dir=null, status = null)
 
 		var/CbotData[0]
-		for(var/mob/living/bot/cleanbot/B in world)
+		for(var/mob/living/bot/cleanbot/B in mob_list)
 			var/turf/bl = get_turf(B)
 			if(bl)
 				if(bl.z != cl.z)

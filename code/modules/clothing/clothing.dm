@@ -24,10 +24,7 @@
 /obj/item/clothing/clean_blood()
 	..()
 	gunshot_residue = null
-	if(istype(loc, /mob))
-		var/mob/M = loc
-		M.update_icon = 1
-		M.update_icons()
+	update_clothing_icon()
 
 /obj/item/clothing/New()
 	..()
@@ -73,8 +70,8 @@
 
 	//Set species_restricted list
 	switch(target_species)
-		if("Human", "Skrell")	//humanoid bodytypes
-			species_restricted = list("Human", "Skrell") //skrell/humans can wear each other's suits
+		if(SPECIES_HUMAN, SPECIES_SKRELL)	//humanoid bodytypes
+			species_restricted = list(SPECIES_HUMAN, SPECIES_SKRELL) //skrell/humans can wear each other's suits
 		else
 			species_restricted = list(target_species)
 
@@ -95,13 +92,13 @@
 
 	//Set species_restricted list
 	switch(target_species)
-		if("Skrell")
-			species_restricted = list("Human", "Skrell") //skrell helmets fit humans too
+		if(SPECIES_SKRELL)
+			species_restricted = list(SPECIES_HUMAN, SPECIES_SKRELL) //skrell helmets fit humans too
 
 		else
 			species_restricted = list(target_species)
 
-	if(target_species == "Vox")
+	if(target_species == SPECIES_VOX)
 		flags_inv &= ~BLOCKHAIR
 		flags_inv &= ~BLOCKHEADHAIR
 	else
@@ -125,64 +122,14 @@
 // Ears: headsets, earmuffs and tiny objects
 /obj/item/clothing/ears
 	name = "ears"
-	w_class = 1.0
+	w_class = ITEM_SIZE_TINY
 	throwforce = 2
 	slot_flags = SLOT_EARS
-
-/obj/item/clothing/ears/equipped(mob/user, slot)
-	..()
-	if(slot_flags & SLOT_TWOEARS)
-		var/mob/living/carbon/human/H = loc
-		if(istype(H))
-			if(slot == slot_l_ear)
-				H.equip_to_slot(new /obj/item/clothing/ears/offear(src), slot_r_ear, 0)
-			else if(slot == slot_r_ear)
-				H.equip_to_slot(new /obj/item/clothing/ears/offear(src), slot_l_ear, 0)
-
-/obj/item/clothing/ears/dropped(mob/user as mob)
-	..()
-	if(slot_flags & SLOT_TWOEARS)
-		var/mob/living/carbon/human/H = user
-		var/obj/item/clothing/ears/offear/Other = null
-
-		if(H.l_ear && istype(H.l_ear, /obj/item/clothing/ears/offear))
-			Other = H.l_ear
-		else if(H.r_ear && istype(H.r_ear, /obj/item/clothing/ears/offear))
-			Other = H.r_ear
-
-		if(Other) H.unEquip(Other)
 
 /obj/item/clothing/ears/update_clothing_icon()
 	if (ismob(src.loc))
 		var/mob/M = src.loc
 		M.update_inv_ears()
-
-/obj/item/clothing/ears/offear
-	name = "Other ear"
-	w_class = 5.0
-	icon = 'icons/mob/screen1_Midnight.dmi'
-	icon_state = "block"
-	slot_flags = SLOT_EARS
-	var/obj/item/clothing/ears/origin = null
-
-	New(var/obj/O)
-		name = O.name
-		desc = O.desc
-		icon = O.icon
-		icon_state = O.icon_state
-		origin = O
-		set_dir(O.dir)
-
-	attack_hand(user)
-		return origin.attack_hand(user)
-
-	dropped(mob/user)
-		..()
-		var/mob/living/carbon/human/H = user
-		if(H.l_ear == origin || H.r_ear == origin)
-			H.remove_from_mob(origin)
-		qdel(src)
-		return
 
 
 ///////////////////////////////////////////////////////////////////////
@@ -190,7 +137,7 @@
 /obj/item/clothing/gloves
 	name = "gloves"
 	gender = PLURAL //Carn: for grammarically correct text-parsing
-	w_class = 2.0
+	w_class = ITEM_SIZE_SMALL
 	item_state = null
 	icon = 'icons/inv_slots/gloves/icon.dmi'
 	siemens_coefficient = 0.75
@@ -201,7 +148,7 @@
 	body_parts_covered = HANDS
 	slot_flags = SLOT_GLOVES
 	attack_verb = list("challenged")
-	species_restricted = list("exclude","Unathi","Tajara")
+	species_restricted = list("exclude",SPECIES_UNATHI,SPECIES_TAJARA)
 
 /obj/item/clothing/gloves/update_clothing_icon()
 	if (ismob(src.loc))
@@ -235,8 +182,8 @@
 	name = "fingerless [name]"
 	desc = "[desc]<br>They have had the fingertips cut off of them."
 	if("exclude" in species_restricted)
-		species_restricted -= "Unathi"
-		species_restricted -= "Tajara"
+		species_restricted -= SPECIES_UNATHI
+		species_restricted -= SPECIES_TAJARA
 	return
 
 
@@ -251,7 +198,7 @@
 	icon = 'icons/inv_slots/hats/icon.dmi'
 	body_parts_covered = HEAD
 	slot_flags = SLOT_HEAD
-	w_class = 2.0
+	w_class = ITEM_SIZE_SMALL
 
 	var/light_overlay = "helmet_light"
 	var/light_applied
@@ -321,6 +268,13 @@
 		var/mob/M = src.loc
 		M.update_inv_wear_mask()
 
+/obj/item/clothing/mask/on_mob_description(mob/living/carbon/human/H, datum/gender/T, slot, slot_name)
+	if(slot == slot_wear_mask)
+		slot_name = "neck"
+		if(body_parts_covered&FACE)
+			slot_name = "face"
+	return ..(H, T, slot, slot_name)
+
 /obj/item/clothing/mask/proc/filter_air(datum/gas_mixture/air)
 	return
 
@@ -338,7 +292,7 @@
 	permeability_coefficient = 0.50
 	force = 2
 	var/overshoes = 0
-	species_restricted = list("exclude","Unathi","Tajara")
+	species_restricted = list("exclude",SPECIES_UNATHI,SPECIES_TAJARA)
 
 /obj/item/clothing/shoes/proc/handle_movement(var/turf/walking, var/running)
 	return
@@ -360,7 +314,8 @@
 	slot_flags = SLOT_OCLOTHING
 	var/blood_overlay_type = "suit"
 	siemens_coefficient = 0.9
-	w_class = 3
+	center_of_mass = null
+	w_class = ITEM_SIZE_NORMAL
 
 /obj/item/clothing/suit/update_clothing_icon()
 	if (ismob(src.loc))
@@ -382,7 +337,8 @@
 	permeability_coefficient = 0.90
 	slot_flags = SLOT_ICLOTHING
 	armor = list(melee = 0, bullet = 0, laser = 0,energy = 0, bomb = 0, bio = 0, rad = 0)
-	w_class = 3
+	w_class = ITEM_SIZE_NORMAL
+	center_of_mass = null
 	var/has_sensor = 1 //For the crew computer 2 = unable to change mode
 	var/sensor_mode = 0
 		/*
@@ -405,6 +361,12 @@
 
 /obj/item/clothing/under/equipped(mob/user, slot)
 	update_status()
+
+/obj/item/clothing/under/on_mob_description(mob/living/carbon/human/H, datum/gender/T, slot)
+	var/msg = ..()
+	if(slot == slot_w_uniform && accessories.len)
+		msg += " Attached to it is [lowertext(english_list(accessories))]."
+	return msg
 
 /obj/item/clothing/under/proc/update_status()
 	if(!ishuman(loc)) return

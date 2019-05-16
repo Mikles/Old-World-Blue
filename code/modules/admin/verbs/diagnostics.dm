@@ -17,7 +17,7 @@
 	var/inactive_on_main_station = 0
 	for(var/zone/zone in air_master.zones)
 		var/turf/simulated/turf = locate() in zone.contents
-		if(turf && turf.z in config.station_levels)
+		if(turf && isStationLevel(turf.z))
 			if(zone.needs_update)
 				active_on_main_station++
 			else
@@ -48,7 +48,7 @@
 	var/largest_click_time = 0
 	var/mob/largest_move_mob = null
 	var/mob/largest_click_mob = null
-	for(var/mob/M in world)
+	for(var/mob/M in mob_list)
 		if(!M.client)
 			continue
 		if(M.next_move >= largest_move_time)
@@ -63,7 +63,7 @@
 				largest_click_time = M.client.next_click - world.time
 			else
 				largest_click_time = 0
-		log_admin("DEBUG: [key_name(M)]  next_move = [M.next_move]  next_click = [M.client.next_click]  world.time = [world.time]")
+		log_debug("[key_name(M)]  next_move = [M.next_move]  next_click = [M.client.next_click]  world.time = [world.time]", M)
 		M.next_move = 1
 		M.client.next_click = 0
 	message_admins("[key_name_admin(largest_move_mob)] had the largest move delay with [largest_move_time] frames / [largest_move_time/10] seconds!", 1)
@@ -105,21 +105,11 @@
 	message_admins("[usr] manually reloaded admins")
 	load_admins()
 
-/client/proc/reload_mentors()
-	set name = "Reload Mentors"
-	set category = "Debug"
-
-	if(!check_rights(R_SERVER)) return
-
-	message_admins("[usr] manually reloaded Mentors")
-	world.load_mods()
-
-
 //todo:
+/*
 /client/proc/jump_to_dead_group()
 	set name = "Jump to dead group"
 	set category = "Debug"
-		/*
 	if(!holder)
 		src << "Only administrators may use this command."
 		return
@@ -134,7 +124,7 @@
 	var/datum/air_group/dest_group = pick(dead_groups)
 	usr.loc = pick(dest_group.members)
 	return
-	*/
+*/
 
 /client/proc/kill_airgroup()
 	set name = "Kill Local Airgroup"

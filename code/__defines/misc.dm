@@ -1,6 +1,6 @@
 #define DEBUG
 
-#define subtypesof(type) (typesof(type) - type)
+#define T_BOARD(name)	"circuit board (" + (name) + ")"
 
 // Turf-only flags.
 #define NOJAUNT 1 // This is used in literally one place, turf.dm, to block ethereal jaunt.
@@ -12,7 +12,7 @@
 #define INVISIBILITY_LEVEL_ONE            35
 #define INVISIBILITY_LEVEL_TWO            45
 #define INVISIBILITY_OBSERVER             60
-#define INVISIBILITY_EYE		          61
+#define INVISIBILITY_EYE                  61
 
 #define SEE_INVISIBLE_LIVING              25
 #define SEE_INVISIBLE_OBSERVER_NOLIGHTING 15
@@ -117,24 +117,22 @@
 #define OBFUSCATION_LAYER 21	//Where images covering the view for eyes are put
 #define SCREEN_LAYER 22			//Mob HUD/effects layer
 
-	#define DEFAULT_TABLE_MATERIAL "plastic"
-#define DEFAULT_WALL_MATERIAL "steel"
-
-#define SHARD_SHARD "shard"
-#define SHARD_SHRAPNEL "shrapnel"
-#define SHARD_STONE_PIECE "piece"
-#define SHARD_SPLINTER "splinters"
-#define SHARD_NONE ""
-
-#define MATERIAL_UNMELTABLE 0x1
-#define MATERIAL_BRITTLE    0x2
-#define MATERIAL_PADDING    0x4
-
-#define TABLE_BRITTLE_MATERIAL_MULTIPLIER 4 // Amount table damage is multiplied by if it is made of a brittle material (e.g. glass)
-
 #define BOMBCAP_DVSTN_RADIUS (max_explosion_range/4)
 #define BOMBCAP_HEAVY_RADIUS (max_explosion_range/2)
 #define BOMBCAP_LIGHT_RADIUS max_explosion_range
 #define BOMBCAP_FLASH_RADIUS (max_explosion_range*1.5)
 
+#define RANGE_TURFS(RADIUS, CENTER) \
+  block( \
+    locate(max(CENTER.x-(RADIUS),1),          max(CENTER.y-(RADIUS),1),          CENTER.z), \
+    locate(min(CENTER.x+(RADIUS),world.maxx), min(CENTER.y+(RADIUS),world.maxy), CENTER.z) \
+)
+
 #define LIST_OF_CONSONANT list("b","c","d","f","g","h","j","k","l","m","n","p","q","r","s","t","v","w","x","y","z","á","â","ã","ä","æ","ç","é","ê","ë","ì","í","ï","ð","ñ","ò","ô","õ","ö","÷","ø","ù")
+
+//Grid for Item Placement
+#define CELLS 8								//Amount of cells per row/column in grid
+#define CELLSIZE (world.icon_size/CELLS)	//Size of a cell in pixels
+
+#define WIZARD_KNOWLEDGE 1
+#define WIZARD_CLOTHINGS 2

@@ -16,16 +16,16 @@
  */
 /obj/item/weapon/wrench
 	name = "wrench"
-	desc = "A wrench with many common uses. Can be usually found in your hand."
+	desc = "A wrench with many common uses. Can usually be found in your hand."
 	icon = 'icons/obj/items.dmi'
 	icon_state = "wrench"
 	flags = CONDUCT
 	slot_flags = SLOT_BELT
 	force = 6
 	throwforce = 7
-	w_class = 2.0
+	w_class = ITEM_SIZE_SMALL
 	origin_tech = list(TECH_MATERIAL = 1, TECH_ENGINEERING = 1)
-	matter = list(DEFAULT_WALL_MATERIAL = 150)
+	matter = list(MATERIAL_STEEL = 150)
 	attack_verb = list("bashed", "battered", "bludgeoned", "whacked")
 
 
@@ -40,11 +40,11 @@
 	flags = CONDUCT
 	slot_flags = SLOT_BELT | SLOT_EARS
 	force = 6
-	w_class = 1.0
+	w_class = ITEM_SIZE_TINY
 	throwforce = 5
 	throw_speed = 3
 	throw_range = 5
-	matter = list(DEFAULT_WALL_MATERIAL = 75)
+	matter = list(MATERIAL_STEEL = 75)
 	attack_verb = list("stabbed")
 	sharp  = 1
 
@@ -87,8 +87,11 @@
 		return ..()
 	if(user.zone_sel.selecting != O_EYES && user.zone_sel.selecting != BP_HEAD)
 		return ..()
+	//TODO: DNA3 clown_block
+	/*
 	if((CLUMSY in user.mutations) && prob(50))
 		M = user
+	*/
 	return eyestab(M,user)
 
 /*
@@ -104,9 +107,9 @@
 	force = 6
 	throw_speed = 2
 	throw_range = 9
-	w_class = 2.0
+	w_class = ITEM_SIZE_SMALL
 	origin_tech = list(TECH_MATERIAL = 1, TECH_ENGINEERING = 1)
-	matter = list(DEFAULT_WALL_MATERIAL = 80)
+	matter = list(MATERIAL_STEEL = 80)
 	attack_verb = list("pinched", "nipped")
 	sharp = 1
 	edge = 1
@@ -118,10 +121,12 @@
 	..()
 
 /obj/item/weapon/wirecutters/attack(mob/living/carbon/C as mob, mob/user as mob)
-	if(user.a_intent == I_HELP && (C.handcuffed) && (istype(C.handcuffed, /obj/item/weapon/handcuffs/cable)))
-		usr.visible_message("\The [usr] cuts \the [C]'s restraints with \the [src]!",\
-		"You cut \the [C]'s restraints with \the [src]!",\
-		"You hear cable being cut.")
+	if(user.a_intent == I_HELP && istype(C) && istype(C.handcuffed, /obj/item/weapon/handcuffs/cable))
+		usr.visible_message(
+			"\The [usr] cuts \the [C]'s restraints with \the [src]!",
+			"You cut \the [C]'s restraints with \the [src]!",
+			"You hear cable being cut."
+		)
 		C.handcuffed = null
 		if(C.buckled && C.buckled.buckle_require_restraints)
 			C.buckled.unbuckle_mob()
@@ -145,10 +150,10 @@
 	throwforce = 5.0
 	throw_speed = 1
 	throw_range = 5
-	w_class = 2.0
+	w_class = ITEM_SIZE_SMALL
 
 	//Cost to make in the autolathe
-	matter = list(DEFAULT_WALL_MATERIAL = 70, "glass" = 30)
+	matter = list(MATERIAL_STEEL = 70, MATERIAL_GLASS = 30)
 
 	//R&D tech level
 	origin_tech = list(TECH_ENGINEERING = 1)
@@ -232,14 +237,13 @@
 
 /obj/item/weapon/weldingtool/afterattack(obj/O as obj, mob/user as mob, proximity)
 	if(!proximity) return
-	if (istype(O, /obj/structure/reagent_dispensers/fueltank) && get_dist(src,O) <= 1 && !src.welding)
+	if (istype(O, /obj/structure/reagent_dispensers/fueltank) && !src.welding)
 		O.reagents.trans_to_obj(src, max_fuel)
 		user << "<span class='notice'>Welder refueled</span>"
 		playsound(src.loc, 'sound/effects/refill.ogg', 50, 1, -6)
 		return
-	else if (istype(O, /obj/structure/reagent_dispensers/fueltank) && get_dist(src,O) <= 1 && src.welding)
-		message_admins("[key_name_admin(user)] triggered a fueltank explosion with a welding tool.")
-		log_game("[key_name(user)] triggered a fueltank explosion with a welding tool.")
+	else if (istype(O, /obj/structure/reagent_dispensers/fueltank) && src.welding)
+		log_game("[key_name(user)] triggered a fueltank explosion with a welding tool.", O)
 		user << "<span class='danger'>You begin welding on the fueltank and with a moment of lucidity you realize, this might not have been the smartest thing you've ever done.</span>"
 		var/obj/structure/reagent_dispensers/fueltank/tank = O
 		tank.explode()
@@ -303,7 +307,7 @@
 
 /obj/item/weapon/weldingtool/update_icon()
 	..()
-	icon_state = welding ? "welder1" : "welder"
+	icon_state = welding ? "[initial(icon_state)]1" : initial(icon_state)
 	var/mob/M = loc
 	if(istype(M))
 		M.update_inv_l_hand()
@@ -324,7 +328,7 @@
 				T.visible_message("<span class='danger'>\The [src] turns on.</span>")
 			src.force = 15
 			src.damtype = "fire"
-			src.w_class = 4
+			src.w_class = ITEM_SIZE_LARGE
 			welding = 1
 			update_icon()
 			processing_objects |= src
@@ -347,68 +351,53 @@
 
 //Decides whether or not to damage a player's eyes based on what they're wearing as protection
 //Note: This should probably be moved to mob
-/obj/item/weapon/weldingtool/proc/eyecheck(mob/user as mob)
+/obj/item/weapon/weldingtool/proc/eyecheck(mob/living/carbon/human/user as mob)
 	if(!ishuman(user)) return 1
 
-	var/safety = user:eyecheck()
-	var/mob/living/carbon/human/H = user
-	var/obj/item/organ/internal/eyes/E = H.internal_organs_by_name[O_EYES]
+	var/safety = user.eyecheck()
+	var/obj/item/organ/internal/eyes/E = user.internal_organs_by_name[O_EYES]
 	if(!E)
 		return
-	if(H.species.flags & IS_SYNTHETIC)
+	if(user.species.flags & IS_SYNTHETIC)
 		return
 	switch(safety)
 		if(1)
-			usr << "<span class='warning'>Your eyes sting a little.</span>"
-			E.damage += rand(1, 2)
+			usr << SPAN_WARN("Your eyes sting a little.")
+			E.take_damage(rand(1, 2))
 			if(E.damage > 12)
 				user.eye_blurry += rand(3,6)
 		if(0)
-			usr << "<span class='warning'>Your eyes burn.</span>"
-			E.damage += rand(2, 4)
+			usr << SPAN_WARN("Your eyes burn.")
+			E.take_damage(rand(2, 4))
 			if(E.damage > 10)
-				E.damage += rand(4,10)
+				E.take_damage(rand(4,10))
 		if(-1)
-			usr << "<span class='danger'>Your thermals intensify the welder's glow. Your eyes itch and burn severely.</span>"
+			usr << SPAN_DANG("Your thermals intensify the welder's glow. Your eyes itch and burn severely.")
+			E.take_damage(rand(12, 16))
 			user.eye_blurry += rand(12,20)
-			E.damage += rand(12, 16)
-	if(safety<2)
-
-		if(E.damage > 10)
-			user << "<span class='warning'>Your eyes are really starting to hurt. This can't be good for you!</span>"
-
-		if (E.damage >= E.min_broken_damage)
-			user << "<span class='danger'>You go blind!</span>"
-			user.sdisabilities |= BLIND
-		else if (E.damage >= E.min_bruised_damage)
-			user << "<span class='danger'>You go blind!</span>"
-			user.eye_blind = 5
-			user.eye_blurry = 5
-			user.disabilities |= NEARSIGHTED
-			spawn(100)
-				user.disabilities &= ~NEARSIGHTED
 	return
 
 
 /obj/item/weapon/weldingtool/largetank
 	name = "industrial welding tool"
+	icon_state = "industrialwelder"
 	max_fuel = 40
 	origin_tech = list(TECH_ENGINEERING = 2)
-	matter = list(DEFAULT_WALL_MATERIAL = 70, "glass" = 60)
+	matter = list(MATERIAL_STEEL = 70, MATERIAL_GLASS = 60)
 
 /obj/item/weapon/weldingtool/hugetank
 	name = "upgraded welding tool"
 	max_fuel = 80
-	w_class = 3.0
+	w_class = ITEM_SIZE_NORMAL
 	origin_tech = list(TECH_ENGINEERING = 3)
-	matter = list(DEFAULT_WALL_MATERIAL = 70, "glass" = 120)
+	matter = list(MATERIAL_STEEL = 70, MATERIAL_GLASS = 120)
 
 /obj/item/weapon/weldingtool/experimental
 	name = "experimental welding tool"
 	max_fuel = 40
-	w_class = 3.0
+	w_class = ITEM_SIZE_NORMAL
 	origin_tech = list(TECH_ENGINEERING = 4, TECH_PHORON = 3)
-	matter = list(DEFAULT_WALL_MATERIAL = 70, "glass" = 120)
+	matter = list(MATERIAL_STEEL = 70, MATERIAL_GLASS = 120)
 	var/last_gen = 0
 
 //Proc to make the experimental welder generate fuel, optimized as fuck -Sieve
@@ -433,9 +422,9 @@
 	throwforce = 7
 	pry = 1
 	item_state = "crowbar"
-	w_class = 2.0
+	w_class = ITEM_SIZE_SMALL
 	origin_tech = list(TECH_ENGINEERING = 1)
-	matter = list(DEFAULT_WALL_MATERIAL = 50)
+	matter = list(MATERIAL_STEEL = 50)
 	attack_verb = list("attacked", "bashed", "battered", "bludgeoned", "whacked")
 
 /obj/item/weapon/crowbar/red
@@ -448,7 +437,7 @@
 	desc = "It even has one of those nubbins for doing the thingy."
 	icon = 'icons/obj/items.dmi'
 	icon_state = "combitool"
-	w_class = 2
+	w_class = ITEM_SIZE_SMALL
 
 	var/list/spawn_tools = list(
 		/obj/item/weapon/screwdriver,

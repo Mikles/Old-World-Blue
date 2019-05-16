@@ -51,6 +51,11 @@
 			error("[src.name] in [get_area(src)]has errored. [src.network?"Empty network list":"Null network list"]")
 		ASSERT(src.network)
 		ASSERT(src.network.len > 0)
+
+	if(!c_tag && isturf(loc))
+		var/area/A = get_area(src)
+		c_tag = A.get_camera_tag(src)
+
 	..()
 
 /obj/machinery/camera/Destroy()
@@ -171,17 +176,6 @@
 				if (S.current == src)
 					O << "[U] holds \a [itemname] up to one of the cameras ..."
 					O << browse(text("<HTML><HEAD><TITLE>[]</TITLE></HEAD><BODY><TT>[]</TT></BODY></HTML>", itemname, info), text("window=[]", itemname))
-
-	else if (istype(W, /obj/item/weapon/camera_bug))
-		if (!src.can_use())
-			user << "<span class='warning'>Camera non-functional.</span>"
-			return
-		if (src.bugged)
-			user << "<span class='notice'>Camera bug removed.</span>"
-			src.bugged = 0
-		else
-			user << "<span class='notice'>Camera bugged.</span>"
-			src.bugged = 1
 
 	else if(W.damtype == BRUTE || W.damtype == BURN) //bashing cameras
 		user.setClickCooldown(DEFAULT_ATTACK_COOLDOWN)

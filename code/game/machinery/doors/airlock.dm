@@ -52,7 +52,7 @@
 /obj/machinery/door/airlock/get_material()
 	if(mineral)
 		return get_material_by_name(mineral)
-	return get_material_by_name(DEFAULT_WALL_MATERIAL)
+	return get_material_by_name(MATERIAL_STEEL)
 
 /obj/machinery/door/airlock/command
 	name = "Airlock"
@@ -220,23 +220,23 @@
 /obj/machinery/door/airlock/gold
 	name = "Gold Airlock"
 	icon = 'icons/obj/doors/Doorgold.dmi'
-	mineral = "gold"
+	mineral = MATERIAL_GOLD
 
 /obj/machinery/door/airlock/silver
 	name = "Silver Airlock"
 	icon = 'icons/obj/doors/Doorsilver.dmi'
-	mineral = "silver"
+	mineral = MATERIAL_SILVER
 
 /obj/machinery/door/airlock/diamond
 	name = "Diamond Airlock"
 	icon = 'icons/obj/doors/Doordiamond.dmi'
-	mineral = "diamond"
+	mineral = MATERIAL_DIAMOND
 
 /obj/machinery/door/airlock/uranium
 	name = "Uranium Airlock"
 	desc = "And they said I was crazy."
 	icon = 'icons/obj/doors/Dooruranium.dmi'
-	mineral = "uranium"
+	mineral = MATERIAL_URANIUM
 	var/last_event = 0
 
 /obj/machinery/door/airlock/process()
@@ -268,7 +268,7 @@
 	name = "Phoron Airlock"
 	desc = "No way this can end badly."
 	icon = 'icons/obj/doors/Doorphoron.dmi'
-	mineral = "phoron"
+	mineral = MATERIAL_PHORON
 
 /obj/machinery/door/airlock/phoron/fire_act(datum/gas_mixture/air, exposed_temperature, exposed_volume)
 	if(exposed_temperature > 300)
@@ -279,10 +279,10 @@
 		PhoronBurn(exposed_temperature)
 
 /obj/machinery/door/airlock/phoron/proc/PhoronBurn(temperature)
-	for(var/turf/simulated/floor/target_tile in range(2,loc))
+	for(var/turf/simulated/floor/target_tile in RANGE_TURFS(2,loc))
 		target_tile.assume_gas("phoron", 35, 400+T0C)
 		spawn (0) target_tile.hotspot_expose(temperature, 400)
-	for(var/turf/simulated/wall/W in range(3,src))
+	for(var/turf/simulated/wall/W in RANGE_TURFS(3,src))
 		W.burn((temperature/4))//Added so that you can't set off a massive chain reaction with a small flame
 	for(var/obj/machinery/door/airlock/phoron/D in range(3,src))
 		D.ignite(temperature/4)
@@ -292,7 +292,7 @@
 /obj/machinery/door/airlock/sandstone
 	name = "Sandstone Airlock"
 	icon = 'icons/obj/doors/Doorsand.dmi'
-	mineral = "sandstone"
+	mineral = MATERIAL_SANDSTONE
 
 /obj/machinery/door/airlock/science
 	name = "Airlock"
@@ -622,10 +622,10 @@ About the new airlock wires panel:
 
 /obj/machinery/door/airlock/CanPass(atom/movable/mover, turf/target, height=0, air_group=0)
 	if (src.isElectrified())
-		if (istype(mover, /obj/item))
+		if(istype(mover, /obj/item))
 			var/obj/item/i = mover
-			if (i.matter && (DEFAULT_WALL_MATERIAL in i.matter) && i.matter[DEFAULT_WALL_MATERIAL] > 0)
-				var/datum/effect/effect/system/spark_spread/s = new /datum/effect/effect/system/spark_spread
+			if (i.matter && (MATERIAL_STEEL in i.matter) && i.matter[MATERIAL_STEEL] > 0)
+				var/datum/effect/effect/system/spark_spread/s = new
 				s.set_up(5, 1, src)
 				s.start()
 	return ..()
@@ -1019,8 +1019,7 @@ About the new airlock wires panel:
 		set_dir(assembly.dir)
 
 	//wires
-	var/turf/T = get_turf(newloc)
-	if(T && (T.z in config.admin_levels))
+	if(isOnAdminLevel(newloc))
 		secured_wires = 1
 	if (secured_wires)
 		wires = new/datum/wires/airlock/secure(src)
@@ -1029,7 +1028,7 @@ About the new airlock wires panel:
 
 /obj/machinery/door/airlock/initialize()
 	if(src.closeOtherId != null)
-		for (var/obj/machinery/door/airlock/A in world)
+		for (var/obj/machinery/door/airlock/A in machines)
 			if(A.closeOtherId == src.closeOtherId && A != src)
 				src.closeOther = A
 				break

@@ -15,7 +15,7 @@
 	desc = "A camera film cartridge. Insert it into a camera to reload it."
 	icon_state = "film"
 	item_state = "electropack"
-	w_class = 1.0
+	w_class = ITEM_SIZE_TINY
 
 
 /********
@@ -28,7 +28,8 @@ var/global/photo_count = 0
 	icon = 'icons/obj/items.dmi'
 	icon_state = "photo"
 	item_state = "paper"
-	w_class = 2.0
+	randpixel = 10
+	w_class = ITEM_SIZE_TINY
 	var/id
 	var/icon/img	//Big photo image
 	var/scribble	//Scribble on the back.
@@ -43,8 +44,8 @@ var/global/photo_count = 0
 
 /obj/item/weapon/photo/attackby(obj/item/weapon/P as obj, mob/user as mob)
 	if(istype(P, /obj/item/weapon/pen))
-		var/txt = sanitize(input(user, "What would you like to write on the back?", "Photo Writing", null)  as text, 128)
-		if(loc == user && user.stat == 0)
+		var/txt = sanitize(input_utf8(user, "What would you like to write on the back?", "Photo Writing", null, "text"), 128)
+		if(!user.stat && Adjacent(user))
 			scribble = txt
 	..()
 
@@ -78,7 +79,7 @@ var/global/photo_count = 0
 
 	var/n_name = sanitizeSafe(input(usr, "What would you like to label the photo?", "Photo Labelling", null)  as text, MAX_NAME_LEN)
 	//loc.loc check is for making possible renaming photos in clipboards
-	if(( (loc == usr || (loc.loc && loc.loc == usr)) && usr.stat == 0))
+	if(( (loc == usr || (loc.loc && loc.loc == usr)) && !usr.stat))
 		name = "[(n_name ? text("[n_name]") : "photo")]"
 	add_fingerprint(usr)
 	return
@@ -100,14 +101,16 @@ var/global/photo_count = 0
 /**************
 * photo album *
 **************/
-/obj/item/weapon/storage/photo_album
+/obj/item/storage/photo_album
 	name = "Photo album"
 	icon = 'icons/obj/items.dmi'
 	icon_state = "album"
 	item_state = "briefcase"
+	w_class = ITEM_SIZE_NORMAL //same as book
+	storage_slots = DEFAULT_BOX_STORAGE //yes, that's storage_slots. Photos are w_class 1 so this has as many slots equal to the number of photos you could put in a box
 	can_hold = list(/obj/item/weapon/photo)
 
-/obj/item/weapon/storage/photo_album/MouseDrop(obj/over_object as obj)
+/obj/item/storage/photo_album/MouseDrop(obj/over_object as obj)
 
 	if(!ishuman(usr))
 		return
@@ -143,10 +146,11 @@ var/global/photo_count = 0
 	desc = "A polaroid camera. 10 photos left."
 	icon_state = "camera"
 	item_state = "electropack"
-	w_class = 2.0
+	w_class = ITEM_SIZE_SMALL
+	randpixel = 5
 	flags = CONDUCT
 	slot_flags = SLOT_BELT
-	matter = list(DEFAULT_WALL_MATERIAL = 2000)
+	matter = list(MATERIAL_STEEL = 2000)
 	var/pictures_max = 10
 	var/pictures_left = 10
 	var/on = 1
@@ -208,24 +212,26 @@ var/global/photo_count = 0
 	// Sort the atoms into their layers
 	var/list/sorted = sort_atoms_by_layer(atoms)
 	var/center_offset = (size-1)/2 * 32 + 1
-	for(var/i; i <= sorted.len; i++)
-		var/atom/A = sorted[i]
-		if(A)
-			var/icon/img = getFlatIcon(A)//build_composite_icon(A)
+	var/i = 1
+	for(var/item in sorted)
+		if(!(++i % 10))
+			sleep()
+		var/atom/A = item
+		var/icon/img = getFlatIcon(A)//build_composite_icon(A)
 
-			// If what we got back is actually a picture, draw it.
-			if(istype(img, /icon))
-				// Check if we're looking at a mob that's lying down
-				if(istype(A, /mob/living) && A:lying)
-					// If they are, apply that effect to their picture.
-					img.BecomeLying()
-				// Calculate where we are relative to the center of the photo
-				var/xoff = (A.x - center.x) * 32 + center_offset
-				var/yoff = (A.y - center.y) * 32 + center_offset
-				if (istype(A,/atom/movable))
-					xoff+=A:step_x
-					yoff+=A:step_y
-				res.Blend(img, blendMode2iconMode(A.blend_mode),  A.pixel_x + xoff, A.pixel_y + yoff)
+		// If what we got back is actually a picture, draw it.
+		if(istype(img, /icon))
+			// Check if we're looking at a mob that's lying down
+			if(istype(A, /mob/living) && A:lying)
+				// If they are, apply that effect to their picture.
+				img.BecomeLying()
+			// Calculate where we are relative to the center of the photo
+			var/xoff = (A.x - center.x) * 32 + center_offset
+			var/yoff = (A.y - center.y) * 32 + center_offset
+			if (istype(A,/atom/movable))
+				xoff+=A:step_x
+				yoff+=A:step_y
+			res.Blend(img, blendMode2iconMode(A.blend_mode),  A.pixel_x + xoff, A.pixel_y + yoff)
 
 	// Lastly, render any contained effects on top.
 	for(var/turf/the_turf in turfs)
@@ -240,28 +246,25 @@ var/global/photo_count = 0
 	var/mob_detail
 	for(var/mob/living/carbon/A in the_turf)
 		if(A.invisibility) continue
-		var/holding = null
+		var/holding = ""
 		var/posenow = null
-		if(A.l_hand || A.r_hand)
-			if(A.l_hand) holding = "They are holding \a [A.l_hand]"
-			if(A.r_hand)
-				if(holding)
-					holding += " and \a [A.r_hand]"
-				else
-					holding = "They are holding \a [A.r_hand]"
-		if(ishuman(A))
-			if(A.pose) posenow = "They're appears to [A.pose] on this photo."
-
-
+		var/datum/gender/T = gender_datums[A.get_gender()]
+		if(A.r_hand)
+			holding = A.r_hand.on_mob_description(A, T, slot_r_hand, "right hand")
+		if(A.l_hand)
+			holding += " "
+			holding += A.l_hand.on_mob_description(A, T, slot_l_hand, "left hand")
+		if(ishuman(A) && A.pose)
+			posenow = "They're appears to [A.pose] on this photo."
 
 		if(!mob_detail)
-			mob_detail = "You can see [A] on the photo[A:health < 75 ? " - [A] looks hurt":""].[holding ? " [holding]":"."]. [posenow] "
+			mob_detail = "You can see [A] on the photo[A:health < 75 ? " - [A] looks hurt":""]. [holding][posenow] "
 		else
 			mob_detail += "You can also see [A] on the photo[A:health < 75 ? " - [A] looks hurt":""].[holding ? " [holding]":"."] [posenow]."
 	return mob_detail
 
 /obj/item/device/camera/afterattack(atom/target as mob|obj|turf|area, mob/user as mob, flag)
-	if(!on || !pictures_left || ismob(target.loc)) return
+	if(!on || !pictures_left || ismob(target.loc) || !ismob(loc)) return
 	captureimage(target, user, flag)
 
 	playsound(loc, pick('sound/items/polaroid1.ogg', 'sound/items/polaroid2.ogg'), 75, 1, -3)
@@ -322,16 +325,12 @@ var/global/photo_count = 0
 	p.tiny = pc
 	p.img = photoimage
 	p.desc = mobs
-	p.pixel_x = rand(-10, 10)
-	p.pixel_y = rand(-10, 10)
 	p.photo_size = size
 
 	return p
 
 /obj/item/device/camera/proc/printpicture(mob/user, obj/item/weapon/photo/p)
-	p.loc = user.loc
-	if(!user.get_inactive_hand())
-		user.put_in_inactive_hand(p)
+	user.put_in_hands(p)
 
 /obj/item/weapon/photo/proc/copy(var/copy_id = 0)
 	var/obj/item/weapon/photo/p = new/obj/item/weapon/photo()

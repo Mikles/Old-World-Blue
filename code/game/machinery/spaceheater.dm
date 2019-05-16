@@ -53,14 +53,13 @@
 				return
 			else
 				// insert cell
-				var/obj/item/weapon/cell/C = usr.get_active_hand()
-				if(istype(C))
-					user.drop_from_inventory(C, src)
-					cell = C
-					C.add_fingerprint(usr)
+				var/obj/item/weapon/cell/C = I
+				user.drop_from_inventory(C, src)
+				cell = C
+				C.add_fingerprint(usr)
 
-					user.visible_message("\blue [user] inserts a power cell into [src].", "\blue You insert the power cell into [src].")
-					power_change()
+				user.visible_message("\blue [user] inserts a power cell into [src].", "\blue You insert the power cell into [src].")
+				power_change()
 		else
 			user << "The hatch must be open to insert a power cell."
 			return
@@ -124,13 +123,16 @@
 				set_temperature = dd_range(T0C, T0C + 90, set_temperature + value)
 
 			if("cellremove")
-				if(panel_open && cell && !usr.get_active_hand())
-					usr.visible_message("\blue [usr] removes \the [cell] from \the [src].", "\blue You remove \the [cell] from \the [src].")
+				if(panel_open && cell)
+					usr.visible_message(
+						"\blue [usr] removes \the [cell] from \the [src].",
+						"\blue You remove \the [cell] from \the [src]."
+					)
 					cell.update_icon()
-					usr.put_in_hands(cell)
-					cell.add_fingerprint(usr)
 					cell = null
 					power_change()
+					cell.add_fingerprint(usr)
+					usr.put_in_hands(cell)
 
 
 			if("cellinstall")

@@ -80,7 +80,7 @@
 	. = ..()
 
 /obj/machinery/door/firedoor/get_material()
-	return get_material_by_name(DEFAULT_WALL_MATERIAL)
+	return get_material_by_name(MATERIAL_STEEL)
 
 /obj/machinery/door/firedoor/examine(mob/user, return_dist = 1)
 	. = ..()
@@ -356,7 +356,8 @@
 		else
 			use_power(360)
 	else
-		log_admin("[usr]([usr.ckey]) has forced open an emergency shutter.")
+		log_game("[key_name(usr)] has forced open an emergency shutter.", src, 0)
+
 	latetoggle()
 	return ..()
 

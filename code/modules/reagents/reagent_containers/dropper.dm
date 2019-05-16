@@ -7,7 +7,7 @@
 	icon_state = "dropper0"
 	amount_per_transfer_from_this = 5
 	possible_transfer_amounts = list(1,2,3,4,5)
-	w_class = 1
+	w_class = ITEM_SIZE_TINY
 	slot_flags = SLOT_EARS
 	volume = 5
 	center_of_mass = list("x"=17, "y"=17)
@@ -62,9 +62,11 @@
 
 			var/mob/living/M = target
 			var/contained = reagentlist()
-			M.attack_log += text("\[[time_stamp()]\] <font color='orange'>Has been squirted with [name] by [user.name] ([user.ckey]). Reagents: [contained]</font>")
-			user.attack_log += text("\[[time_stamp()]\] <font color='red'>Used the [name] to squirt [M.name] ([M.key]). Reagents: [contained]</font>")
-			msg_admin_attack("[user.name] ([user.ckey]) squirted [M.name] ([M.key]) with [name]. Reagents: [contained] (INTENT: [uppertext(user.a_intent)]) (<A HREF='?_src_=holder;adminplayerobservecoodjump=1;X=[user.x];Y=[user.y];Z=[user.z]'>JMP</a>)")
+			admin_attack_log(user, M,
+				"Used the [name] to squirt [M.name] ([M.key]). Reagents: [contained]",
+				"Has been squirted with [name] by [user.name] ([user.ckey]). Reagents: [contained]",
+				"used [name] (reagents: [contained]) for  squirted"
+			)
 			trans = reagents.trans_to_mob(target, reagents.total_volume, CHEM_INGEST)
 			user.visible_message("<span class='warning'>[user] squirts something into [target]'s eyes!</span>", "<span class='notice'>You transfer [trans] units of the solution.</span>")
 			return

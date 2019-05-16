@@ -8,7 +8,7 @@ var/list/admin_verbs_default = list(
 	/client/proc/hide_most_verbs,		/*hides all our hideable adminverbs*/
 	/client/proc/debug_variables,		/*allows us to -see- the variables of any instance in the game. +VAREDIT needed to modify*/
 //	/client/proc/check_antagonists,		/*shows all antags*/
-	/client/proc/cmd_mentor_check_new_players,
+	/client/proc/check_new_players,
 	/client/proc/cmd_admin_say,
 	/client/proc/checkAccount
 //	/client/proc/deadchat				/*toggles deadchat on/off*/
@@ -70,9 +70,9 @@ var/list/admin_verbs_admin = list(
 	/datum/admins/proc/show_player_info,
 	/client/proc/free_slot,			/*frees slot for chosen job*/
 	/client/proc/cmd_admin_change_custom_event,
-	/client/proc/cmd_admin_rejuvenate,
 	/client/proc/toggleattacklogs,
 	/client/proc/toggledebuglogs,
+	/client/proc/togglemodelogs,
 	/client/proc/toggleghostwriters,
 	/client/proc/toggledrones,
 	/client/proc/check_customitem_activity,
@@ -175,7 +175,6 @@ var/list/admin_verbs_debug = list(
 	/client/proc/cmd_debug_tog_aliens,
 	/client/proc/air_report,
 	/client/proc/reload_admins,
-	/client/proc/reload_mentors,
 	/client/proc/restart_controller,
 	/client/proc/print_random_map,
 	/client/proc/create_random_map,
@@ -190,7 +189,8 @@ var/list/admin_verbs_debug = list(
 	/client/proc/jumptomob,
 	/client/proc/jumptocoord,
 	/client/proc/dsay,
-	/client/proc/beacon_move
+	/client/proc/beacon_move,
+	/client/proc/test_MD
 	)
 
 var/list/admin_verbs_paranoid_debug = list(
@@ -207,6 +207,7 @@ var/list/admin_verbs_permissions = list(
 	/client/proc/edit_admin_permissions
 	)
 var/list/admin_verbs_rejuv = list(
+	/client/proc/cmd_admin_rejuvenate,
 	/client/proc/respawn_character
 	)
 
@@ -287,6 +288,7 @@ var/list/admin_verbs_mod = list(
 	/client/proc/cmd_admin_pm_panel,	/*admin-pm list*/
 	/client/proc/debug_variables,		/*allows us to -see- the variables of any instance in the game.*/
 	/client/proc/toggledebuglogs,
+	/client/proc/togglemodelogs,
 	/datum/admins/proc/PlayerNotes,
 	/client/proc/admin_ghost,			/*allows us to ghost/reenter body at will*/
 	/datum/admins/proc/show_player_info,
@@ -296,16 +298,6 @@ var/list/admin_verbs_mod = list(
 	/client/proc/check_antagonists,
 //	/client/proc/jobbans,
 	/client/proc/cmd_admin_subtle_message 	/*send an message to somebody as a 'voice in their head'*/
-)
-
-var/list/admin_verbs_mentor = list(
-	/client/proc/cmd_admin_pm_context,
-	/client/proc/cmd_admin_pm_panel,
-	/datum/admins/proc/PlayerNotes,
-	/client/proc/admin_ghost,
-	/datum/admins/proc/show_player_info,
-//	/client/proc/dsay,
-	/client/proc/cmd_admin_subtle_message
 )
 
 /client/proc/add_admin_verbs()
@@ -327,7 +319,6 @@ var/list/admin_verbs_mentor = list(
 		if(holder.rights & R_SOUNDS)		verbs += admin_verbs_sounds
 		if(holder.rights & R_SPAWN)			verbs += admin_verbs_spawn
 		if(holder.rights & R_MOD)			verbs += admin_verbs_mod
-		if(holder.rights & R_MENTOR)		verbs += admin_verbs_mentor
 
 /client/proc/remove_admin_verbs()
 	verbs.Remove(
@@ -387,14 +378,7 @@ var/list/admin_verbs_mentor = list(
 	if(isobserver(mob))
 		//re-enter
 		var/mob/observer/dead/ghost = mob
-		if(!is_mentor(usr.client))
-			ghost.can_reenter_corpse = 1
-		if(ghost.can_reenter_corpse)
-			ghost.reenter_corpse()
-		else
-			ghost << "<font color='red'>Error:  Aghost:  Can't reenter corpse, mentors that use adminHUD while aghosting are not permitted to enter their corpse again</font>"
-			return
-
+		ghost.reenter_corpse()
 
 	else if(istype(mob,/mob/new_player))
 		src << "<font color='red'>Error: Aghost: Can't admin-ghost whilst in the lobby. Join or Observe first.</font>"
@@ -435,14 +419,12 @@ var/list/admin_verbs_mentor = list(
 			temp = input(usr,"Set time (in minutes)","Time to respawn",initial(config.respawn_time)) as num|null
 			if (temp >= 0)
 				config.respawn_time = temp
-				log_admin("[key_name(usr)] edit humans respawn time to [config.respawn_time]")
-				message_admins("[key_name(usr)] edit humans respawn time to [config.respawn_time]", 1)
+				log_admin("[usr.key] edit humans respawn time to [config.respawn_time]")
 		if ("Mouse")
 			temp = input(usr,"Set time (in minutes)?","Time to respawn",initial(config.respawn_time_mouse)) as num|null
 			if (temp >= 0)
 				config.respawn_time_mouse = temp
-				log_admin("[key_name(usr)] edit mice respawn time to [config.respawn_time_mouse]")
-				message_admins("[key_name(usr)] edit mice respawn time to [config.respawn_time_mouse]", 1)
+				log_admin("[usr.key] edit mice respawn time to [config.respawn_time_mouse]")
 		if ("Cancel")
 			return
 
@@ -472,7 +454,7 @@ var/list/admin_verbs_mentor = list(
 	set category = "Admin"
 	if(holder)
 		holder.check_antagonists()
-		log_admin("[key_name(usr)] checked antagonists.")	//for tsar~
+		log_admin("[usr.key] checked antagonists.", null, 0)
 	return
 /*
 /client/proc/jobbans()
@@ -538,8 +520,7 @@ var/list/admin_verbs_mentor = list(
 			holder.fakekey = new_key
 			if(istype(mob, /mob/new_player))
 				mob.name = new_key
-		log_admin("[key_name(usr)] has turned stealth mode [holder.fakekey ? "ON" : "OFF"]")
-		message_admins("[key_name_admin(usr)] has turned stealth mode [holder.fakekey ? "ON" : "OFF"]", 1)
+		log_admin("[usr.key] has turned stealth mode [holder.fakekey ? "ON" : "OFF"]", null, 0)
 
 #define MAX_WARNS 3
 #define AUTOBANTIME 30
@@ -563,13 +544,15 @@ var/list/admin_verbs_mentor = list(
 
 	if(++D.warns >= MAX_WARNS)					//uh ohhhh...you'reee iiiiin trouuuubble O:)
 		ban_unban_log_save("[ckey] warned [warned_ckey], resulting in a [AUTOBANTIME] minute autoban.")
+		var/datum/admins/Admin = admin_datums[usr.key]
+		if(!Admin || !Admin.DB_ban_record(BANTYPE_TEMP, C.mob, AUTOBANTIME, "Autobanning due to too many formal warnings", null, null, C.key))
+			AddBan(warned_ckey, D.last_id, "Autobanning due to too many formal warnings", ckey, 1, AUTOBANTIME)
 		if(C)
 			message_admins("[key_name_admin(src)] has warned [key_name_admin(C)] resulting in a [AUTOBANTIME] minute ban.")
 			C << "<font color='red'><BIG><B>You have been autobanned due to a warning by [ckey].</B></BIG><br>This is a temporary ban, it will be removed in [AUTOBANTIME] minutes.</font>"
 			del(C)
 		else
 			message_admins("[key_name_admin(src)] has warned [warned_ckey] resulting in a [AUTOBANTIME] minute ban.")
-		AddBan(warned_ckey, D.last_id, "Autobanning due to too many formal warnings", ckey, 1, AUTOBANTIME)
 	else
 		if(C)
 			C << "<font color='red'><BIG><B>You have been formally warned by an administrator.</B></BIG><br>Further warnings will result in an autoban.</font>"
@@ -634,8 +617,7 @@ var/list/admin_verbs_mentor = list(
 				D.affected_species |= H.species.greater_form
 	infect_virus2(T,D,1)
 
-	log_admin("[key_name(usr)] gave [key_name(T)] a [greater] disease2 with infection chance [D.infectionchance].")
-	message_admins("\blue [key_name_admin(usr)] gave [key_name(T)] a [greater] disease2 with infection chance [D.infectionchance].", 1)
+	log_admin("[usr.key] gave [key_name(T)] a [greater] disease2 with infection chance [D.infectionchance].", T)
 
 /client/proc/make_sound(var/obj/O in world) // -- TLE
 	set category = "Special Verbs"
@@ -647,8 +629,7 @@ var/list/admin_verbs_mentor = list(
 			return
 		for (var/mob/V in hearers(O))
 			V.show_message(message, 2)
-		log_admin("[key_name(usr)] made [O] at [O.x], [O.y], [O.z]. make a sound")
-		message_admins("\blue [key_name_admin(usr)] made [O] at [O.x], [O.y], [O.z]. make a sound", 1)
+		log_admin("[usr.key] made [O] make a sound \"[message]\".", O, 0)
 
 
 /client/proc/togglebuildmodeself()
@@ -677,8 +658,7 @@ var/list/admin_verbs_mentor = list(
 	else
 		air_processing_killed = 1
 		usr << "<b>Disabled air processing.</b>"
-	log_admin("[key_name(usr)] used 'kill air'.")
-	message_admins("\blue [key_name_admin(usr)] used 'kill air'.", 1)
+	log_admin("[usr.key] used 'kill air'.")
 
 /client/proc/readmin_self()
 	set name = "Re-Admin self"
@@ -687,7 +667,6 @@ var/list/admin_verbs_mentor = list(
 	if(deadmin_holder)
 		deadmin_holder.reassociate()
 		log_admin("[src] re-admined themself.")
-		message_admins("[src] re-admined themself.", 1)
 		src << "<span class='interface'>You now have the keys to control the planet, or atleast a small space station</span>"
 		verbs -= /client/proc/readmin_self
 
@@ -698,7 +677,6 @@ var/list/admin_verbs_mentor = list(
 	if(holder)
 		if(alert("Confirm self-deadmin for the round? You can't re-admin yourself without someont promoting you.",,"Yes","No") == "Yes")
 			log_admin("[src] deadmined themself.")
-			message_admins("[src] deadmined themself.", 1)
 			deadmin()
 			src << "<span class='interface'>You are now a normal player.</span>"
 			verbs |= /client/proc/readmin_self
@@ -732,7 +710,7 @@ var/list/admin_verbs_mentor = list(
 
 	var/new_name = sanitizeSafe(input(src, "Enter new name. Leave blank or as is to cancel.", "[S.real_name] - Enter new silicon name", S.real_name))
 	if(new_name && new_name != S.real_name)
-		log_and_message_admins("has renamed the silicon '[S.real_name]' to '[new_name]'")
+		log_admin("[usr.ckey] has renamed the silicon '[S.real_name]' to '[new_name]'")
 		S.SetName(new_name)
 
 /client/proc/manage_silicon_laws()
@@ -792,7 +770,7 @@ var/list/admin_verbs_mentor = list(
 	var sec_level = input(usr, "It's currently code [get_security_level()].", "Select Security Level")  as null|anything in (list("green","blue","red","delta")-get_security_level())
 	if(alert("Switch from code [get_security_level()] to code [sec_level]?","Change security level?","Yes","No") == "Yes")
 		set_security_level(sec_level)
-		log_admin("[key_name(usr)] changed the security level to code [sec_level].")
+		log_admin("[usr.key] changed the security level to code [sec_level].")
 
 
 //---- bs12 verbs ----
@@ -809,7 +787,7 @@ var/list/admin_verbs_mentor = list(
 		usr << "\red You can only do this to humans!"
 		return
 	var/datum/species/S = M.species
-	if(!S) S = all_species["Human"]
+	if(!S) S = all_species[SPECIES_HUMAN]
 
 	if(alert("Are you sure you wish to edit this mob's appearance?",,"Yes","No") != "Yes")
 		return
@@ -938,6 +916,17 @@ var/list/admin_verbs_mentor = list(
 	else
 		usr << "You now won't get debug log messages"
 
+/client/proc/togglemodelogs()
+	set name = "Toggle GameMode Log Messages"
+	set category = "Preferences"
+
+	prefs.chat_toggles ^= CHAT_GAMEMODELOGS
+	if (prefs.chat_toggles & CHAT_GAMEMODELOGS)
+		usr << "You now will get game mode log messages"
+	else
+		usr << "You now won't get game mode log messages"
+
+
 /client/proc/add_supply_pack()
 	set category = "Fun"
 	set name = "Add supply pack"
@@ -999,11 +988,12 @@ var/list/admin_verbs_mentor = list(
 		name, cost, access, containername, \
 		containertype, group, hide, contains )
 
-	if( supply_controller.supply_packs.Find(name) ) log_debug("Supply pack [name] already exist!")
+	if( supply_controller.supply_packs.Find(name) )
+		log_debug("Supply pack [name] already exist!")
 	else
 		supply_controller.supply_packs[name] = CP
 		usr << "Supply pack [name] successfully created!"
-		log_admin("[key_name(usr)] has add custom supply pack [name]")
+		log_admin("[usr.key] has add custom supply pack [name]", null, 0)
 
 
 /client/proc/man_up(mob/T as mob in mob_list)
@@ -1015,8 +1005,7 @@ var/list/admin_verbs_mentor = list(
 	T << "<span class='notice'>Move on.</span>"
 	T << 'sound/voice/ManUp1.ogg'
 
-	log_admin("[key_name(usr)] told [key_name(T)] to man up and deal with it.")
-	message_admins("\blue [key_name_admin(usr)] told [key_name(T)] to man up and deal with it.", 1)
+	log_admin("[usr.key] told [key_name(T)] to man up and deal with it.", T)
 
 /client/proc/global_man_up()
 	set category = "Fun"
@@ -1027,8 +1016,7 @@ var/list/admin_verbs_mentor = list(
 		T << "<br><center><span class='notice'><b><font size=4>Man up.<br> Deal with it.</font></b><br>Move on.</span></center><br>"
 		T << 'sound/voice/ManUp1.ogg'
 
-	log_admin("[key_name(usr)] told everyone to man up and deal with it.")
-	message_admins("\blue [key_name_admin(usr)] told everyone to man up and deal with it.", 1)
+	log_admin("[usr.key] told everyone to man up and deal with it.", usr)
 
 /client/proc/give_spell(mob/T as mob in mob_list) // -- Urist
 	set category = "Fun"
@@ -1037,8 +1025,7 @@ var/list/admin_verbs_mentor = list(
 	var/spell/S = input("Choose the spell to give to that guy", "ABRAKADABRA") as null|anything in spells
 	if(!S) return
 	T.spell_list += new S
-	log_admin("[key_name(usr)] gave [key_name(T)] the spell [S].")
-	message_admins("\blue [key_name_admin(usr)] gave [key_name(T)] the spell [S].", 1)
+	log_admin("[usr.key] gave [key_name(T)] the spell [S].", T)
 
 
 
@@ -1047,15 +1034,11 @@ var/list/admin_verbs_mentor = list(
 	set name = "Toggle Paralyze"
 	set desc = "Paralyzes a player. Or unparalyses them."
 
-	var/msg
-
 	if(check_rights(R_ADMIN|R_MOD))
 		if (H.paralysis == 0)
 			H.paralysis = 1000
-			msg = " has paralyzed [key_name(H)]."
+			log_admin("[usr.key] has paralyzed [key_name(H)].", H)
 		else
 			H.paralysis = 0
-			msg = " has unparalyzed [key_name(H)]."
-		message_admins(key_name_admin(usr) + msg)
-		log_admin(key_name(usr) + msg)
+			log_admin("[usr.key] has unparalyzed [key_name(H)].", H)
 

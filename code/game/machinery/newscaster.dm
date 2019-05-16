@@ -250,7 +250,7 @@ var/list/obj/machinery/newscaster/allCasters = list() //Global list that will co
 	if(!user.IsAdvancedToolUser())
 		return 0
 
-	if(ishuman(user) || istype(user,/mob/living/silicon) )
+	if(ishuman(user) || issilicon(user))
 		var/mob/living/human_or_robot_user = user
 		var/dat
 		dat = text("<HEAD><TITLE>Newscaster</TITLE></HEAD><H3>Newscaster Unit #[src.unit_no]</H3>")
@@ -550,6 +550,7 @@ var/list/obj/machinery/newscaster/allCasters = list() //Global list that will co
 			if(src.msg =="" || src.msg=="\[REDACTED\]" || src.scanned_user == "Unknown" || src.channel_name == "" )
 				src.screen=6
 			else
+				log_game("[usr] use [src] for submit message: \"[msg]\"", src.loc, FALSE)
 				var/image = photo_data ? photo_data.photo : null
 				news_network.SubmitArticle(src.msg, src.scanned_user, src.channel_name, image, 0)
 				src.screen=4
@@ -808,7 +809,7 @@ var/list/obj/machinery/newscaster/allCasters = list() //Global list that will co
 	desc = "An issue of The Griffon, the newspaper circulating aboard Nanotrasen Space Stations."
 	icon = 'icons/obj/bureaucracy.dmi'
 	icon_state = "newspaper"
-	w_class = 2	//Let's make it fit in trashbags!
+	w_class = ITEM_SIZE_SMALL	//Let's make it fit in trashbags!
 	attack_verb = list("bapped")
 	var/screen = 0
 	var/pages = 0
@@ -960,8 +961,8 @@ obj/item/weapon/newspaper/attackby(obj/item/weapon/W as obj, mob/user as mob)
 					src.scanned_user = GetNameAndAssignmentFromId(P.id)
 				else
 					src.scanned_user = "Unknown"
-			else if(istype(human_user.wear_id, /obj/item/weapon/card/id) )
-				var/obj/item/weapon/card/id/ID = human_user.wear_id
+			else if(istype(human_user.wear_id.GetID(), /obj/item/weapon/card/id) )
+				var/obj/item/weapon/card/id/ID = human_user.wear_id.GetID()
 				src.scanned_user = GetNameAndAssignmentFromId(ID)
 			else
 				src.scanned_user ="Unknown"

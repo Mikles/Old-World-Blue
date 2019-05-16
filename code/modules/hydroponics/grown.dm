@@ -5,6 +5,7 @@
 	icon = 'icons/obj/hydroponics_products.dmi'
 	icon_state = "blank"
 	desc = "Nutritious! Probably."
+	randpixel = 5
 
 	var/plantname
 	var/datum/seed/seed
@@ -15,8 +16,6 @@
 	..()
 	if(!dried_type)
 		dried_type = type
-	src.pixel_x = rand(-5.0, 5)
-	src.pixel_y = rand(-5.0, 5)
 
 	// Fill the object up with the appropriate reagents.
 	if(planttype)
@@ -200,8 +199,8 @@
 					for(var/i=0,i<2,i++)
 						var/obj/item/stack/material/wood/NG = new (user.loc)
 						if(flesh_colour) NG.color = flesh_colour
-						for (var/obj/item/stack/material/wood/G in user.loc)
-							if(G==NG)
+						for (var/obj/item/stack/material/G in user.loc)
+							if(G.get_material_name() != MATERIAL_WOOD || G==NG)
 								continue
 							if(G.amount>=G.max_amount)
 								continue
@@ -247,9 +246,12 @@
 
 		user.lastattacked = M
 		M.lastattacker = user
-		user.attack_log += "\[[time_stamp()]\]<font color='red'> Attacked [M.name] ([M.ckey]) with [name] (INTENT: [uppertext(user.a_intent)]) (DAMTYE: [uppertext(damtype)])</font>"
-		M.attack_log += "\[[time_stamp()]\]<font color='orange'> Attacked by [user.name] ([user.ckey]) with [name] (INTENT: [uppertext(user.a_intent)]) (DAMTYE: [uppertext(damtype)])</font>"
-		msg_admin_attack("[key_name(user)] attacked [key_name(M)] with [name] (INTENT: [uppertext(user.a_intent)]) (DAMTYE: [uppertext(damtype)])" )
+		admin_attack_log(
+			user, M,
+			"Attacked [M.name] ([M.ckey]) with [name]",
+			"Attacked by [user.name] ([user.ckey]) with [name]",
+			"attacked with [name] "
+		)
 
 		if(ishuman(M))
 			var/mob/living/carbon/human/H = M
@@ -258,7 +260,7 @@
 				playsound(loc, hitsound, 50, 1, -1)
 			return hit
 		else
-			if(attack_verb.len)
+			if(attack_verb)
 				user.visible_message("<span class='danger'>[M] has been [pick(attack_verb)] with [src] by [user]!</span>")
 			else
 				user.visible_message("<span class='danger'>[M] has been attacked with [src] by [user]!</span>")
@@ -272,8 +274,7 @@
 						var/turf/simulated/location = get_turf(M)
 						if(istype(location)) location.add_blood_floor(M)
 				if("fire")
-					if (!(COLD_RESISTANCE in M.mutations))
-						M.take_organ_damage(0, force)
+					M.take_organ_damage(0, force)
 			M.updatehealth()
 
 		if(seed && seed.get_trait(TRAIT_STINGS))

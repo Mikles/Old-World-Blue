@@ -16,14 +16,14 @@
 	desc = "A head-mounted face cover designed to protect the wearer completely from space-arc eye."
 	icon_state = "welding"
 	item_state = "welding"
-	matter = list(DEFAULT_WALL_MATERIAL = 3000, "glass" = 1000)
+	matter = list(MATERIAL_STEEL = 3000, MATERIAL_GLASS = 1000)
 	var/up = 0
 	armor = list(melee = 10, bullet = 0, laser = 0,energy = 0, bomb = 0, bio = 0, rad = 0)
 	flags_inv = (HIDEMASK|HIDEEARS|HIDEEYES|HIDEFACE)
 	body_parts_covered = HEAD|FACE|EYES
 	icon_action_button = "action_welding"
 	siemens_coefficient = 0.9
-	w_class = 3
+	w_class = ITEM_SIZE_NORMAL
 
 /obj/item/clothing/head/welding/attack_self()
 	toggle()
@@ -140,7 +140,7 @@ obj/item/clothing/head/welding/blue
 	body_parts_covered = HEAD|FACE|EYES
 	brightness_on = 2
 	light_overlay = "helmet_light"
-	w_class = 3
+	w_class = ITEM_SIZE_NORMAL
 
 /*
  * Kitty ears
@@ -177,4 +177,4 @@ obj/item/clothing/head/welding/blue
 	desc = "KHAAAAK!"
 	icon_state = "vox-captain_hat"
 	item_state = "vox-captain_hat"
-	species_restricted = list("Vox")
+	species_restricted = list(SPECIES_VOX)

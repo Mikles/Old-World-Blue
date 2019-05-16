@@ -102,14 +102,14 @@
 	if(C.prefs && C.prefs.toggles & SOUND_ADMINHELP)
 		C << 'sound/effects/adminhelp.ogg'
 
-	log_admin("PM: [key_name(src)]->[key_name(C)]: [msg]")
+	log_admin("PM: [key_name(src)]->[key_name(C)]: [msg]", null, 0)
 
 	//we don't use message_admins here because the sender/receiver might get it too
 	for(var/client/X in admins)
 		//check client/X is an admin and isn't the sender or recipient
 		if(X == C || X == src)
 			continue
-		if(X.key != key && X.key != C.key && (X.holder.rights & R_ADMIN|R_MOD|R_MENTOR))
+		if(X.key != key && X.key != C.key && (X.holder.rights & R_ADMIN|R_MOD))
 			X << "<span class='pm'><span class='other'>" + create_text_tag("pm_other", "PM:", X) + " <span class='name'>[key_name(src, X, 0)]</span> to <span class='name'>[key_name(C, X, 0)]</span>: <span class='message'>[msg]</span></span></span>"
 
 /client/proc/cmd_admin_irc_pm(sender)
@@ -132,7 +132,7 @@
 
 	src << "<span class='pm'><span class='out'>" + create_text_tag("pm_out_alt", "", src) + " to <span class='name'>IRC-[sender]</span>: <span class='message'>[msg]</span></span></span>"
 
-	log_admin("PM: [key_name(src)]->IRC-[sender]: [msg]")
+	log_admin("PM: [key_name(src)]->IRC-[sender]: [msg]", null, 0)
 	for(var/client/X in admins)
 		if(X == src)
 			continue

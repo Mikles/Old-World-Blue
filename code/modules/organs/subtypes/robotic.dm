@@ -22,30 +22,29 @@
 		for(var/name in spawn_part)
 			child_type = spawn_part[name]
 			new child_type(owner, owner.species.has_limbs[name])
-	if(can_activate())
-		activate()
+
+/obj/item/organ/external/robotic/sync_to_owner()
+	for(var/obj/item/organ/I in internal_organs)
+		I.sync_to_owner()
+
+	if(gendered)
+		gendered = (owner.gender == MALE)? "_m": "_f"
+	body_build = owner.body_build.index
 
 /obj/item/organ/external/robotic/get_icon()
-	var/gender = "_m"
-	var/body_build = ""
-	if(owner)
-		if(owner.gender == FEMALE)
-			gender = "_f"
-		body_build = owner.body_build.index
-	icon_state = "[organ_tag][gendered ? "[gender]" : ""][body_build]"
+	icon_state = "[organ_tag][gendered][body_build]"
 
 	mob_icon = new /icon(default_icon, icon_state)
-	icon = mob_icon
-	dir = SOUTH
 	return mob_icon
 
+/obj/item/organ/external/robotic/apply_colors()
+	return
+
 /obj/item/organ/external/robotic/get_icon_key()
-	. = "robotic"
-	if(model)
-		. += model
+	. = "robotic[model]"
 
 /obj/item/organ/external/robotic/Destroy()
-	deactivate(1)
+	deactivate()
 	..()
 
 /obj/item/organ/external/robotic/removed()
@@ -57,13 +56,19 @@
 	return
 
 /obj/item/organ/external/robotic/proc/can_activate()
-	return 1
+	if(owner.sleeping || owner.stunned || owner.restrained())
+		owner << SPAN_WARN("You can't do that now!")
+		return
+
+	for(var/obj/item/weapon/implant/prosthesis_inhibition/I in owner)
+		if(I.malfunction)
+			continue
+		owner << SPAN_WARN("[I] in your [I.part] prevent [src] activation!")
+		return FALSE
+	return TRUE
 
 /obj/item/organ/external/robotic/proc/activate()
-	return 1
-
-/obj/item/organ/external/robotic/proc/deactivate(var/emergency = 1)
-	return 1
+/obj/item/organ/external/robotic/proc/deactivate()
 
 /obj/item/organ/external/robotic/limb
 	max_damage = 50

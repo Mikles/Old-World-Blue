@@ -9,14 +9,12 @@
 	throwforce = 5.0
 	throw_speed = 3
 	throw_range = 5
-	w_class = 3.0
+	w_class = ITEM_SIZE_NORMAL
 	var/charge = 0	// note %age conveted to actual charge in New
 	var/maxcharge = 1000
 	var/rigged = 0		// true if rigged to explode
 	var/minor_fault = 0 //If not 100% reliable, it will build up faults.
-	var/construction_cost = list(DEFAULT_WALL_MATERIAL=750,"glass"=75)
-	var/construction_time=100
-	matter = list(DEFAULT_WALL_MATERIAL = 700, "glass" = 50)
+	matter = list(MATERIAL_STEEL = 700, MATERIAL_GLASS = 50)
 
 	suicide_act(mob/user)
 		viewers(user) << "<span class='danger'>\The [user] is licking the electrodes of \the [src]! It looks like \he's trying to commit suicide.</span>"
@@ -27,12 +25,12 @@
 	name = "device power cell"
 	desc = "A small power cell designed to power handheld devices."
 	icon_state = "cell" //placeholder
-	w_class = 2
+	w_class = ITEM_SIZE_SMALL
 	force = 0
 	throw_speed = 5
 	throw_range = 7
 	maxcharge = 1000
-	matter = list("metal" = 350, "glass" = 50)
+	matter = list(MATERIAL_STEEL = 350, MATERIAL_GLASS = 50)
 
 /obj/item/weapon/cell/device/variable/New(newloc, charge_amount)
 	..(newloc)
@@ -44,7 +42,7 @@
 	desc = "You can't top the plasma top." //TOTALLY TRADEMARK INFRINGEMENT
 	origin_tech = list(TECH_POWER = 0)
 	maxcharge = 500
-	matter = list(DEFAULT_WALL_MATERIAL = 700, "glass" = 40)
+	matter = list(MATERIAL_STEEL = 700, MATERIAL_GLASS = 40)
 
 /obj/item/weapon/cell/crap/empty/New()
 	..()
@@ -54,7 +52,7 @@
 	name = "security borg rechargable D battery"
 	origin_tech = list(TECH_POWER = 0)
 	maxcharge = 600	//600 max charge / 100 charge per shot = six shots
-	matter = list(DEFAULT_WALL_MATERIAL = 700, "glass" = 40)
+	matter = list(MATERIAL_STEEL = 700, MATERIAL_GLASS = 40)
 
 /obj/item/weapon/cell/secborg/empty/New()
 	..()
@@ -64,14 +62,14 @@
 	name = "heavy-duty power cell"
 	origin_tech = list(TECH_POWER = 1)
 	maxcharge = 5000
-	matter = list(DEFAULT_WALL_MATERIAL = 700, "glass" = 50)
+	matter = list(MATERIAL_STEEL = 700, MATERIAL_GLASS = 50)
 
 /obj/item/weapon/cell/high
 	name = "high-capacity power cell"
 	origin_tech = list(TECH_POWER = 2)
 	icon_state = "hcell"
 	maxcharge = 10000
-	matter = list(DEFAULT_WALL_MATERIAL = 700, "glass" = 60)
+	matter = list(MATERIAL_STEEL = 700, MATERIAL_GLASS = 60)
 
 /obj/item/weapon/cell/high/empty/New()
 	..()
@@ -82,8 +80,7 @@
 	origin_tech = list(TECH_POWER = 5)
 	icon_state = "scell"
 	maxcharge = 20000
-	matter = list(DEFAULT_WALL_MATERIAL = 700, "glass" = 70)
-	construction_cost = list(DEFAULT_WALL_MATERIAL=750,"glass"=100)
+	matter = list(MATERIAL_STEEL = 700, MATERIAL_GLASS = 70)
 
 /obj/item/weapon/cell/super/empty/New()
 	..()
@@ -94,8 +91,7 @@
 	origin_tech = list(TECH_POWER = 6)
 	icon_state = "hpcell"
 	maxcharge = 30000
-	matter = list(DEFAULT_WALL_MATERIAL = 700, "glass" = 80)
-	construction_cost = list(DEFAULT_WALL_MATERIAL=500,"glass"=150,"gold"=200,"silver"=200)
+	matter = list(MATERIAL_STEEL = 700, MATERIAL_GLASS = 80)
 
 /obj/item/weapon/cell/hyper/empty/New()
 	..()
@@ -106,7 +102,7 @@
 	icon_state = "icell"
 	origin_tech =  null
 	maxcharge = 30000 //determines how badly mobs get shocked
-	matter = list(DEFAULT_WALL_MATERIAL = 700, "glass" = 80)
+	matter = list(MATERIAL_STEEL = 700, MATERIAL_GLASS = 80)
 
 	check_charge()
 		return 1

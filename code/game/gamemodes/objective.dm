@@ -74,7 +74,7 @@ datum/objective/assassinate
 				target.current.stat == DEAD || \
 				issilicon(target.current) || \
 				isbrain(target.current) || \
-				target.current.z > 8 || \
+				isOnPlayerLevel(target.current.z) || \
 				!target.current.ckey
 			) //Borgs/brains/AIs count as dead for traitor objectives. --NeoFite
 				return 1
@@ -347,7 +347,7 @@ datum/objective/escape
 			return 0
 		if(!emergency_shuttle.returned())
 			return 0
-		if(!owner.current || owner.current.stat ==2)
+		if(!owner.current || owner.current.stat == DEAD)
 			return 0
 		var/turf/location = get_turf(owner.current.loc)
 		if(!location)
@@ -456,7 +456,7 @@ datum/objective/steal
 		/*"nuclear authentication disk" = /obj/item/weapon/disk/nuclear,*/
 		"nuclear gun" = /obj/item/weapon/gun/energy/gun/nuclear,
 		"diamond drill" = /obj/item/weapon/pickaxe/diamonddrill,
-		"bag of holding" = /obj/item/weapon/storage/backpack/holding,
+		"bag of holding" = /obj/item/storage/backpack/holding,
 		"hyper-capacity cell" = /obj/item/weapon/cell/hyper,
 		"10 diamonds" = /obj/item/stack/material/diamond,
 		"50 gold bars" = /obj/item/stack/material/gold,
@@ -536,7 +536,7 @@ datum/objective/steal
 						if(isAI(M) && M.stat != DEAD)
 							return 1
 
-				for(var/mob/living/silicon/ai/ai in world)
+				for(var/mob/living/silicon/ai/ai in mob_list)
 					var/area/check_area = get_area(ai)
 					if(check_area.is_escape_location)
 						return 1
@@ -558,7 +558,7 @@ datum/objective/download
 	check_completion()
 		if(!ishuman(owner.current))
 			return 0
-		if(!owner.current || owner.current.stat == 2)
+		if(!owner.current || owner.current.stat == DEAD)
 			return 0
 
 		var/current_amount
@@ -593,13 +593,13 @@ datum/objective/capture
 
 		for(var/mob/living/carbon/human/M in A) // Humans (and subtypes).
 			var/worth = M.species.rarity_value
-			if(M.stat==2)//Dead folks are worth less.
+			if(M.stat==DEAD)//Dead folks are worth less.
 				worth*=0.5
 				continue
 			captured_amount += worth
 
 		for(var/mob/living/carbon/alien/larva/M in A)//Larva are important for research.
-			if(M.stat==2)
+			if(M.stat==DEAD)
 				captured_amount+=0.5
 				continue
 			captured_amount+=1
@@ -665,7 +665,7 @@ datum/objective/heist/kidnap
 		if(!target)//If it's a free objective.
 			return 1
 		if(target && target.current)
-			if (target.current.stat == 2)
+			if (target.current.stat == DEAD)
 				return 0 // They're dead. Fail.
 			//if (!target.current.restrained())
 			//	return 0 // They're loose. Close but no cigar.
@@ -740,28 +740,28 @@ datum/objective/heist/salvage
 	choose_target()
 		switch(rand(1,8))
 			if(1)
-				target = DEFAULT_WALL_MATERIAL
+				target = MATERIAL_STEEL
 				target_amount = 300
 			if(2)
-				target = "glass"
+				target = MATERIAL_GLASS
 				target_amount = 200
 			if(3)
-				target = "plasteel"
+				target = MATERIAL_PLASTEEL
 				target_amount = 100
 			if(4)
-				target = "phoron"
+				target = MATERIAL_PHORON
 				target_amount = 100
 			if(5)
-				target = "silver"
+				target = MATERIAL_SILVER
 				target_amount = 50
 			if(6)
-				target = "gold"
+				target = MATERIAL_GOLD
 				target_amount = 20
 			if(7)
-				target = "uranium"
+				target = MATERIAL_URANIUM
 				target_amount = 20
 			if(8)
-				target = "diamond"
+				target = MATERIAL_DIAMOND
 				target_amount = 20
 
 		explanation_text = "Ransack the station and escape with [target_amount] [target]."
@@ -773,23 +773,20 @@ datum/objective/heist/salvage
 		for(var/obj/item/O in locate(/area/skipjack_station/start))
 
 			var/obj/item/stack/material/S
-			if(istype(O,/obj/item/stack/material))
-				if(O.name == target)
-					S = O
-					total_amount += S.get_amount()
+			if(istype(O) && O.get_material() == target)
+				S = O
+				total_amount += S.get_amount()
 			for(var/obj/I in O.contents)
-				if(istype(I,/obj/item/stack/material))
-					if(I.name == target)
-						S = I
-						total_amount += S.get_amount()
+				if(ismaterial(I) && I.get_material() == target)
+					S = I
+					total_amount += S.get_amount()
 
 		for(var/datum/mind/raider in raiders.current_antagonists)
 			if(raider.current)
 				for(var/obj/item/O in raider.current.get_contents())
-					if(istype(O,/obj/item/stack/material))
-						if(O.name == target)
-							var/obj/item/stack/material/S = O
-							total_amount += S.get_amount()
+					if(ismaterial(O) && O.get_material() == target)
+						var/obj/item/stack/material/S = O
+						total_amount += S.get_amount()
 
 		if(total_amount >= target_amount) return 1
 		return 0
@@ -809,7 +806,7 @@ datum/objective/heist/salvage
 /datum/objective/borer_survive/check_completion()
 	if(owner)
 		var/mob/living/simple_animal/borer/B = owner
-		if(istype(B) && B.stat < 2 && B.host && B.host.stat < 2) return 1
+		if(istype(B) && B.stat < DEAD && B.host && B.host.stat < DEAD) return 1
 	return 0
 
 /datum/objective/borer_reproduce
@@ -828,7 +825,7 @@ datum/objective/heist/salvage
 	if(owner)
 		for(var/datum/mind/ninja in get_antags("ninja"))
 			if(ninja != owner)
-				if(ninja.current.stat < 2) return 0
+				if(ninja.current.stat < DEAD) return 0
 		return 1
 	return 0
 
@@ -845,7 +842,7 @@ datum/objective/heist/salvage
 	if(!cult)
 		return 0
 	for(var/datum/mind/cult_mind in cult.current_antagonists)
-		if (cult_mind.current && cult_mind.current.stat!=2)
+		if (cult_mind.current && cult_mind.current.stat!=DEAD)
 			var/area/A = get_area(cult_mind.current )
 			if ( is_type_in_list(A, centcom_areas))
 				acolytes_survived++

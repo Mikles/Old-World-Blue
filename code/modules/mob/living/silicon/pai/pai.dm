@@ -129,7 +129,7 @@
 	return 0
 
 /mob/living/silicon/pai/blob_act()
-	if (src.stat != 2)
+	if (src.stat != DEAD)
 		src.adjustBruteLoss(60)
 		src.updatehealth()
 		return 1
@@ -190,7 +190,7 @@
 		src.unset_machine()
 		src.reset_view(null)
 		return 0
-	if (stat == 2 || !C.status || !(src.network in C.network)) return 0
+	if (stat == DEAD || !C.status || !(src.network in C.network)) return 0
 
 	// ok, we're alive, camera is good and in our network...
 
@@ -229,7 +229,7 @@
 	src.cameraFollow = null
 	var/cameralist[0]
 
-	if(usr.stat == 2)
+	if(usr.stat == DEAD)
 		usr << "You can't change your camera network because you are dead!"
 		return
 
@@ -375,7 +375,7 @@
 	else
 		visible_message("<span class='warning'>[user.name] bonks [src] harmlessly with [W].</span>")
 	spawn(1)
-		if(stat != 2) close_up()
+		if(stat != DEAD) close_up()
 	return
 
 /mob/living/silicon/pai/attack_hand(mob/user as mob)

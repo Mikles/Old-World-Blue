@@ -323,7 +323,7 @@ var/list/turret_icons
 				update_icon()
 		wrenching = 0
 
-	else if(istype(I, /obj/item/weapon/card/id)||istype(I, /obj/item/device/pda))
+	else if(I.GetID())
 		//Behavior lock/unlock mangement
 		if(allowed(user))
 			locked = !locked
@@ -706,7 +706,7 @@ var/list/turret_icons
 				return
 
 		if(1)
-			if(istype(I, /obj/item/stack/material) && I.get_material_name() == DEFAULT_WALL_MATERIAL)
+			if(ismaterial(I) && I.get_material_name() == MATERIAL_STEEL)
 				var/obj/item/stack/M = I
 				if(M.use(2))
 					user << "<span class='notice'>You add some metal armor to the interior frame.</span>"
@@ -798,7 +798,7 @@ var/list/turret_icons
 			//attack_hand() removes the prox sensor
 
 		if(6)
-			if(istype(I, /obj/item/stack/material) && I.get_material_name() == DEFAULT_WALL_MATERIAL)
+			if(ismaterial(I) && I.get_material_name() == MATERIAL_STEEL)
 				var/obj/item/stack/M = I
 				if(M.use(2))
 					user << "<span class='notice'>You add some metal armor to the exterior frame.</span>"

@@ -65,7 +65,7 @@ for reference:
 /obj/structure/barricade/New(var/newloc, var/material_name)
 	..(newloc)
 	if(!material_name)
-		material_name = "wood"
+		material_name = MATERIAL_WOOD
 	material = get_material_by_name("[material_name]")
 	if(!material)
 		qdel(src)
@@ -89,7 +89,7 @@ for reference:
 				user << "<span class='warning'>You need one sheet of [material.display_name] to repair \the [src].</span>"
 				return
 			visible_message("<span class='notice'>[user] begins to repair \the [src].</span>")
-			if(do_after(user,20) && health < maxhealth)
+			if(do_after(user,20,src) && health < maxhealth)
 				if(D.use(1))
 					health = maxhealth
 					visible_message("<span class='notice'>[user] repairs \the [src].</span>")
@@ -173,7 +173,7 @@ for reference:
 	icon_state = "barrier[locked]"
 
 /obj/machinery/deployable/barrier/attackby(obj/item/weapon/W as obj, mob/user as mob)
-	if(istype(W, /obj/item/weapon/card/id/))
+	if(W.GetID())
 		if(allowed(user))
 			if	(emagged < 2.0)
 				locked = !locked
@@ -226,7 +226,7 @@ for reference:
 			if(health <= 0)
 				explode()
 			return
-			
+
 /obj/machinery/deployable/barrier/emp_act(severity)
 	if(stat & (BROKEN|NOPOWER))
 		return

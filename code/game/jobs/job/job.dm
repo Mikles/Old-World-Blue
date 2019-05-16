@@ -25,7 +25,7 @@
 	var/economic_modifier = 2			  // With how much does this job modify the initial account amount?
 
 	var/idtype = /obj/item/weapon/card/id // The type of the ID the player will have
-	var/custom_survival_gear = null       // Custom box for spawn in backpack
+	var/adv_survival_gear = null          // Spawn default or advanced survival gears.
 
 	//job equipment
 	var/implanted = 0
@@ -42,11 +42,11 @@
 	var/glasses = null
 	var/suit_store = null
 
-	var/backpack  = /obj/item/weapon/storage/backpack
-	var/satchel   = /obj/item/weapon/storage/backpack/satchel
-	var/satchel_j = /obj/item/weapon/storage/backpack/satchel/norm
-	var/dufflebag = /obj/item/weapon/storage/backpack/dufflebag
-	var/messenger = /obj/item/weapon/storage/backpack/messenger
+	var/backpack  = /obj/item/storage/backpack
+	var/satchel   = /obj/item/storage/backpack/satchel
+	var/satchel_j = /obj/item/storage/backpack/satchel/norm
+	var/dufflebag = /obj/item/storage/backpack/dufflebag
+	var/messenger = /obj/item/storage/backpack/messenger
 
 	//This will be put in backpack. List ordered by priority!
 	var/list/put_in_backpack = list()
@@ -96,13 +96,10 @@ For copy-pasting:
 			if("Dufflebag")		backpack_type = dufflebag
 			if("Messenger")		backpack_type = messenger
 
-		var/obj/item/weapon/storage/backpack/BPK = new backpack_type(H)
+		var/obj/item/storage/backpack/BPK = new backpack_type(H)
 		if(H.equip_to_slot_or_del(BPK, slot_back,1))
 			for( var/path in put_in_backpack )
 				new path(BPK)
-
-	//Survival equipment
-	H.equip_survival_gear(custom_survival_gear)
 
 	//No-check items (suits, gloves, etc)
 	if(ear)
@@ -129,7 +126,7 @@ For copy-pasting:
 		else
 			H.equip_to_slot_or_del(new pda (H), slot_belt)
 
-	if(!H.back || !istype(H.back, /obj/item/weapon/storage/backpack))
+	if(!H.back || !istype(H.back, /obj/item/storage/backpack))
 		var/list/slots = list( slot_belt, slot_r_store, slot_l_store, slot_r_hand, slot_l_hand, slot_s_store )
 		for( var/path in put_in_backpack )
 			if( !slots.len ) break
@@ -138,10 +135,13 @@ For copy-pasting:
 				if( H.equip_to_slot_if_possible(I, slot, 0, 1, 0) )
 					slots -= slot
 					break
-			if(istype(H.r_hand,/obj/item/weapon/storage))
+			if(istype(H.r_hand,/obj/item/storage))
 				new path(H.r_hand)
-			else if(istype(H.l_hand, /obj/item/weapon/storage))
+			else if(istype(H.l_hand, /obj/item/storage))
 				new path(H.l_hand)
+
+	//Survival equipment
+	H.equip_survival_gear(src)
 
 	//Loyalty implant
 	if(implanted) H.implant_loyalty(H)
@@ -198,6 +198,21 @@ For copy-pasting:
 	if(C && config.use_age_restriction_for_jobs && isnum(C.player_age) && isnum(minimal_player_age))
 		return max(0, minimal_player_age - C.player_age)
 	return 0
+
+/datum/job/proc/available_to(var/mob/player)
+	if(!player)
+		return 0
+	if(jobban_isbanned(player,title))
+		return 0
+	if(!player_old_enough(player.client))
+		return 0
+	if(!player.client || !player.client.prefs)
+		return 0
+	if(player.client.prefs.IsJobRestricted(title))
+		return 0
+	if(minimum_character_age && (player.client.prefs.age < minimum_character_age))
+		return 0
+	return 1
 
 /datum/job/proc/apply_fingerprints(var/mob/living/carbon/human/target)
 	if(!istype(target))

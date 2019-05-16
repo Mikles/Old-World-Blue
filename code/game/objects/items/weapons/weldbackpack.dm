@@ -4,7 +4,7 @@
 	slot_flags = SLOT_BACK
 	icon = 'icons/obj/storage.dmi'
 	icon_state = "welderpack"
-	w_class = 4.0
+	w_class = ITEM_SIZE_LARGE
 	var/max_fuel = 350
 
 /obj/item/weapon/weldpack/New()
@@ -17,9 +17,8 @@
 	if(istype(W, /obj/item/weapon/weldingtool))
 		var/obj/item/weapon/weldingtool/T = W
 		if(T.welding & prob(50))
-			message_admins("[key_name_admin(user)] triggered a fueltank explosion.")
-			log_game("[key_name(user)] triggered a fueltank explosion.")
-			user << "\red That was stupid of you."
+			log_game("[key_name(user)] triggered a fueltank explosion.", src)
+			user << SPAN_DANG("That was stupid of you.")
 			explosion(get_turf(src),-1,0,2)
 			if(src)
 				qdel(src)

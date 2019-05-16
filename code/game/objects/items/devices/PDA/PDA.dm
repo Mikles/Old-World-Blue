@@ -9,7 +9,7 @@ var/global/list/obj/item/device/pda/PDAs = list()
 	icon = 'icons/obj/pda.dmi'
 	icon_state = "pda"
 	item_state = "electronic"
-	w_class = 2.0
+	w_class = ITEM_SIZE_SMALL
 	slot_flags = SLOT_ID | SLOT_BELT
 
 	//Main variables
@@ -247,7 +247,7 @@ var/global/list/obj/item/device/pda/PDAs = list()
 	set category = "AI IM"
 	set name = "Send Message"
 	set src in usr
-	if(usr.stat == 2)
+	if(usr.stat == DEAD)
 		usr << "You can't send PDA messages because you are dead!"
 		return
 	var/list/plist = available_pdas()
@@ -263,7 +263,7 @@ var/global/list/obj/item/device/pda/PDAs = list()
 	set category = "AI IM"
 	set name = "Toggle Sender/Receiver"
 	set src in usr
-	if(usr.stat == 2)
+	if(usr.stat == DEAD)
 		usr << "You can't do that because you are dead!"
 		return
 	toff = !toff
@@ -274,7 +274,7 @@ var/global/list/obj/item/device/pda/PDAs = list()
 	set category = "AI IM"
 	set name = "Toggle Ringer"
 	set src in usr
-	if(usr.stat == 2)
+	if(usr.stat == DEAD)
 		usr << "You can't do that because you are dead!"
 		return
 	message_silent=!message_silent
@@ -285,7 +285,7 @@ var/global/list/obj/item/device/pda/PDAs = list()
 	set category = "AI IM"
 	set name = "Show Message Log"
 	set src in usr
-	if(usr.stat == 2)
+	if(usr.stat == DEAD)
 		usr << "You can't do that because you are dead!"
 		return
 	var/HTML = "<html><head><title>AI PDA Message Log</title></head><body>"
@@ -783,7 +783,7 @@ var/global/list/obj/item/device/pda/PDAs = list()
 
 		if("Toggle Door")
 			if(cartridge && cartridge.access_remote_door)
-				for(var/obj/machinery/door/blast/M in world)
+				for(var/obj/machinery/door/blast/M in machines)
 					if(M.id == cartridge.remote_door_id)
 						if(M.density)
 							M.open()
@@ -821,12 +821,10 @@ var/global/list/obj/item/device/pda/PDAs = list()
 							U.show_message("<span class='warning'>Energy feeds back into your [src]!</span>", 1)
 							ui.close()
 							detonate_act(src)
-							log_admin("[key_name(U)] just attempted to blow up [P] with the Detomatix cartridge but failed, blowing themselves up")
-							message_admins("[key_name_admin(U)] just attempted to blow up [P] with the Detomatix cartridge but failed.", 1)
+							log_mode("[key_name(U)] just attempted to blow up [P] with the Detomatix cartridge but failed, blowing themselves up", P)
 						else
 							U.show_message("<span class='notice'>Success!</span>", 1)
-							log_admin("[key_name(U)] just attempted to blow up [P] with the Detomatix cartridge and succeeded")
-							message_admins("[key_name_admin(U)] just attempted to blow up [P] with the Detomatix cartridge and succeeded.", 1)
+							log_mode("[key_name(U)] just attempted to blow up [P] with the Detomatix cartridge and succeeded", U)
 							detonate_act(P)
 					else
 						U << "No charges left."
@@ -1056,7 +1054,7 @@ var/global/list/obj/item/device/pda/PDAs = list()
 	var/reception_message = "\icon[src] <b>Message from [sender] ([sender_job]), </b>\"[utf8_to_cp1251(message)]\" (<a href='byond://?src=\ref[src];choice=Message;skiprefresh=1;target=\ref[sending_unit]'>Reply</a>)"
 	new_info(message_silent, ttone, reception_message)
 
-	log_pda("[usr] (PDA: [sending_unit]) sent \"[message]\" to [name]")
+	log_pda("[key_name(usr)] ([sending_unit] -> [name]) sent \"[message]\"")
 	new_message = 1
 	update_icon()
 
@@ -1068,7 +1066,7 @@ var/global/list/obj/item/device/pda/PDAs = list()
 	var/reception_message = "\icon[src] <b>Message from [sender] ([sender_job]), </b>\"[message]\" (<a href='byond://?src=\ref[src];choice=Message;skiprefresh=1;target=\ref[sending_unit]'>Reply</a>) [track]"
 	new_info(message_silent, newstone, reception_message)
 
-	log_pda("[usr] (PDA: [sending_unit]) sent \"[message]\" to [name]")
+	log_pda("[key_name(usr)] ([sending_unit] -> [name]) sent \"[message]\"")
 	new_message = 1
 
 /obj/item/device/pda/verb/verb_reset_pda()
@@ -1156,8 +1154,8 @@ var/global/list/obj/item/device/pda/PDAs = list()
 				user.drop_from_inventory(I, src)
 				id = I
 	else
-		var/obj/item/weapon/card/I = user.get_active_hand()
-		if (istype(I, /obj/item/weapon/card/id) && I:registered_name)
+		var/obj/item/weapon/card/id/I = user.get_active_hand()
+		if (istype(I, /obj/item/weapon/card/id) && I.registered_name)
 			var/obj/old_id = id
 			user.drop_from_inventory(I, src)
 			id = I
@@ -1216,7 +1214,7 @@ var/global/list/obj/item/device/pda/PDAs = list()
 					O.show_message("<span class='warning'>\The [user] has analyzed [C]'s vitals!</span>", 1)
 
 				user.show_message("<span class='notice'>Analyzing Results for [C]:</span>")
-				user.show_message("<span class='notice'>    Overall Status: [C.stat > 1 ? "dead" : "[C.health - C.halloss]% healthy"]</span>", 1)
+				user.show_message("<span class='notice'>    Overall Status: [C.stat == DEAD ? "dead" : "[C.health - C.halloss]% healthy"]</span>", 1)
 				user.show_message(text("<span class='notice'>    Damage Specifics:</span> <span class='[]'>[]</span>-<span class='[]'>[]</span>-<span class='[]'>[]</span>-<span class='[]'>[]</span>",
 						(C.getOxyLoss() > 50) ? "warning" : "", C.getOxyLoss(),
 						(C.getToxLoss() > 50) ? "warning" : "", C.getToxLoss(),
@@ -1389,7 +1387,7 @@ var/global/list/obj/item/device/pda/PDAs = list()
 
 
 //Some spare PDAs in a box
-/obj/item/weapon/storage/box/PDAs
+/obj/item/storage/box/PDAs
 	name = "box of spare PDAs"
 	desc = "A box of spare PDA microcomputers."
 	icon = 'icons/obj/pda.dmi'

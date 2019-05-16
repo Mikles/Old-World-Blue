@@ -90,6 +90,17 @@
 
 	custom_items["gremy4uu"] = L
 
+///PhoeniX Vito///
+
+	L = list()
+
+	current_data = new()
+	current_data.character_name = "Vikro Box"
+	current_data.item_path = /obj/item/device/radio/headset/moonphones
+	L |= current_data
+
+	custom_items["phoenixvito"] = L
+
 ///Fox231///
 
 	L = list()
@@ -105,6 +116,44 @@
 	L |= current_data
 
 	custom_items["fox231"] = L
+
+
+////Maglaj////
+
+	L = list()
+
+	current_data = new()
+	current_data.character_name = "Nikolay Bolotov"
+	current_data.item_path = /obj/item/clothing/under/rank/security/maglaj
+	L |= current_data
+
+	current_data = new()
+	current_data.character_name = "Nikolay Bolotov"
+	current_data.item_path = /obj/item/clothing/shoes/jackboots/maglaj
+	L |= current_data
+
+	custom_items["maglaj"] = L
+
+////D00k-N00kem////
+
+	L = list()
+
+	current_data = new()
+	current_data.character_name = "Natalia Lynn"
+	current_data.item_path = /obj/item/clothing/suit/storage/labcoat/augmented
+	L |= current_data
+
+	current_data = new()
+	current_data.character_name = "Lorenzo Shere"
+	current_data.item_path = /obj/item/clothing/mask/gas/D00k_N00kem
+	L |= current_data
+
+	current_data = new()
+	current_data.character_name = "Lorenzo Shere"
+	current_data.item_path = /obj/item/clothing/suit/storage/labcoat/long
+	L |= current_data
+
+	custom_items["d00kn00kem"] = L
 
 ///Shamah///
 
@@ -122,16 +171,32 @@
 	L = list()
 
 	current_data = new()
-	current_data.character_name = "Delain Veber-Bezo"
+	current_data.character_name = "Charlotte View"
 	current_data.item_path = /obj/item/weapon/flame/lighter/zippo/black
 	L |= current_data
 
 	current_data = new()
-	current_data.character_name = "Delain Veber-Bezo"
+	current_data.character_name = "Charlotte View"
 	current_data.item_path = /obj/item/clothing/suit/storage/deverezzer
 	L |= current_data
 
 	custom_items["deverezzer"] = L
+
+///LunarDarkness///
+
+	L = list()
+
+	current_data = new()
+	current_data.character_name = "Renie View"
+	current_data.item_path = /obj/item/weapon/flame/lighter/zippo/black
+	L |= current_data
+
+	current_data = new()
+	current_data.character_name = "Renie View"
+	current_data.item_path = /obj/item/clothing/suit/storage/deverezzer
+	L |= current_data
+
+	custom_items["lunardarkness"] = L
 
 ///Lethal Ghost///
 
@@ -146,16 +211,7 @@
 
 ///Eclipse///
 
-	current_data = new()
-	current_data.character_name = "Aiden McMurray"
-	current_data.item_path = /obj/item/clothing/under/rank/mechatronic/solar
-	L |= current_data
-
-	current_data = new()
-	current_data.req_titles = list("Paramedic")
-	current_data.character_name = "Aiden McMurray"
-	current_data.item_path = /obj/item/clothing/suit/storage/vest/pcrc
-	L |= current_data
+	L = list()
 
 	current_data = new()
 	current_data.character_name = "Aiden McMurray"
@@ -170,20 +226,13 @@
 
 	current_data = new()
 	current_data.req_titles = list("Head of Security", "Security Officer", "Warden")
-	current_data.character_name = "Aiden McMurray"
-	current_data.item_path = /obj/item/clothing/under/rank/security/solar
+	current_data.item_path = /obj/item/clothing/head/helmet/blackberetarmor
 	L |= current_data
 
 	current_data = new()
 	current_data.req_titles = list("Head of Security", "Security Officer", "Warden")
 	current_data.character_name = "Aiden McMurray"
 	current_data.item_path = /obj/item/clothing/head/helmet/pmcsolar
-	L |= current_data
-
-	current_data = new()
-	current_data.req_titles = list("Head of Security", "Security Officer", "Warden")
-	current_data.character_name = "Aiden McMurray"
-	current_data.item_path = /obj/item/clothing/mask/keffiehsolar
 	L |= current_data
 
 	custom_items["solareclipse84"] = L
@@ -257,38 +306,6 @@
 
 	custom_items["wajtswv"] = L
 
-///Tertiumdatur///
-
-	L = list()
-
-	current_data = new()
-	current_data.character_name = "Morlaiaschorr Ilirka"
-	current_data.item_desc = "A kit for modifying a voidsuit."
-	current_data.name = "Brown refitted modification of the ordinary atmospherics voidsuit made by Aether A&R. This one suitable only for tajaran."
-	current_data.item_path = /obj/item/device/kit/suit
-	current_data.req_titles = list("Atmospheric Technician", "Station Engineer")
-	current_data.kit_name = "dark brown voidsuit"
-	current_data.kit_desc = "Brown refitted version of the ordinary atmospherics voidsuit made by Aether A&R. This one suitable only for tajaran."
-	current_data.kit_icon = "rig-atmos_special"
-	L |= current_data
-
-	current_data = new()
-	current_data.character_name = "Morlaiaschorr Ilirka"
-	current_data.item_path = /obj/item/clothing/glasses/hud/engi
-	L |= current_data
-
-	current_data = new()
-	current_data.character_name = "Karamzi Khis'san"
-	current_data.item_path = /obj/item/clothing/head/floral_crown
-	L |= current_data
-
-	current_data = new()
-	current_data.character_name = "Judas Insufledor"
-	current_data.item_path = /obj/item/clothing/suit/storage/judas_jacket
-	L |= current_data
-
-	custom_items["tertiumdatur"] = L
-
 ///Nikiss2000///
 
 	L = list()
@@ -300,17 +317,19 @@
 
 	custom_items["nikiss2000"] = L
 
-
-
-///Nikiton///
+////NearBird////
 
 	L = list()
 	current_data = new()
 	current_data.req_titles = list("Head of Security", "Security Officer", "Warden")
-	current_data.character_name = "Leroy Woodward"
-	current_data.item_path = /obj/item/clothing/accessory/purple_heart/nikiton
+	current_data.item_path = /obj/item/clothing/suit/storage/vest/solar
 	L |= current_data
 
+	custom_items["nearbird"] = L
+
+
+///Nikiton///
+	L = list()
 	current_data = new()
 	current_data.req_titles = list("Head of Security", "Security Officer", "Warden")
 	current_data.character_name = "Leroy Woodward"
@@ -325,7 +344,6 @@
 	L = list()
 	current_data = new()
 	current_data.req_titles = list("Head of Security", "Security Officer", "Warden")
-	current_data.character_name = "Megan Abbott"
 	current_data.item_path = /obj/item/clothing/accessory/purple_heart/madman
 	L |= current_data
 
@@ -371,31 +389,31 @@
 
 	custom_items["subber"] = L
 
-///MarcusAga///
+///Joody///
 
 	L = list()
 
 	current_data = new()
-	current_data.character_name = "Bertrand Francois"
-	current_data.item_path = /obj/item/clothing/under/pants/sweaterj
+	current_data.character_name = "Aliah Shak'hanara"
+	current_data.item_path = /obj/item/clothing/suit/storage/toggleable_hood/cloak
 	L |= current_data
 
 	current_data = new()
-	current_data.character_name = "Bertrand Francois"
-	current_data.item_path = /obj/item/clothing/suit/storage/pullover
+	current_data.character_name = "Aliah Shak'hanara"
+	current_data.item_path = /obj/item/clothing/under/dbodywraps
 	L |= current_data
 
 	current_data = new()
-	current_data.character_name = "Bertrand Francois"
-	current_data.item_path = /obj/item/clothing/shoes/red_boots
+	current_data.character_name = "Aliah Shak'hanara"
+	current_data.item_path = /obj/item/clothing/shoes/leatherboots
 	L |= current_data
 
 	current_data = new()
-	current_data.character_name = "Bertrand Francois"
-	current_data.item_path = /obj/item/device/pda/chrome
+	current_data.character_name = "Aliah Shak'hanara"
+	current_data.item_path = /obj/item/clothing/accessory/locket/Evans
 	L |= current_data
 
-	custom_items["marcusaga"] = L
+	custom_items["joody"] = L
 
 	return 1
 

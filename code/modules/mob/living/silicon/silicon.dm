@@ -84,8 +84,14 @@
 /mob/living/silicon/IsAdvancedToolUser()
 	return 1
 
+/mob/living/silicon/put_in_hands(var/obj/item/W)
+	W.forceMove(get_turf(W))
+	W.layer = initial(W.layer)
+	W.dropped()
+	return 0
+
 /mob/living/silicon/blob_act()
-	if (src.stat != 2)
+	if (src.stat != DEAD)
 		src.adjustBruteLoss(60)
 		src.updatehealth()
 		return 1
@@ -266,17 +272,17 @@
 
 	switch(severity)
 		if(1.0)
-			if (stat != 2)
+			if (stat != DEAD)
 				adjustBruteLoss(100)
 				adjustFireLoss(100)
 				if(!anchored)
 					gib()
 		if(2.0)
-			if (stat != 2)
+			if (stat != DEAD)
 				adjustBruteLoss(60)
 				adjustFireLoss(60)
 		if(3.0)
-			if (stat != 2)
+			if (stat != DEAD)
 				adjustBruteLoss(30)
 
 	updatehealth()

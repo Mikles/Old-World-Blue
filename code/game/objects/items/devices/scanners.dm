@@ -13,14 +13,13 @@ REAGENT SCANNER
 	name = "health analyzer"
 	desc = "A hand-held body scanner able to distinguish vital signs of the subject."
 	icon_state = "health"
-	item_state = "analyzer"
 	flags = CONDUCT
 	slot_flags = SLOT_BELT
 	throwforce = 3
-	w_class = 2.0
+	w_class = ITEM_SIZE_SMALL
 	throw_speed = 5
 	throw_range = 10
-	matter = list(DEFAULT_WALL_MATERIAL = 200)
+	matter = list(MATERIAL_STEEL = 200)
 	origin_tech = list(TECH_MAGNET = 1, TECH_BIO = 1)
 	var/mode = 1;
 
@@ -34,6 +33,8 @@ REAGENT SCANNER
 	scan_mob(M, user)
 
 /obj/item/device/healthanalyzer/proc/scan_mob(mob/living/M, mob/living/user)
+	//TODO: DNA3 clown_block
+	/*
 	if ((CLUMSY in user.mutations) && prob(50))
 		user << text("<span class='warning'>You try to analyze the floor's vitals!</span>")
 		for(var/mob/O in viewers(M, null))
@@ -44,6 +45,7 @@ REAGENT SCANNER
 		user.show_message("<span class='notice'>Key: Suffocation/Toxin/Burns/Brute</span>", 1)
 		user.show_message("<span class='notice'>Body Temperature: ???</span>", 1)
 		return
+	*/
 	user.visible_message("<span class='notice'> [user] has analyzed [M]'s vitals.</span>","<span class='notice'> You have analyzed [M]'s vitals.</span>")
 
 	if (!ishuman(M) || M.isSynthetic())
@@ -66,7 +68,7 @@ REAGENT SCANNER
 		user.show_message("<span class='notice'>Analyzing Results for [M]:</span>")
 		user.show_message("<span class='notice'>Overall Status: dead</span>")
 	else
-		user.show_message("<span class='notice'>Analyzing Results for [M]:\n\t Overall Status: [M.stat > 1 ? "dead" : "[round(M.health/M.maxHealth*100)]% healthy"]</span>")
+		user.show_message("<span class='notice'>Analyzing Results for [M]:\n\t Overall Status: [M.stat == DEAD ? "dead" : "[round(M.health/M.maxHealth*100)]% healthy"]</span>")
 	user.show_message("<span class='notice'>    Key: <font color='blue'>Suffocation</font>/<font color='green'>Toxin</font>/<font color='#FFA500'>Burns</font>/<font color='red'>Brute</font></span>", 1)
 	user.show_message("<span class='notice'>    Damage Specifics: <font color='blue'>[OX]</font> - <font color='green'>[TX]</font> - <font color='#FFA500'>[BU]</font> - <font color='red'>[BR]</font></span>")
 	user.show_message("<span class='notice'>Body Temperature: [M.bodytemperature-T0C]&deg;C ([M.bodytemperature*1.8-459.67]&deg;F)</span>", 1)
@@ -193,14 +195,14 @@ REAGENT SCANNER
 	desc = "A hand-held environmental scanner which reports current gas levels."
 	icon_state = "atmos"
 	item_state = "analyzer"
-	w_class = 2.0
+	w_class = ITEM_SIZE_SMALL
 	flags = CONDUCT
 	slot_flags = SLOT_BELT
 	throwforce = 5
 	throw_speed = 4
 	throw_range = 20
 
-	matter = list(DEFAULT_WALL_MATERIAL = 30,"glass" = 20)
+	matter = list(MATERIAL_STEEL = 30,MATERIAL_GLASS = 20)
 
 	origin_tech = list(TECH_MAGNET = 1, TECH_ENGINEERING = 1)
 
@@ -226,14 +228,14 @@ REAGENT SCANNER
 	desc = "A hand-held mass spectrometer which identifies trace chemicals in a blood sample."
 	icon_state = "spectrometer"
 	item_state = "analyzer"
-	w_class = 2.0
+	w_class = ITEM_SIZE_SMALL
 	flags = CONDUCT | OPENCONTAINER
 	slot_flags = SLOT_BELT
 	throwforce = 5
 	throw_speed = 4
 	throw_range = 20
 
-	matter = list(DEFAULT_WALL_MATERIAL = 30,"glass" = 20)
+	matter = list(MATERIAL_STEEL = 30,MATERIAL_GLASS = 20)
 
 	origin_tech = list(TECH_MAGNET = 2, TECH_BIO = 2)
 	var/details = 0
@@ -287,13 +289,13 @@ REAGENT SCANNER
 	desc = "A hand-held reagent scanner which identifies chemical agents."
 	icon_state = "spectrometer"
 	item_state = "analyzer"
-	w_class = 2.0
+	w_class = ITEM_SIZE_SMALL
 	flags = CONDUCT
 	slot_flags = SLOT_BELT
 	throwforce = 5
 	throw_speed = 4
 	throw_range = 20
-	matter = list(DEFAULT_WALL_MATERIAL = 30,"glass" = 20)
+	matter = list(MATERIAL_STEEL = 30,MATERIAL_GLASS = 20)
 
 	origin_tech = list(TECH_MAGNET = 2, TECH_BIO = 2)
 	var/details = 0
@@ -333,12 +335,12 @@ REAGENT SCANNER
 	icon_state = "adv_spectrometer"
 	item_state = "analyzer"
 	origin_tech = list(TECH_BIO = 1)
-	w_class = 2.0
+	w_class = ITEM_SIZE_SMALL
 	flags = CONDUCT
 	throwforce = 0
 	throw_speed = 3
 	throw_range = 7
-	matter = list(DEFAULT_WALL_MATERIAL = 30,"glass" = 20)
+	matter = list(MATERIAL_STEEL = 30,MATERIAL_GLASS = 20)
 
 /obj/item/device/slime_scanner/attack(mob/living/M as mob, mob/living/user as mob)
 	if (!isslime(M))

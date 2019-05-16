@@ -22,7 +22,6 @@
 		owner.internal_organs_by_name[organ_tag] = null
 	if(parent)
 		parent.internal_organs -= src
-		parent = null
 	return ..()
 
 /obj/item/organ/internal/removed(mob/living/user)
@@ -30,6 +29,8 @@
 
 	owner.internal_organs_by_name[organ_tag] = null
 	owner.internal_organs -= src
+
+	parent.internal_organs -= src
 
 	var/datum/reagent/blood/transplant_blood = locate(/datum/reagent/blood) in reagents.reagent_list
 	transplant_data = list()

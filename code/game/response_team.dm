@@ -33,7 +33,7 @@ var/can_call_ert
 		usr << "<span class='danger'>Looks like somebody beat you to it!</span>"
 		return
 
-	message_admins("[key_name_admin(usr)] is dispatching an Emergency Response Team.", 1)
+//	message_admins("[key_name_admin(usr)] is dispatching an Emergency Response Team.", 1)
 	log_admin("[key_name(usr)] used Dispatch Response Team.")
 	trigger_armed_response_team(1)
 
@@ -42,7 +42,7 @@ client/verb/JoinResponseTeam()
 	set name = "Join Response Team"
 	set category = "IC"
 
-	if(!MayRespawn(1))
+	if(!MayRespawn(1,5))
 		usr << "<span class='warning'>You cannot join the response team at this time.</span>"
 		return
 
@@ -70,7 +70,8 @@ proc/percentage_dead()
 	var/deadcount = 0
 	for(var/mob/living/carbon/human/H in mob_list)
 		if(H.client) // Monkeys and mice don't have a client, amirite?
-			if(H.stat == 2) deadcount++
+			if(H.stat == DEAD)
+				deadcount++
 			total++
 
 	if(total == 0) return 0

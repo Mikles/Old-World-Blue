@@ -7,7 +7,7 @@
 	flags = OPENCONTAINER|NOBLUDGEON
 	slot_flags = SLOT_BELT
 	throwforce = 3
-	w_class = 2.0
+	w_class = ITEM_SIZE_SMALL
 	throw_speed = 2
 	throw_range = 10
 	amount_per_transfer_from_this = 10
@@ -27,7 +27,10 @@
 		if(standard_dispenser_refill(user, A))
 			return
 
-	if(istype(A, /obj/item/weapon/storage) || istype(A, /obj/structure/table) || istype(A, /obj/structure/closet) || istype(A, /obj/item/weapon/reagent_containers) || istype(A, /obj/structure/sink) || istype(A, /obj/structure/janitorialcart))
+	if(loc != user)
+		return ..()
+
+	if(istype(A, /obj/item/weapon/reagent_containers) || istype(A, /obj/structure/sink))
 		return ..()
 
 	if(istype(A, /spell))
@@ -42,14 +45,11 @@
 	user.setClickCooldown(4)
 
 	if(reagents.has_reagent("sacid"))
-		message_admins("[key_name_admin(user)] fired sulphuric acid from \a [src].")
-		log_game("[key_name(user)] fired sulphuric acid from \a [src].")
+		log_game("[key_name(user)] fired sulphuric acid from \a [src].", src)
 	if(reagents.has_reagent("pacid"))
-		message_admins("[key_name_admin(user)] fired Polyacid from \a [src].")
-		log_game("[key_name(user)] fired Polyacid from \a [src].")
+		log_game("[key_name(user)] fired Polyacid from \a [src].", src)
 	if(reagents.has_reagent("lube"))
-		message_admins("[key_name_admin(user)] fired Space lube from \a [src].")
-		log_game("[key_name(user)] fired Space lube from \a [src].")
+		log_game("[key_name(user)] fired Space lube from \a [src].", src)
 	return
 
 /obj/item/weapon/reagent_containers/spray/proc/Spray_at(atom/A as mob|obj, mob/user as mob, proximity)
@@ -158,7 +158,7 @@
 	icon_state = "chemsprayer"
 	item_state = "chemsprayer"
 	throwforce = 3
-	w_class = 3.0
+	w_class = ITEM_SIZE_LARGE
 	possible_transfer_amounts = null
 	volume = 600
 	origin_tech = list(TECH_COMBAT = 3, TECH_MATERIAL = 3, TECH_ENGINEERING = 3)

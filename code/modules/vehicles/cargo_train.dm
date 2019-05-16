@@ -20,7 +20,7 @@
 	desc = "A keyring with a small steel key, and a yellow fob reading \"Choo Choo!\"."
 	icon = 'icons/obj/vehicles.dmi'
 	icon_state = "train_keys"
-	w_class = 1
+	w_class = ITEM_SIZE_TINY
 
 /obj/vehicle/train/cargo/trolley
 	name = "cargo train trolley"
@@ -164,11 +164,11 @@
 	if(is_train_head() && ishuman(load))
 		var/mob/living/carbon/human/D = load
 		D << "\red \b You ran over [H]!"
-		visible_message("<B>\red \The [src] ran over [H]!</B>")
-		attack_log += text("\[[time_stamp()]\] <font color='red'>ran over [H.name] ([H.ckey]), driven by [D.name] ([D.ckey])</font>")
-		msg_admin_attack("[D.name] ([D.ckey]) ran over [H.name] ([H.ckey]). (<A HREF='?_src_=holder;adminplayerobservecoodjump=1;X=[src.x];Y=[src.y];Z=[src.z]'>JMP</a>)")
+		visible_message(SPAN_DANG("\The [src] ran over [H]!"))
+		attack_log += text("\[[time_stamp()]\] <font color='red'>ran over [key_name(H)], driven by [key_name(D)]</font>")
+		self_attack_log(D, "ran over [key_name(H)].", 1)
 	else
-		attack_log += text("\[[time_stamp()]\] <font color='red'>ran over [H.name] ([H.ckey])</font>")
+		attack_log += text("\[[time_stamp()]\] <font color='red'>ran over [key_name(H)]</font>")
 
 
 //-------------------------------------------

@@ -791,7 +791,7 @@
 				update_icon()
 				return
 
-			if (istype(W, /obj/item/weapon/card/id) || istype(W, /obj/item/device/pda))// trying to unlock the interface with an ID card
+			if (W.GetID())// trying to unlock the interface with an ID card
 				if(stat & (NOPOWER|BROKEN))
 					user << "It does nothing"
 					return
@@ -862,8 +862,8 @@ Just a object used in constructing air alarms
 	icon = 'icons/obj/doors/door_assembly.dmi'
 	icon_state = "door_electronics"
 	desc = "Looks like a circuit. Probably is."
-	w_class = 2.0
-	matter = list(DEFAULT_WALL_MATERIAL = 50, "glass" = 50)
+	w_class = ITEM_SIZE_SMALL
+	matter = list(MATERIAL_STEEL = 50, MATERIAL_GLASS = 50)
 
 /*
 FIRE ALARM
@@ -1120,7 +1120,7 @@ FIRE ALARM
 		pixel_y = (dir & 3)? (dir ==1 ? -24 : 24) : 0
 
 /obj/machinery/firealarm/initialize()
-	if(z in config.contact_levels)
+	if(isStationLevel(z))
 		if(security_level)
 			src.overlays += image('icons/obj/monitors.dmi', "overlay_[get_security_level()]")
 		else
@@ -1136,9 +1136,9 @@ Just a object used in constructing fire alarms
 	name = "fire alarm electronics"
 	icon = 'icons/obj/doors/door_assembly.dmi'
 	icon_state = "door_electronics"
-	desc = "A circuit. It has a label on it, it says \"Can handle heat levels up to 40 degrees celsius!\""
-	w_class = 2.0
-	matter = list(DEFAULT_WALL_MATERIAL = 50, "glass" = 50)
+	desc = "A circuit. It has a label on it, it says \"Can handle heat levels up to 40 degrees celsius!\"."
+	w_class = ITEM_SIZE_SMALL
+	matter = list(MATERIAL_STEEL = 50, MATERIAL_GLASS = 50)
 
 /obj/machinery/partyalarm
 	name = "\improper PARTY BUTTON"

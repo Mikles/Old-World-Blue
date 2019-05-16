@@ -3,11 +3,10 @@
 	icon_state = "chemg"
 	item_state = "grenade"
 	desc = "A hand made chemical grenade."
-	w_class = 2.0
+	w_class = ITEM_SIZE_SMALL
 	force = 2.0
 	det_time = null
 	unacidable = 1
-
 	var/stage = 0
 	var/state = 0
 	var/path = 0
@@ -38,7 +37,7 @@
 		if(stage > 1 && !active && clown_check(user))
 			user << "<span class='warning'>You prime \the [name]!</span>"
 
-			msg_admin_attack("[user.name] ([user.ckey]) primed \a [src]. (<A HREF='?_src_=holder;adminplayerobservecoodjump=1;X=[user.x];Y=[user.y];Z=[user.z]'>JMP</a>)")
+			self_attack_log(user, "primed \a [src].", 1)
 
 			activate()
 			add_fingerprint(user)
@@ -131,7 +130,7 @@
 			icon_state = initial(icon_state) + "_active"
 
 			if(user)
-				msg_admin_attack("[user.name] ([user.ckey]) primed \a [src] (<A HREF='?_src_=holder;adminplayerobservecoodjump=1;X=[user.x];Y=[user.y];Z=[user.z]'>JMP</a>)")
+				self_attack_log(user, "primed \a [src]", 1)
 
 		return
 

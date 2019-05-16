@@ -47,12 +47,8 @@
 		aiCamera.captureimage(A, usr)
 		return
 
-	/*
-		AI restrained() currently does nothing
-	if(restrained())
-		RestrainedClickOn(A)
-	else
-	*/
+	face_atom(A)
+
 	A.add_hiddenprint(src)
 	A.attack_ai(src)
 

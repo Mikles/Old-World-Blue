@@ -1,6 +1,6 @@
 /proc/count_drones()
 	var/drones = 0
-	for(var/mob/living/silicon/robot/drone/D in world)
+	for(var/mob/living/silicon/robot/drone/D in mob_list)
 		if(D.key && D.client)
 			drones++
 	return drones
@@ -43,7 +43,8 @@
 		return
 
 	if(stat & NOPOWER || !produce_drones)
-		if(icon_state != "drone_fab_nopower") icon_state = "drone_fab_nopower"
+		if(icon_state != "drone_fab_nopower")
+			icon_state = "drone_fab_nopower"
 		return
 
 	if(drone_progress >= 100)
@@ -112,33 +113,11 @@
 		usr << "<span class='danger'>You are banned from playing synthetics and cannot spawn as a drone.</span>"
 		return
 
-	if(!MayRespawn(1))
-		return
-
-	var/deathtime = world.time - src.timeofdeath
-	if(isobserver(src))
-		var/mob/observer/dead/G = src
-		if(G.has_enabled_antagHUD == 1 && config.antag_hud_restricted)
-			usr << "<span class='notice'>Upon using the antagHUD you forfeighted the ability to join the round.</span>"
-			return
-
-	var/deathtimeminutes = round(deathtime / 600)
-	var/pluralcheck = "minute"
-	if(deathtimeminutes == 0)
-		pluralcheck = ""
-	else if(deathtimeminutes == 1)
-		pluralcheck = " [deathtimeminutes] minute and"
-	else if(deathtimeminutes > 1)
-		pluralcheck = " [deathtimeminutes] minutes and"
-	var/deathtimeseconds = round((deathtime - deathtimeminutes * 600) / 10,1)
-
-	if (deathtime < 6000)
-		usr << "You have been dead for[pluralcheck] [deathtimeseconds] seconds."
-		usr << "You must wait 10 minutes to respawn as a drone!"
+	if(!MayRespawn(1, 10))
 		return
 
 	var/list/all_fabricators = list()
-	for(var/obj/machinery/drone_fabricator/DF in world)
+	for(var/obj/machinery/drone_fabricator/DF in machines)
 		if(DF.stat & NOPOWER || !DF.produce_drones)
 			continue
 		if(DF.drone_progress >= 100)

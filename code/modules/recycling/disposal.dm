@@ -48,6 +48,18 @@
 		trunk.linked = null
 	return ..()
 
+/obj/machinery/disposal/affect_grab(var/mob/living/user, var/mob/living/target, var/grab_state)
+	user.visible_message("[user] starts putting [target] into the disposal.")
+	if(do_after(user, 20, src) && Adjacent(target))
+		target.forceMove(src)
+		visible_message(SPAN_NOTE("[target] has been placed in the [src] by [user]."))
+		admin_attack_log(user, target,
+			"Has placed [key_name(target)] in disposals",
+			"Has been placed in disposals by [key_name(user)]",
+			"placed in a disposals unit"
+		)
+		return TRUE
+
 // attack by item places it in to disposal
 /obj/machinery/disposal/attackby(var/obj/item/I, var/mob/user)
 	if(stat & BROKEN || !I || !user)
@@ -97,32 +109,13 @@
 		user << "You can't place that item inside the disposal unit."
 		return
 
-	if(istype(I, /obj/item/weapon/storage/bag/trash))
-		var/obj/item/weapon/storage/bag/trash/T = I
+	if(istype(I, /obj/item/storage/bag/trash))
+		var/obj/item/storage/bag/trash/T = I
 		user << "\blue You empty the bag."
 		for(var/obj/item/O in T.contents)
 			T.remove_from_storage(O,src)
 		T.update_icon()
 		update()
-		return
-
-	var/obj/item/weapon/grab/G = I
-	if(istype(G))	// handle grabbed mob
-		if(ismob(G.affecting) && get_dist(src,G.affecting)<2)
-			var/mob/GM = G.affecting
-			for (var/mob/V in viewers(usr))
-				V.show_message("[usr] starts putting [GM.name] into the disposal.", 3)
-			if(do_after(usr, 20))
-				if (GM.client)
-					GM.client.perspective = EYE_PERSPECTIVE
-					GM.client.eye = src
-				GM.loc = src
-				for (var/mob/C in viewers(src))
-					C.show_message("\red [GM.name] has been placed in the [src] by [user].", 3)
-				qdel(G)
-				usr.attack_log += text("\[[time_stamp()]\] <font color='red'>Has placed [GM.name] ([GM.ckey]) in disposals.</font>")
-				GM.attack_log += text("\[[time_stamp()]\] <font color='orange'>Has been placed in disposals by [usr.name] ([usr.ckey])</font>")
-				msg_admin_attack("[usr] ([usr.ckey]) placed [GM] ([GM.ckey]) in a disposals unit. (<A HREF='?_src_=holder;adminplayerobservecoodjump=1;X=[usr.x];Y=[usr.y];Z=[usr.z]'>JMP</a>)")
 		return
 
 	if(!I || !user.unEquip(I, src))
@@ -163,9 +156,11 @@
 		msg = "[user.name] stuffs [target.name] into the [src]!"
 		user << "You stuff [target.name] into the [src]!"
 
-		user.attack_log += text("\[[time_stamp()]\] <font color='red'>Has placed [target.name] ([target.ckey]) in disposals.</font>")
-		target.attack_log += text("\[[time_stamp()]\] <font color='orange'>Has been placed in disposals by [user.name] ([user.ckey])</font>")
-		msg_admin_attack("[user] ([user.ckey]) placed [target] ([target.ckey]) in a disposals unit. (<A HREF='?_src_=holder;adminplayerobservecoodjump=1;X=[user.x];Y=[user.y];Z=[user.z]'>JMP</a>)")
+		admin_attack_log(user, target,
+			"Has placed [key_name(target)] in disposals.",
+			"Has been placed in disposals by [key_name(user)].",
+			"placed in a disposals unit "
+		)
 	else
 		return
 	if (target.client)
@@ -491,7 +486,7 @@
 		//Check for any living mobs trigger hasmob.
 		//hasmob effects whether the package goes to cargo or its tagged destination.
 		for(var/mob/living/M in D)
-			if(M && M.stat != 2 && !istype(M,/mob/living/silicon/robot/drone))
+			if(M && M.stat != DEAD && !istype(M,/mob/living/silicon/robot/drone))
 				hasmob = 1
 
 		//Checks 1 contents level deep. This means that players can be sent through disposals...
@@ -499,7 +494,7 @@
 		for(var/obj/O in D)
 			if(O.contents)
 				for(var/mob/living/M in O.contents)
-					if(M && M.stat != 2 && !istype(M,/mob/living/silicon/robot/drone))
+					if(M && M.stat != DEAD && !istype(M,/mob/living/silicon/robot/drone))
 						hasmob = 1
 
 		// now everything inside the disposal gets put into the holder

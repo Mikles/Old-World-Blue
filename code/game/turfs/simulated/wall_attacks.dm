@@ -6,7 +6,7 @@
 
 	if(density)
 		can_open = WALL_OPENING
-		set_wall_state("[material.icon_base]fwall_open")
+		set_wall_state("open")
 		//flick("[material.icon_base]fwall_opening", src)
 		density = 0
 		opacity = 0
@@ -16,7 +16,7 @@
 	else
 		can_open = WALL_OPENING
 		//flick("[material.icon_base]fwall_closing", src)
-		set_wall_state("[material.icon_base]0")
+		set_wall_state("0")
 		density = 1
 		opacity = 1
 		blocks_air = 1
@@ -24,7 +24,7 @@
 		set_light(1)
 
 	if(air_master)
-		for(var/turf/simulated/turf in range(1))
+		for(var/turf/simulated/turf in RANGE_TURFS(1, src))
 			air_master.mark_for_update(turf)
 
 	sleep(15)
@@ -67,12 +67,15 @@
 	add_fingerprint(user)
 	user.setClickCooldown(DEFAULT_ATTACK_COOLDOWN)
 	var/rotting = (locate(/obj/effect/overlay/wallrot) in src)
+	//TODO: DNA3 hulk
+	/*
 	if (HULK in user.mutations)
 		if (rotting || !prob(material.hardness))
 			success_smash(user)
 		else
 			fail_smash(user)
 			return 1
+	*/
 
 	try_touch(user, rotting)
 
@@ -167,7 +170,7 @@
 	// Basic dismantling.
 	if(isnull(construction_stage) || !reinf_material)
 
-		var/cut_delay = 60 - material.cut_delay
+		var/cut_delay = 60 + material.cut_delay
 		var/dismantle_verb
 		var/dismantle_sound
 
@@ -200,7 +203,7 @@
 			if(cut_delay<0)
 				cut_delay = 0
 
-			if(!do_after(user,cut_delay))
+			if(!do_after(user,cut_delay, src))
 				return
 
 			user << "<span class='notice'>You remove the outer plating.</span>"

@@ -420,7 +420,7 @@ swapmap
 		An item may be like:
 
 		/turf/wall
-		/obj/fence{icon_state="iron"}
+		/obj/fence{icon_state=MATERIAL_IRON}
 	 */
 	proc/BuildFilledRectangle(turf/T1,turf/T2,item)
 		if(!Contains(T1) || !Contains(T2)) return
@@ -449,7 +449,8 @@ swapmap
 		type. Actually the list doesn't have to be just turfs.
 	 */
 	proc/BuildInTurfs(list/turfs,item)
-		for(var/T in turfs) new item(T)
+		for(var/T in turfs)
+			new item(T)
 
 atom
 	Write(savefile/S)

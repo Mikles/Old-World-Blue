@@ -1,8 +1,7 @@
 var/datum/antagonist/revolutionary/revs
 
 /datum/antagonist/revolutionary
-	id = MODE_REVOLUTIONARY
-	role_type = BE_REV
+	id = ROLE_REVOLUTIONARY
 	role_text = "Head Revolutionary"
 	role_text_plural = "Revolutionaries"
 	bantype = "revolutionary"
@@ -39,7 +38,7 @@ var/datum/antagonist/revolutionary/revs
 		return
 	global_objectives = list()
 	for(var/mob/living/carbon/human/player in mob_list)
-		if(!player.mind || player.stat==2 || !(player.mind.assigned_role in command_positions))
+		if(!player.mind || player.stat == DEAD || !(player.mind.assigned_role in command_positions))
 			continue
 		var/datum/objective/rev/rev_obj = new
 		rev_obj.target = player.mind

@@ -7,14 +7,15 @@
 	icon_state = "large"
 	sharp = 1
 	edge = 1
-	w_class = 2
+	w_class = ITEM_SIZE_SMALL
 	force_divisor = 0.2 // 6 with hardness 30 (glass)
 	thrown_force_divisor = 0.4 // 4 with weight 15 (glass)
 	item_state = "shard-glass"
 	attack_verb = list("stabbed", "slashed", "sliced", "cut")
-	default_material = "glass"
+	default_material = MATERIAL_GLASS
 	unbreakable = 1 //It's already broken.
 	drops_debris = 0
+	randpixel = 8
 
 /obj/item/weapon/material/shard/suicide_act(mob/user)
 	viewers(user) << pick("\red <b>[user] is slitting \his wrists with \the [src]! It looks like \he's trying to commit suicide.</b>", \
@@ -27,8 +28,6 @@
 		return
 
 	icon_state = "[material.shard_icon][pick("large", "medium", "small")]"
-	pixel_x = rand(-8, 8)
-	pixel_y = rand(-8, 8)
 	update_icon()
 
 	if(material.shard_type)

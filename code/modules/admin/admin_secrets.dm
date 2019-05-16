@@ -54,8 +54,7 @@ var/datum/admin_secrets/admin_secrets = new()
 		return 0
 
 	if(log)
-		log_admin("[key_name(user)] used [name]")
-		message_admins("[key_name(user)] used [name]")
+		log_admin("[key_name(user)] used [name]", user)
 
 
 	return 1
@@ -116,16 +115,14 @@ var/datum/admin_secrets/admin_secrets = new()
 		return
 
 	gravity_is_on = !gravity_is_on
-	for(var/area/A in world)
+	for(var/area/A in all_areas)
 		A.gravitychange(gravity_is_on,A)
 
 	if(gravity_is_on)
-		log_admin("[key_name(usr)] toggled gravity on.", 1)
-		message_admins("\blue [key_name_admin(usr)] toggled gravity on.", 1)
+		log_admin("[key_name(usr)] toggled gravity on.")
 		command_announcement.Announce("Gravity generators are again functioning within normal parameters. Sorry for any inconvenience.")
 	else
-		log_admin("[key_name(usr)] toggled gravity off.", 1)
-		message_admins("\blue [key_name_admin(usr)] toggled gravity off.", 1)
+		log_admin("[key_name(usr)] toggled gravity off.")
 		command_announcement.Announce("Feedback surge detected in mass-distributions systems. Artificial gravity has been disabled whilst the system reinitializes. Further failures may result in a gravitational collapse and formation of blackholes. Have a nice day.")
 
 
@@ -316,25 +313,23 @@ var/datum/admin_secrets/admin_secrets = new()
 
 	var/datum/shuttle/S = shuttle_controller.shuttles[shuttle_tag]
 
-	var/origin_area = input(user, "Which area is the shuttle at now? (MAKE SURE THIS IS CORRECT OR THINGS WILL BREAK)") as null|area in world
+	var/origin_area = input(user, "Which area is the shuttle at now? (MAKE SURE THIS IS CORRECT OR THINGS WILL BREAK)") as null|area in all_areas
 	if (!origin_area) return
 
-	var/destination_area = input(user, "Which area is the shuttle at now? (MAKE SURE THIS IS CORRECT OR THINGS WILL BREAK)") as null|area in world
+	var/destination_area = input(user, "Which area is the shuttle at now? (MAKE SURE THIS IS CORRECT OR THINGS WILL BREAK)") as null|area in all_areas
 	if (!destination_area) return
 
 	var/long_jump = alert(user, "Is there a transition area for this jump?","", "Yes", "No")
 	if (long_jump == "Yes")
-		var/transition_area = input(user, "Which area is the transition area? (MAKE SURE THIS IS CORRECT OR THINGS WILL BREAK)") as null|area in world
+		var/transition_area = input(user, "Which area is the transition area? (MAKE SURE THIS IS CORRECT OR THINGS WILL BREAK)") as null|area in all_areas
 		if (!transition_area) return
 
 		var/move_duration = input(user, "How many seconds will this jump take?") as num
 
 		S.long_jump(origin_area, destination_area, transition_area, move_duration)
-		message_admins("<span class='notice'>[key_name_admin(user)] has initiated a jump from [origin_area] to [destination_area] lasting [move_duration] seconds for the [shuttle_tag] shuttle</span>", 1)
 		log_admin("[key_name_admin(user)] has initiated a jump from [origin_area] to [destination_area] lasting [move_duration] seconds for the [shuttle_tag] shuttle")
 	else
 		S.short_jump(origin_area, destination_area)
-		message_admins("<span class='notice'>[key_name_admin(user)] has initiated a jump from [origin_area] to [destination_area] for the [shuttle_tag] shuttle</span>", 1)
 		log_admin("[key_name_admin(user)] has initiated a jump from [origin_area] to [destination_area] for the [shuttle_tag] shuttle")
 
 
@@ -418,10 +413,10 @@ var/datum/admin_secrets/admin_secrets = new()
 
 	var/datum/shuttle/S = shuttle_controller.shuttles[shuttle_tag]
 
-	var/origin_area = input("Which area is the shuttle at now? (MAKE SURE THIS IS CORRECT OR THINGS WILL BREAK)") as null|area in world
+	var/origin_area = input("Which area is the shuttle at now? (MAKE SURE THIS IS CORRECT OR THINGS WILL BREAK)") as null|area in all_areas
 	if (!origin_area) return
 
-	var/destination_area = input("Which area is the shuttle at now? (MAKE SURE THIS IS CORRECT OR THINGS WILL BREAK)") as null|area in world
+	var/destination_area = input("Which area is the shuttle at now? (MAKE SURE THIS IS CORRECT OR THINGS WILL BREAK)") as null|area in all_areas
 	if (!destination_area) return
 
 	S.move(origin_area, destination_area)
@@ -440,9 +435,8 @@ var/datum/admin_secrets/admin_secrets = new()
 	if(!.)
 		return
 	for(var/mob/living/carbon/human/H in mob_list)
-		var/turf/T = get_turf(H)
 		var/security = 0
-		if((T && T in config.admin_levels) || prisonwarped.Find(H))
+		if(isOnAdminLevel(H) || prisonwarped.Find(H))
 		//don't warp them if they aren't ready or are already there
 			continue
 		H.Paralyse(5)
@@ -494,7 +488,7 @@ var/datum/admin_secrets/admin_secrets = new()
 	if(!.)
 		return
 
-	for(var/obj/machinery/light/L in world)
+	for(var/obj/machinery/light/L in machines)
 		L.fix()
 
 
@@ -579,8 +573,7 @@ var/datum/admin_secrets/admin_secrets = new()
 	var/range_dev = max_explosion_range *0.25
 	var/range_high = max_explosion_range *0.5
 	var/range_low = max_explosion_range
-	message_admins("<span class='danger'>[key_name_admin(usr)] changed the bomb cap to [range_dev], [range_high], [range_low]</span>", 1)
-	log_admin("[key_name_admin(usr)] changed the bomb cap to [max_explosion_range]")
+	log_admin("[key_name_admin(usr)] changed the bomb cap to [range_dev], [range_high], [range_low]")
 
 
 /datum/admin_secret_item/fun_secret/triple_ai_mode
@@ -624,22 +617,6 @@ var/datum/admin_secrets/admin_secrets = new()
 	for(var/mob/living/carbon/human/H in mob_list)
 		spawn(0)
 			H.monkeyize()
-
-
-/datum/admin_secret_item/admin_secret/admin_logs
-	name = "Admin Logs"
-
-/datum/admin_secret_item/admin_secret/admin_logs/execute(var/mob/user)
-	. = ..()
-	if(!.)
-		return
-	var/dat = "<B>Admin Log<HR></B>"
-	for(var/l in admin_log)
-		dat += "<li>[l]</li>"
-	if(!admin_log.len)
-		dat += "No-one has done anything this round!"
-	user << browse(dat, "window=admin_log")
-
 
 
 /datum/admin_secret_item/final_solution/supermatter_cascade

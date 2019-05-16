@@ -244,11 +244,18 @@
 /mob/living/silicon/robot/proc/pick_module()
 	if(module)
 		return
-	var/list/modules = robot_modules.Copy()
+	var/list/modules = new
+	for(var/M in robot_modules)
+		var/obj/item/weapon/robot_module/module = robot_modules[M]
+		if(!jobban_isbanned(src, initial(module.ban_type)))
+			modules[M] = robot_modules[M]
 	if((crisis && security_level == SEC_LEVEL_RED) || crisis_override) //Leaving this in until it's balanced appropriately.
-		src << "\red Crisis mode active. Combat module available."
-		for(var/name in redcode_robot_modules)
-			modules[name] = redcode_robot_modules[name]
+		src << SPAN_WARN("Crisis mode active. Combat module available.")
+		for(var/M in redcode_robot_modules)
+			var/obj/item/weapon/robot_module/module = redcode_robot_modules[M]
+			if(!jobban_isbanned(src, initial(module.ban_type)))
+				modules[M] = redcode_robot_modules[M]
+
 	modtype = input("Please, select a module!", "Robot", null, null) in modules
 
 	if(module)
@@ -525,12 +532,7 @@
 				user << "You jam the crowbar into the robot and begin levering [mmi]."
 				sleep(30)
 				user << "You damage some parts of the chassis, but eventually manage to rip out [mmi]!"
-				var/obj/item/robot_parts/robot_suit/C = new(loc)
-				C.l_leg = new (C)
-				C.r_leg = new (C)
-				C.l_arm = new (C)
-				C.r_arm = new (C)
-				C.update_icon()
+				new/obj/item/robot_parts/robot_suit/with_limbs(loc)
 				new/obj/item/robot_parts/chest(loc)
 				qdel(src)
 			else
@@ -572,8 +574,8 @@
 			user << "Close the panel first."
 		else if(cell)
 			user << "There is a power cell already installed."
-		else if(W.w_class != 3)
-			user << "\The [W] is too [W.w_class < 3? "small" : "large"] to fit here."
+		else if(W.w_class != ITEM_SIZE_NORMAL)
+			user << "\The [W] is too [W.w_class < ITEM_SIZE_NORMAL? "small" : "large"] to fit here."
 		else
 			user.unEquip(W, src)
 			cell = W
@@ -707,7 +709,7 @@
 
 /mob/living/silicon/robot/updateicon()
 	overlays.Cut()
-	if(stat == 0)
+	if(!stat)
 		var/image/eyes = image(icon, sprite_data.eyes)
 		eyes.color = sprite_data.eyes_color
 		overlays += eyes
@@ -1070,7 +1072,7 @@
 				disconnect_from_ai()
 				user << "You emag [src]'s interface."
 				message_admins("[key_name_admin(user)] emagged cyborg [key_name_admin(src)].  Laws overridden.")
-				log_game("[key_name(user)] emagged cyborg [key_name(src)].  Laws overridden.")
+				log_game("[key_name(user)] emagged cyborg [key_name(src)].  Laws overridden.", src)
 				clear_supplied_laws()
 				clear_inherent_laws()
 				laws = new /datum/ai_laws/syndicate_override

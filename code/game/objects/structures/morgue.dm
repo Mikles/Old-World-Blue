@@ -42,7 +42,7 @@
 			src.icon_state = "morgue2"
 			get_occupants()
 			for (var/mob/living/carbon/human/H in occupants)
-				if(H.isSynthetic() || H.suiciding || !H.ckey || !H.client || (NOCLONE in H.mutations) || (H.species && H.species.flags & NO_SCAN))
+				if(H.isSynthetic() || H.suiciding || !H.ckey || !H.client || (NOCLONE & H.status_flags) || (H.species.flags & NO_SCAN))
 					src.icon_state = "morgue2"
 					break
 				else
@@ -342,7 +342,7 @@
 		locked = 1
 
 		for(var/mob/living/M in contents)
-			if (M.stat!=2)
+			if (M.stat!=DEAD)
 				if (!iscarbon(M))
 					M.emote("scream")
 				else
@@ -353,7 +353,7 @@
 			//Logging for this causes runtimes resulting in the cremator locking up. Commenting it out until that's figured out.
 			//M.attack_log += "\[[time_stamp()]\] Has been cremated by <b>[user]/[user.ckey]</b>" //No point in this when the mob's about to be deleted
 			//user.attack_log +="\[[time_stamp()]\] Cremated <b>[M]/[M.ckey]</b>"
-			//log_attack("\[[time_stamp()]\] <b>[user]/[user.ckey]</b> cremated <b>[M]/[M.ckey]</b>")
+			log_attack("[key_name(user)] cremated [key_name(M)]", src)
 			M.death(1)
 			M.ghostize()
 			qdel(M)

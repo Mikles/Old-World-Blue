@@ -23,7 +23,7 @@
 /obj/effect/spider/attackby(var/obj/item/weapon/W, var/mob/user)
 	user.setClickCooldown(DEFAULT_ATTACK_COOLDOWN)
 
-	if(W.attack_verb.len)
+	if(W.attack_verb)
 		visible_message("<span class='warning'>\The [src] have been [pick(W.attack_verb)] with \the [W][(user ? " by [user]." : ".")]</span>")
 	else
 		visible_message("<span class='warning'>\The [src] have been attacked with \the [W][(user ? " by [user]." : ".")]</span>")
@@ -81,8 +81,7 @@
 	icon_state = "eggs"
 	var/amount_grown = 0
 	New()
-		pixel_x = rand(3,-3)
-		pixel_y = rand(3,-3)
+		pixel_x = rand(-3,3)
 		processing_objects |= src
 
 /obj/effect/spider/eggcluster/process()
@@ -104,8 +103,7 @@
 	var/obj/machinery/atmospherics/unary/vent_pump/entry_vent
 	var/travelling_in_vent = 0
 	New()
-		pixel_x = rand(6,-6)
-		pixel_y = rand(6,-6)
+		pixel_x = rand(-6,6)
 		processing_objects.Add(src)
 		//50% chance to grow up
 		if(prob(50))

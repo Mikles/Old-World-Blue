@@ -3,7 +3,7 @@
 	desc = "MAGGOT."
 	icon_state = "rocket"
 	item_state = "rocket"
-	w_class = 4.0
+	w_class = ITEM_SIZE_HUGE
 	throw_speed = 2
 	throw_range = 10
 	force = 5.0
@@ -42,6 +42,5 @@
 	return null
 
 /obj/item/weapon/gun/launcher/rocket/handle_post_fire(mob/user, atom/target)
-	message_admins("[key_name_admin(user)] fired a rocket from a rocket launcher ([src.name]) at [target].")
-	log_game("[key_name_admin(user)] used a rocket launcher ([src.name]) at [target].")
+	log_game("[key_name_admin(user)] used a rocket launcher ([src.name]) at [target].", target)
 	..()

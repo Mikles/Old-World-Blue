@@ -133,7 +133,6 @@ var/global/Holiday = null
 	world.update_status()
 	Holiday_Game_Start()
 
-	message_admins("\blue ADMIN: Event: [key_name(src)] force-set Holiday to \"[Holiday]\"")
 	log_admin("[key_name(src)] force-set Holiday to \"[Holiday]\"")
 
 
@@ -170,7 +169,7 @@ var/global/Holiday = null
 			else			Egg = new(F)
 */
 /*			var/list/obj/containers = list()
-			for(var/obj/item/weapon/storage/S in world)
+			for(var/obj/item/storage/S in world)
 				if(isNotStationLevel(S.z))	continue
 				containers += S
 
